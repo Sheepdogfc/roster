@@ -15,7 +15,6 @@ import org.acme.flighcrewscheduling.domain.Employee;
 import org.acme.flighcrewscheduling.domain.Flight;
 import org.acme.flighcrewscheduling.domain.FlightAssignment;
 import org.acme.flighcrewscheduling.domain.FlightCrewSchedule;
-import org.acme.flighcrewscheduling.domain.Skill;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -33,9 +32,9 @@ class FlightCrewSchedulingConstraintProviderTest {
 
     @Test
     void requiredSkill() {
-        FlightAssignment assignment = new FlightAssignment("1", null, 0, new Skill("1"));
+        FlightAssignment assignment = new FlightAssignment("1", null, 0, "1");
         Employee employee = new Employee("1");
-        employee.setSkills(Set.of(new Skill("2")));
+        employee.setSkills(Set.of("2"));
         assignment.setEmployee(employee);
 
         constraintVerifier.verifyThat(FlightCrewSchedulingConstraintProvider::requiredSkill)
@@ -65,8 +64,8 @@ class FlightCrewSchedulingConstraintProviderTest {
     void transferBetweenTwoFlights() {
         Employee employee = new Employee("1");
 
-        Airport firstAirport = new Airport("1", "1");
-        Airport secondAirport = new Airport("2", "2");
+        Airport firstAirport = new Airport("1");
+        Airport secondAirport = new Airport("2");
 
         Flight firstFlight =
                 new Flight("1", "1", firstAirport, LocalDateTime.now(), secondAirport, LocalDateTime.now().plusMinutes(10));
@@ -109,11 +108,11 @@ class FlightCrewSchedulingConstraintProviderTest {
     @Test
     void firstAssignmentNotDepartingFromHome() {
         Employee employee = new Employee("1");
-        employee.setHomeAirport(new Airport("1", "1"));
+        employee.setHomeAirport(new Airport("1"));
         employee.setUnavailableDays(Set.of(LocalDate.now()));
 
         Flight flight =
-                new Flight("1", "1", new Airport("2", "2"), LocalDateTime.now(), new Airport("3", "3"),
+                new Flight("1", "1", new Airport("2"), LocalDateTime.now(), new Airport("3"),
                         LocalDateTime.now().plusMinutes(10));
         FlightAssignment assignment = new FlightAssignment("1", flight);
 
@@ -129,16 +128,16 @@ class FlightCrewSchedulingConstraintProviderTest {
     @Test
     void lastAssignmentNotArrivingAtHome() {
         Employee employee = new Employee("1");
-        employee.setHomeAirport(new Airport("1", "1"));
+        employee.setHomeAirport(new Airport("1"));
         employee.setUnavailableDays(Set.of(LocalDate.now()));
 
         Flight firstFlight =
-                new Flight("1", "1", new Airport("2", "2"), LocalDateTime.now(), new Airport("3", "3"),
+                new Flight("1", "1", new Airport("2"), LocalDateTime.now(), new Airport("3"),
                         LocalDateTime.now().plusMinutes(10));
         FlightAssignment firstAssignment = new FlightAssignment("1", firstFlight);
 
         Flight secondFlight =
-                new Flight("2", "2", new Airport("4", "4"), LocalDateTime.now(), new Airport("4", "4"),
+                new Flight("2", "2", new Airport("3"), LocalDateTime.now(), new Airport("4"),
                         LocalDateTime.now().plusMinutes(10));
         FlightAssignment secondAssignment = new FlightAssignment("1", secondFlight);
 

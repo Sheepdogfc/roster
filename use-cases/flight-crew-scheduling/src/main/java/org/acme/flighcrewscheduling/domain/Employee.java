@@ -17,7 +17,7 @@ public class Employee {
     private String name;
     private Airport homeAirport;
 
-    private Set<Skill> skills;
+    private Set<String> skills;
     private Set<LocalDate> unavailableDays;
 
     @InverseRelationShadowVariable(sourceVariableName = "employee")
@@ -36,7 +36,7 @@ public class Employee {
         this.homeAirport = homeAirport;
     }
 
-    public boolean hasSkill(Skill skill) {
+    public boolean hasSkill(String skill) {
         return skills.contains(skill);
     }
 
@@ -75,14 +75,6 @@ public class Employee {
         return count;
     }
 
-    public long getFlightDurationTotalInMinutes() {
-        long total = 0L;
-        for (FlightAssignment flightAssignment : flightAssignments) {
-            total += flightAssignment.getFlightDurationInMinutes();
-        }
-        return total;
-    }
-
     @Override
     public String toString() {
         return name;
@@ -112,11 +104,11 @@ public class Employee {
         this.homeAirport = homeAirport;
     }
 
-    public Set<Skill> getSkills() {
+    public Set<String> getSkills() {
         return skills;
     }
 
-    public void setSkills(Set<Skill> skills) {
+    public void setSkills(Set<String> skills) {
         this.skills = skills;
     }
 

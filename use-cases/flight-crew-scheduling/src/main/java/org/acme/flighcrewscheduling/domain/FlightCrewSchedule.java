@@ -7,7 +7,6 @@ import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionPrope
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
-import ai.timefold.solver.core.api.domain.solution.ProblemFactProperty;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.hardsoftlong.HardSoftLongScore;
 
@@ -16,12 +15,6 @@ public class FlightCrewSchedule {
 
     private LocalDate scheduleFirstUTCDate;
     private LocalDate scheduleLastUTCDate;
-
-    @ProblemFactProperty
-    private FlightCrewParametrization parametrization;
-
-    @ProblemFactCollectionProperty
-    private List<Skill> skills;
 
     @ProblemFactCollectionProperty
     private List<Airport> airports;
@@ -60,22 +53,6 @@ public class FlightCrewSchedule {
 
     public void setScheduleLastUTCDate(LocalDate scheduleLastUTCDate) {
         this.scheduleLastUTCDate = scheduleLastUTCDate;
-    }
-
-    public FlightCrewParametrization getParametrization() {
-        return parametrization;
-    }
-
-    public void setParametrization(FlightCrewParametrization parametrization) {
-        this.parametrization = parametrization;
-    }
-
-    public List<Skill> getSkills() {
-        return skills;
-    }
-
-    public void setSkills(List<Skill> skills) {
-        this.skills = skills;
     }
 
     public List<Airport> getAirports() {

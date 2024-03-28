@@ -2,7 +2,6 @@ package org.acme.flighcrewscheduling.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.Objects;
@@ -44,24 +43,6 @@ public class Flight implements Comparable<Flight> {
 
     public LocalDate getDepartureUTCDate() {
         return departureUTCDateTime.toLocalDate();
-    }
-
-    public LocalTime getDepartureUTCTime() {
-        return departureUTCDateTime.toLocalTime();
-    }
-
-    public LocalDate getArrivalUTCDate() {
-        return arrivalUTCDateTime.toLocalDate();
-    }
-
-    public LocalTime getArrivalUTCTime() {
-        return arrivalUTCDateTime.toLocalTime();
-    }
-
-    // TODO return overlapping time to avoid score trap?
-    public boolean overlaps(Flight other) {
-        return departureUTCDateTime.compareTo(other.arrivalUTCDateTime) < 0
-                && other.departureUTCDateTime.compareTo(arrivalUTCDateTime) < 0;
     }
 
     @Override

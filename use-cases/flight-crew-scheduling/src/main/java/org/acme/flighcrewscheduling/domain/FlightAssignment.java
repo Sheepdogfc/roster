@@ -18,7 +18,7 @@ public class FlightAssignment implements Comparable<FlightAssignment> {
     private String id;
     private Flight flight;
     private int indexInFlight;
-    private Skill requiredSkill;
+    private String requiredSkill;
 
     @PlanningVariable
     private Employee employee;
@@ -31,15 +31,11 @@ public class FlightAssignment implements Comparable<FlightAssignment> {
         this.flight = flight;
     }
 
-    public FlightAssignment(String id, Flight flight, int indexInFlight, Skill requiredSkill) {
+    public FlightAssignment(String id, Flight flight, int indexInFlight, String requiredSkill) {
         this.id = id;
         this.flight = flight;
         this.indexInFlight = indexInFlight;
         this.requiredSkill = requiredSkill;
-    }
-
-    public long getFlightDurationInMinutes() {
-        return flight.getDurationInMinutes();
     }
 
     public boolean hasRequiredSkills() {
@@ -79,11 +75,11 @@ public class FlightAssignment implements Comparable<FlightAssignment> {
         this.indexInFlight = indexInFlight;
     }
 
-    public Skill getRequiredSkill() {
+    public String getRequiredSkill() {
         return requiredSkill;
     }
 
-    public void setRequiredSkill(Skill requiredSkill) {
+    public void setRequiredSkill(String requiredSkill) {
         this.requiredSkill = requiredSkill;
     }
 
