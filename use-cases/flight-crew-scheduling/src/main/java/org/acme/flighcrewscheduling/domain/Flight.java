@@ -7,6 +7,8 @@ import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Flight implements Comparable<Flight> {
 
     private static final Comparator<Flight> COMPARATOR = Comparator.comparing(Flight::getDepartureUTCDateTime)
@@ -40,6 +42,7 @@ public class Flight implements Comparable<Flight> {
         this.arrivalUTCDateTime = arrivalUTCDateTime;
     }
 
+    @JsonIgnore
     public LocalDate getDepartureUTCDate() {
         return departureUTCDateTime.toLocalDate();
     }

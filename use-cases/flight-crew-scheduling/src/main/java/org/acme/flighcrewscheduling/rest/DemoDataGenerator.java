@@ -173,13 +173,13 @@ public class DemoDataGenerator {
                     while (flight.getArrivalAirport() == null) {
                         Airport arrivalAirport = airports.get(random.nextInt(airports.size()));
                         if (!flight.getDepartureAirport().equals(arrivalAirport)) {
-                            flight.setDepartureAirport(arrivalAirport);
+                            flight.setArrivalAirport(arrivalAirport);
                         }
                     }
                 });
 
         // Flight duration - 1h 16%; 2h 32%; 3h 48%; 4h 4%
-        List<Pair<Float, Integer>> timeGroupCount = List.of(
+        List<Pair<Float, Integer>> timeCount = List.of(
                 new Pair<>(0.16f, 1),
                 new Pair<>(0.48f, 2),
                 new Pair<>(0.96f, 3),
@@ -187,12 +187,12 @@ public class DemoDataGenerator {
         int countDates = size / dates.size();
         BiConsumer<Flight, LocalDate> flightConsumer = (flight, date) -> {
             double nextCountHours = random.nextDouble();
-            int countHours = timeGroupCount.stream()
-                    .filter(p -> p.key() <= nextCountHours)
+            int countHours = timeCount.stream()
+                    .filter(p -> nextCountHours <= p.key())
                     .mapToInt(Pair::value)
                     .findFirst()
                     .getAsInt();
-            LocalTime startTime = timeGroups.get(random.nextInt(timeGroupCount.size() - countHours));
+            LocalTime startTime = timeGroups.get(random.nextInt(timeGroups.size() - countHours));
             LocalDateTime departureDateTime = LocalDateTime.of(date, startTime);
             LocalDateTime arrivalDateTime = LocalDateTime.of(date, startTime.plusHours(countHours));
             flight.setDepartureUTCDateTime(departureDateTime);
@@ -200,6 +200,10 @@ public class DemoDataGenerator {
         };
         dates.forEach(startDate -> applyRandomValue(countDates, flights, startDate,
                 flight -> flight.getDepartureUTCDateTime() == null, flightConsumer));
+        // Ensure there are no empty dates
+        flights.stream()
+                .filter(flight -> flight.getDepartureUTCDateTime() == null)
+                .forEach(flight -> flightConsumer.accept(flight, dates.get(random.nextInt(dates.size()))));
         return flights;
     }
 

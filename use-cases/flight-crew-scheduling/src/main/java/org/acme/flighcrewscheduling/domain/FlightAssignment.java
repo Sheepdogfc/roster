@@ -7,6 +7,8 @@ import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @PlanningEntity
 public class FlightAssignment implements Comparable<FlightAssignment> {
 
@@ -38,10 +40,12 @@ public class FlightAssignment implements Comparable<FlightAssignment> {
         this.requiredSkill = requiredSkill;
     }
 
+    @JsonIgnore
     public boolean hasRequiredSkills() {
         return getEmployee().hasSkill(requiredSkill);
     }
 
+    @JsonIgnore
     public boolean isUnavailableEmployee() {
         return !getEmployee().isAvailable(getFlight().getDepartureUTCDate());
     }
