@@ -1,8 +1,8 @@
 package org.acme.flighcrewscheduling.domain;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.SortedSet;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
@@ -17,8 +17,8 @@ public class Employee {
     private String name;
     private Airport homeAirport;
 
-    private Set<String> skills;
-    private Set<LocalDate> unavailableDays;
+    private List<String> skills;
+    private List<LocalDate> unavailableDays;
 
     @InverseRelationShadowVariable(sourceVariableName = "employee")
     private SortedSet<FlightAssignment> flightAssignments;
@@ -28,6 +28,11 @@ public class Employee {
 
     public Employee(String id) {
         this.id = id;
+    }
+
+    public Employee(String id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public Employee(String id, String name, Airport homeAirport) {
@@ -104,19 +109,19 @@ public class Employee {
         this.homeAirport = homeAirport;
     }
 
-    public Set<String> getSkills() {
+    public List<String> getSkills() {
         return skills;
     }
 
-    public void setSkills(Set<String> skills) {
+    public void setSkills(List<String> skills) {
         this.skills = skills;
     }
 
-    public Set<LocalDate> getUnavailableDays() {
+    public List<LocalDate> getUnavailableDays() {
         return unavailableDays;
     }
 
-    public void setUnavailableDays(Set<LocalDate> unavailableDays) {
+    public void setUnavailableDays(List<LocalDate> unavailableDays) {
         this.unavailableDays = unavailableDays;
     }
 

@@ -2,7 +2,7 @@ package org.acme.flighcrewscheduling.solver;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -34,7 +34,7 @@ class FlightCrewSchedulingConstraintProviderTest {
     void requiredSkill() {
         FlightAssignment assignment = new FlightAssignment("1", null, 0, "1");
         Employee employee = new Employee("1");
-        employee.setSkills(Set.of("2"));
+        employee.setSkills(List.of("2"));
         assignment.setEmployee(employee);
 
         constraintVerifier.verifyThat(FlightCrewSchedulingConstraintProvider::requiredSkill)
@@ -93,7 +93,7 @@ class FlightCrewSchedulingConstraintProviderTest {
     @Test
     void employeeUnavailability() {
         Employee employee = new Employee("1");
-        employee.setUnavailableDays(Set.of(LocalDate.now()));
+        employee.setUnavailableDays(List.of(LocalDate.now()));
 
         Flight flight =
                 new Flight("1", "1", null, LocalDateTime.now(), null, LocalDateTime.now().plusMinutes(10));
@@ -109,7 +109,7 @@ class FlightCrewSchedulingConstraintProviderTest {
     void firstAssignmentNotDepartingFromHome() {
         Employee employee = new Employee("1");
         employee.setHomeAirport(new Airport("1"));
-        employee.setUnavailableDays(Set.of(LocalDate.now()));
+        employee.setUnavailableDays(List.of(LocalDate.now()));
 
         Flight flight =
                 new Flight("1", "1", new Airport("2"), LocalDateTime.now(), new Airport("3"),
@@ -129,7 +129,7 @@ class FlightCrewSchedulingConstraintProviderTest {
     void lastAssignmentNotArrivingAtHome() {
         Employee employee = new Employee("1");
         employee.setHomeAirport(new Airport("1"));
-        employee.setUnavailableDays(Set.of(LocalDate.now()));
+        employee.setUnavailableDays(List.of(LocalDate.now()));
 
         Flight firstFlight =
                 new Flight("1", "1", new Airport("2"), LocalDateTime.now(), new Airport("3"),
@@ -142,7 +142,7 @@ class FlightCrewSchedulingConstraintProviderTest {
         FlightAssignment secondAssignment = new FlightAssignment("1", secondFlight);
 
         SortedSet<FlightAssignment> assignments = new TreeSet<>();
-        assignments.add(secondAssignment);
+        assignments.add(firstAssignment);
         assignments.add(secondAssignment);
         employee.setFlightAssignments(assignments);
 
