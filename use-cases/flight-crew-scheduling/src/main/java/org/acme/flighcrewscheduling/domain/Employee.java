@@ -44,10 +44,11 @@ public class Employee {
         this.unavailableDays = new ArrayList<>();
     }
 
-    public Employee(String id, String name, Airport homeAirport) {
+    public Employee(String id, String name, Airport homeAirport, List<String> skills) {
         this.id = id;
         this.name = name;
         this.homeAirport = homeAirport;
+        this.skills = skills;
     }
 
     @JsonIgnore
@@ -57,7 +58,7 @@ public class Employee {
 
     @JsonIgnore
     public boolean isAvailable(LocalDate date) {
-        return !unavailableDays.contains(date);
+        return unavailableDays == null || !unavailableDays.contains(date);
     }
 
     @JsonIgnore
@@ -86,7 +87,8 @@ public class Employee {
         FlightAssignment previousAssignment = null;
         for (FlightAssignment assignment : flightAssignments) {
             if (previousAssignment != null
-                    && previousAssignment.getFlight().getArrivalAirport() != assignment.getFlight().getDepartureAirport()) {
+                    && !previousAssignment.getFlight().getArrivalAirport()
+                            .equals(assignment.getFlight().getDepartureAirport())) {
                 count++;
             }
             previousAssignment = assignment;

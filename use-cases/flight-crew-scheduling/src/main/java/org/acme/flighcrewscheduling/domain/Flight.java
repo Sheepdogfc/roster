@@ -32,6 +32,12 @@ public class Flight implements Comparable<Flight> {
         this.id = id;
     }
 
+    public Flight(String id, Airport departureAirport, Airport arrivalAirport) {
+        this.id = id;
+        this.departureAirport = departureAirport;
+        this.arrivalAirport = arrivalAirport;
+    }
+
     public Flight(String id, String flightNumber, Airport departureAirport, LocalDateTime departureUTCDateTime,
             Airport arrivalAirport, LocalDateTime arrivalUTCDateTime) {
         this.id = id;
