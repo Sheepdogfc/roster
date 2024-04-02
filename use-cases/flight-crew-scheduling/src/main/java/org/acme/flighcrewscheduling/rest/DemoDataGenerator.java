@@ -31,8 +31,12 @@ import org.acme.flighcrewscheduling.domain.FlightCrewSchedule;
 @ApplicationScoped
 public class DemoDataGenerator {
 
-    private static final String[] FIRST_NAMES = { "Amy", "Beth", "Chad", "Dan", "Elsa", "Flo", "Gus", "Hugo", "Ivy", "Jay" };
-    private static final String[] LAST_NAMES = { "Cole", "Fox", "Green", "Jones", "King", "Li", "Poe", "Rye", "Smith", "Watt" };
+    private static final String[] FIRST_NAMES = { "Amy", "Beth", "Chad", "Dan", "Elsa", "Flo", "Gus", "Hugo", "Ivy", "Jay",
+            "Jeri", "Hope", "Avis", "Lino", "Lyle", "Nick", "Dino", "Otha", "Gwen", "Jose", "Dena", "Jana", "Dave",
+            "Russ", "Josh", "Dana", "Katy" };
+    private static final String[] LAST_NAMES =
+            { "Cole", "Fox", "Green", "Jones", "King", "Li", "Poe", "Rye", "Smith", "Watt", "Howe", "Lowe", "Wise", "Clay",
+                    "Carr", "Hood", "Long", "Horn", "Haas", "Meza" };
     private static final String ATTENDANT_SKILL = "Flight attendant";
     private static final String PILOT_SKILL = "Pilot";
     private static final Random random = new Random(0);
@@ -45,11 +49,7 @@ public class DemoDataGenerator {
                 new Airport("LHR", "LHR", 51.4775, -0.461389),
                 new Airport("CDG", "CDG", 49.009722, 2.547778),
                 new Airport("AMS", "AMS", 52.308056, 4.764167),
-                new Airport("FRA", "FRA", 50.033333, 8.570556),
-                new Airport("IST", "IST", 40.976111, 28.814167),
-                new Airport("MAD", "MAD", 40.472222, -3.560833),
-                new Airport("BCN", "BCN", 41.296944, 2.078333),
-                new Airport("LGW", "LGW", 51.148056, -0.190278));
+                new Airport("FRA", "FRA", 50.033333, 8.570556));
 
         // Flights
         LocalDate firstMonthMonday = LocalDate.now().with(firstInMonth(DayOfWeek.MONDAY)); // First Monday of the month
@@ -100,6 +100,7 @@ public class DemoDataGenerator {
         List<Employee> employees = new ArrayList<>(flightAirports.size() * 5);
 
         MutableInt count = new MutableInt();
+        // Three teams per airport
         flightAirports.forEach(airport -> IntStream.range(0, 3).forEach(i -> {
             employees.add(new Employee(String.valueOf(count.increment()), nameSupplier.get(), airport, List.of(PILOT_SKILL)));
             employees.add(new Employee(String.valueOf(count.increment()), nameSupplier.get(), airport, List.of(PILOT_SKILL)));
@@ -156,8 +157,8 @@ public class DemoDataGenerator {
         }
 
         // Flight number
-        flights.forEach(
-                flight -> flight.setFlightNumber("%s%s".formatted(flight.getDepartureAirport().getCode(), flight.getId())));
+        IntStream.range(0, flights.size()).forEach(i -> flights.get(i)
+                .setFlightNumber("%s%s".formatted(flights.get(i).getDepartureAirport().getCode(), String.valueOf(i))));
 
         // Flight duration - 1h 16%; 2h 32%; 3h 48%; 4h 4%
         List<Pair<Float, Integer>> timeCount = List.of(
@@ -222,9 +223,6 @@ public class DemoDataGenerator {
                     .add(new FlightAssignment(String.valueOf(count.increment()), flight, indexSkill.increment(), PILOT_SKILL));
             flightAssignments
                     .add(new FlightAssignment(String.valueOf(count.increment()), flight, indexSkill.increment(), PILOT_SKILL));
-            flightAssignments
-                    .add(new FlightAssignment(String.valueOf(count.increment()), flight, indexSkill.increment(),
-                            ATTENDANT_SKILL));
             flightAssignments
                     .add(new FlightAssignment(String.valueOf(count.increment()), flight, indexSkill.increment(),
                             ATTENDANT_SKILL));

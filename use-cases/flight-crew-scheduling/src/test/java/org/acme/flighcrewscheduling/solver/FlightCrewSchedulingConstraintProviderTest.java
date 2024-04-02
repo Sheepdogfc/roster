@@ -46,12 +46,12 @@ class FlightCrewSchedulingConstraintProviderTest {
     void flightConflict() {
         Employee employee = new Employee("1");
 
-        Flight flight = new Flight("1", "1", null, LocalDateTime.now(), null, LocalDateTime.now().plusMinutes(10));
+        Flight flight = new Flight("1", null, LocalDateTime.now(), null, LocalDateTime.now().plusMinutes(10));
         FlightAssignment assignment = new FlightAssignment("1", flight);
         assignment.setEmployee(employee);
 
         Flight overlappingFlight =
-                new Flight("1", "1", null, LocalDateTime.now().plusMinutes(1), null, LocalDateTime.now().plusMinutes(11));
+                new Flight("1", null, LocalDateTime.now().plusMinutes(1), null, LocalDateTime.now().plusMinutes(11));
         FlightAssignment overlappingAssignment = new FlightAssignment("2", overlappingFlight);
         overlappingAssignment.setEmployee(employee);
 
@@ -68,15 +68,15 @@ class FlightCrewSchedulingConstraintProviderTest {
         Airport secondAirport = new Airport("2");
 
         Flight firstFlight =
-                new Flight("1", "1", firstAirport, LocalDateTime.now(), secondAirport, LocalDateTime.now().plusMinutes(10));
+                new Flight("1", firstAirport, LocalDateTime.now(), secondAirport, LocalDateTime.now().plusMinutes(10));
         FlightAssignment firstAssignment = new FlightAssignment("1", firstFlight);
 
         Flight firstInvalidFlight =
-                new Flight("2", "2", firstAirport, LocalDateTime.now(), secondAirport, LocalDateTime.now().plusMinutes(10));
+                new Flight("2", firstAirport, LocalDateTime.now(), secondAirport, LocalDateTime.now().plusMinutes(10));
         FlightAssignment firstInvalidAssignment = new FlightAssignment("2", firstInvalidFlight);
 
         Flight secondInvalidFlight =
-                new Flight("3", "3", firstAirport, LocalDateTime.now(), secondAirport, LocalDateTime.now().plusMinutes(10));
+                new Flight("3", firstAirport, LocalDateTime.now(), secondAirport, LocalDateTime.now().plusMinutes(10));
         FlightAssignment secondInvalidAssignment = new FlightAssignment("3", secondInvalidFlight);
 
         SortedSet<FlightAssignment> assignments = new TreeSet<>();
@@ -96,7 +96,7 @@ class FlightCrewSchedulingConstraintProviderTest {
         employee.setUnavailableDays(List.of(LocalDate.now()));
 
         Flight flight =
-                new Flight("1", "1", null, LocalDateTime.now(), null, LocalDateTime.now().plusMinutes(10));
+                new Flight("1", null, LocalDateTime.now(), null, LocalDateTime.now().plusMinutes(10));
         FlightAssignment assignment = new FlightAssignment("1", flight);
         assignment.setEmployee(employee);
 
@@ -112,7 +112,7 @@ class FlightCrewSchedulingConstraintProviderTest {
         employee.setUnavailableDays(List.of(LocalDate.now()));
 
         Flight flight =
-                new Flight("1", "1", new Airport("2"), LocalDateTime.now(), new Airport("3"),
+                new Flight("1", new Airport("2"), LocalDateTime.now(), new Airport("3"),
                         LocalDateTime.now().plusMinutes(10));
         FlightAssignment assignment = new FlightAssignment("1", flight);
 
@@ -132,12 +132,12 @@ class FlightCrewSchedulingConstraintProviderTest {
         employee.setUnavailableDays(List.of(LocalDate.now()));
 
         Flight firstFlight =
-                new Flight("1", "1", new Airport("2"), LocalDateTime.now(), new Airport("3"),
+                new Flight("1", new Airport("2"), LocalDateTime.now(), new Airport("3"),
                         LocalDateTime.now().plusMinutes(10));
         FlightAssignment firstAssignment = new FlightAssignment("1", firstFlight);
 
         Flight secondFlight =
-                new Flight("2", "2", new Airport("3"), LocalDateTime.now(), new Airport("4"),
+                new Flight("2", new Airport("3"), LocalDateTime.now(), new Airport("4"),
                         LocalDateTime.now().plusMinutes(10));
         FlightAssignment secondAssignment = new FlightAssignment("1", secondFlight);
 

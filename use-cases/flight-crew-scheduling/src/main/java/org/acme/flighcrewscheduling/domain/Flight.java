@@ -7,8 +7,11 @@ import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+@JsonIdentityInfo(scope = Flight.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "flightNumber")
 public class Flight implements Comparable<Flight> {
 
     private static final Comparator<Flight> COMPARATOR = Comparator.comparing(Flight::getDepartureUTCDateTime)
@@ -18,7 +21,6 @@ public class Flight implements Comparable<Flight> {
             .thenComparing(Flight::getFlightNumber);
 
     @PlanningId
-    private String id;
     private String flightNumber;
     private Airport departureAirport;
     private LocalDateTime departureUTCDateTime;
@@ -28,19 +30,18 @@ public class Flight implements Comparable<Flight> {
     public Flight() {
     }
 
-    public Flight(String id) {
-        this.id = id;
+    public Flight(String flightNumber) {
+        this.flightNumber = flightNumber;
     }
 
-    public Flight(String id, Airport departureAirport, Airport arrivalAirport) {
-        this.id = id;
+    public Flight(String flightNumber, Airport departureAirport, Airport arrivalAirport) {
+        this.flightNumber = flightNumber;
         this.departureAirport = departureAirport;
         this.arrivalAirport = arrivalAirport;
     }
 
-    public Flight(String id, String flightNumber, Airport departureAirport, LocalDateTime departureUTCDateTime,
+    public Flight(String flightNumber, Airport departureAirport, LocalDateTime departureUTCDateTime,
             Airport arrivalAirport, LocalDateTime arrivalUTCDateTime) {
-        this.id = id;
         this.flightNumber = flightNumber;
         this.departureAirport = departureAirport;
         this.departureUTCDateTime = departureUTCDateTime;
@@ -61,10 +62,6 @@ public class Flight implements Comparable<Flight> {
     // ************************************************************************
     // Simple getters and setters
     // ************************************************************************
-
-    public String getId() {
-        return id;
-    }
 
     public String getFlightNumber() {
         return flightNumber;
@@ -117,11 +114,11 @@ public class Flight implements Comparable<Flight> {
             return true;
         if (!(o instanceof Flight flight))
             return false;
-        return Objects.equals(getId(), flight.getId());
+        return Objects.equals(getFlightNumber(), flight.getFlightNumber());
     }
 
     @Override
     public int hashCode() {
-        return getId().hashCode();
+        return getFlightNumber().hashCode();
     }
 }

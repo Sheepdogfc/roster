@@ -1,6 +1,5 @@
 package org.acme.flighcrewscheduling.domain;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
@@ -13,9 +12,6 @@ import ai.timefold.solver.core.api.solver.SolverStatus;
 
 @PlanningSolution
 public class FlightCrewSchedule {
-
-    private LocalDate scheduleFirstUTCDate;
-    private LocalDate scheduleLastUTCDate;
 
     @ProblemFactCollectionProperty
     private List<Airport> airports;
@@ -47,22 +43,6 @@ public class FlightCrewSchedule {
     // ************************************************************************
     // Simple getters and setters
     // ************************************************************************
-
-    public LocalDate getScheduleFirstUTCDate() {
-        return scheduleFirstUTCDate;
-    }
-
-    public void setScheduleFirstUTCDate(LocalDate scheduleFirstUTCDate) {
-        this.scheduleFirstUTCDate = scheduleFirstUTCDate;
-    }
-
-    public LocalDate getScheduleLastUTCDate() {
-        return scheduleLastUTCDate;
-    }
-
-    public void setScheduleLastUTCDate(LocalDate scheduleLastUTCDate) {
-        this.scheduleLastUTCDate = scheduleLastUTCDate;
-    }
 
     public List<Airport> getAirports() {
         return airports;

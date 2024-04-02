@@ -11,9 +11,12 @@ import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.InverseRelationShadowVariable;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @PlanningEntity
+@JsonIdentityInfo(scope = Employee.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Employee {
 
     @PlanningId
@@ -35,6 +38,8 @@ public class Employee {
 
     public Employee(String id) {
         this.id = id;
+        this.flightAssignments = new TreeSet<>();
+        this.unavailableDays = new ArrayList<>();
     }
 
     public Employee(String id, String name) {
@@ -146,7 +151,11 @@ public class Employee {
     }
 
     public void setFlightAssignments(SortedSet<FlightAssignment> flightAssignments) {
-        this.flightAssignments = flightAssignments;
+        if (flightAssignments == null) {
+            this.flightAssignments = new TreeSet<>();
+        } else {
+            this.flightAssignments = flightAssignments;
+        }
     }
 
     @Override

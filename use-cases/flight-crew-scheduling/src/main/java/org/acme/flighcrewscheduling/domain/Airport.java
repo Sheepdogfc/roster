@@ -5,6 +5,10 @@ import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+@JsonIdentityInfo(scope = Airport.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "code")
 public class Airport implements Comparable<Airport> {
 
     @PlanningId
@@ -85,8 +89,10 @@ public class Airport implements Comparable<Airport> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Airport airport)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Airport airport))
+            return false;
         return Objects.equals(getCode(), airport.getCode());
     }
 
