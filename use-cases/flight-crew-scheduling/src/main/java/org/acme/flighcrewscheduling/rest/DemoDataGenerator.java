@@ -39,7 +39,7 @@ public class DemoDataGenerator {
                     "Carr", "Hood", "Long", "Horn", "Haas", "Meza" };
     private static final String ATTENDANT_SKILL = "Flight attendant";
     private static final String PILOT_SKILL = "Pilot";
-    private static final Random random = new Random(0);
+    private final Random random = new Random(0);
 
     public FlightCrewSchedule generateDemoData() {
         FlightCrewSchedule schedule = new FlightCrewSchedule();
