@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Tag(name = "Flight Crew Scheduling",
-        description = "Flight Crew Scheduling service assigning employees for flights.")
+        description = "Flight Crew Scheduling service assigning crew for flights.")
 @Path("schedules")
 public class FlightCrewSchedulingResource {
 
