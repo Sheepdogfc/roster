@@ -1,20 +1,27 @@
-var autoRefreshIntervalId = null;
+let autoRefreshIntervalId = null;
+const formatter = JSJoda.DateTimeFormatter.ofPattern("MM/dd/YYYY HH:mm").withLocale(JSJodaLocale.Locale.ENGLISH);
 
-const zoomMin = 1000 * 60 * 60 * 2 // 2 hours in milliseconds
+const zoomMin = 1000 * 60 * 60 * 8 // 2 hours in milliseconds
 const zoomMax = 2 * 7 * 1000 * 60 * 60 * 24 // 2 weeks in milliseconds
 
-const byCrewPanel = document.getElementById("byCrewPanel");
-const byCrewTimelineOptions = {
-    timeAxis: {scale: "hour", step: 2},
+const byTimelineOptions = {
+    timeAxis: {scale: "hour", step: 8},
     orientation: {axis: "top"},
     stack: false,
     xss: {disabled: true}, // Items are XSS safe through JQuery
     zoomMin: zoomMin,
     zoomMax: zoomMax,
 };
-var byCrewGroupData = new vis.DataSet();
-var byCrewItemData = new vis.DataSet();
-var byCrewTimeline = new vis.Timeline(byCrewPanel, byCrewItemData, byCrewGroupData, byCrewTimelineOptions);
+
+const byCrewPanel = document.getElementById("byCrewPanel");
+let byCrewGroupData = new vis.DataSet();
+let byCrewItemData = new vis.DataSet();
+let byCrewTimeline = new vis.Timeline(byCrewPanel, byCrewItemData, byCrewGroupData, byTimelineOptions);
+
+const byFlightPanel = document.getElementById("byFlightPanel");
+let byFlightGroupData = new vis.DataSet();
+let byFlightItemData = new vis.DataSet();
+let byFlightTimeline = new vis.Timeline(byFlightPanel, byFlightItemData, byFlightGroupData, byTimelineOptions);
 
 let scheduleId = null;
 let loadedSchedule = null;
@@ -34,9 +41,19 @@ $(document).ready(function () {
     });
     $("#byCrewTab").click(function () {
         viewType = "R";
-        byCrewTimeline.redraw();
         refreshSchedule();
     });
+    $("#byFlightTab").click(function () {
+        viewType = "F";
+        refreshSchedule();
+    });
+    // HACK to allow vis-timeline to work within Bootstrap tabs
+    $("#byCrewTab").on('shown.bs.tab', function (event) {
+        byCrewTimeline.redraw();
+    })
+    $("#byFlightTab").on('shown.bs.tab', function (event) {
+        byFlightTimeline.redraw();
+    })
 
     setupAjax();
     refreshSchedule();
@@ -88,6 +105,9 @@ function renderSchedule(schedule) {
     if (viewType === "R") {
         renderScheduleByCrew(schedule);
     }
+    if (viewType === "F") {
+        renderScheduleByFlight(schedule);
+    }
 }
 
 function renderScheduleByCrew(schedule) {
@@ -98,11 +118,10 @@ function renderScheduleByCrew(schedule) {
     byCrewItemData.clear();
 
     $.each(schedule.employees.sort((e1, e2) => e1.name.localeCompare(e2.name)), (_, employee) => {
-        let content = `<div class="d-flex flex-column"><div><h5 class="card-title mb-1">${employee.name} (${employee.homeAirport})</h5></div>`;
-        let skills = employee.skills.sort();
-        content += `<div class="d-flex">`;
-        skills.forEach(e => content += `<div><span class="badge text-bg-success m-1" style="background-color: ${pickColor(e)}">${e}</span></div>`);
-        content += "</div>";
+        const crewIcon = employee.skills.indexOf("Pilot") >= 0 ? '<span class="fas fa-solid fa-plane-departure"></span>' :
+            '<span class="fas fa-solid fa-glass-martini"></span>';
+        let content = `<div class="d-flex flex-column"><div><h5 class="card-title mb-1">${employee.name} (${employee.homeAirport}) ${crewIcon}</h5></div>`;
+
         byCrewGroupData.add({
             id: employee.id,
             content: content,
@@ -136,15 +155,15 @@ function renderScheduleByCrew(schedule) {
             const unassignedElement = $(`<div class="card-body"/>`)
                 .append($(`<h5 class="card-title mb-1"/>`).text(`${flight.departureAirport} → ${flight.arrivalAirport}`))
                 .append($(`<p class="card-text ms-2 mb-0"/>`).text(`${departureDateTime.until(arrivalDateTime, JSJoda.ChronoUnit.HOURS)} hour(s)`))
-                .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Departure: ${departureDateTime}`))
-                .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Arrival: ${arrivalDateTime}`));
+                .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Departure: ${formatter.format(departureDateTime)}`))
+                .append($(`<p class="card-text ms-2 mb-0"/>`).text(`Arrival: ${formatter.format(arrivalDateTime)}`));
 
             unassignedCrew.append($(`<div class="pl-1"/>`).append($(`<div class="card"/>`).append(unassignedElement)));
             byCrewItemData.add({
                 id: assignment.id,
                 group: assignment.employee,
-                start: departureDateTime.toString(),
-                end: arrivalDateTime.toString(),
+                start: formatter.format(departureDateTime),
+                end: formatter.format(arrivalDateTime),
                 style: "background-color: #EF292999"
             });
         } else {
@@ -160,8 +179,74 @@ function renderScheduleByCrew(schedule) {
         }
     });
 
-    byCrewTimeline.setWindow(JSJoda.LocalDateTime.now().withHour(0).withMinute(0).toString(),
-        JSJoda.LocalDateTime.now().withHour(23).withMinute(59).toString());
+    byCrewTimeline.setWindow(JSJoda.LocalDateTime.now().minusMinutes(1).toString(),
+        JSJoda.LocalDateTime.now().plusDays(4).withHour(23).withMinute(59).toString());
+    byCrewTimeline.redraw();
+}
+
+function renderScheduleByFlight(schedule) {
+    const unassignedCrew = $("#unassignedCrew");
+    unassignedCrew.children().remove();
+    byFlightGroupData.clear();
+    byFlightItemData.clear();
+
+    $.each(schedule.flights.sort((e1, e2) => JSJoda.LocalDateTime.parse(e1.departureUTCDateTime)
+        .compareTo(JSJoda.LocalDateTime.parse(e2.departureUTCDateTime))), (_, flight) => {
+        let content = `<div class="d-flex flex-column"><div><h5 class="card-title mb-1">${flight.departureAirport} → ${flight.arrivalAirport}</h5></div>`;
+
+        byFlightGroupData.add({
+            id: flight.flightNumber,
+            content: content,
+        });
+    });
+
+    const employeeMap = new Map();
+    schedule.employees.forEach(e => employeeMap.set(e.id, e));
+
+    $.each(schedule.flights, (_, flight) => {
+        const content = $(`<div class="card-body"/>`).append($(`<h4 class="card-title mb-1"/>`).text(flight.flightNumber));
+        const unassignedElement = $(`<div class="card-body"/>`).append($(`<h4 class="card-title mb-1"/>`).text(`${flight.departureAirport} → ${flight.arrivalAirport}`));
+        const assignments = schedule.flightAssignments.filter(f => f.flight === flight.flightNumber);
+        let countUnassigned = 0;
+        const missingSkills = [];
+        const pilots = [];
+        const attendants = [];
+        assignments.forEach(assigment => {
+            if (assigment.employee == null) {
+                countUnassigned++;
+                missingSkills.push(assigment.requiredSkill);
+            } else {
+                const employee = employeeMap.get(assigment.employee);
+                if (assigment.requiredSkill === 'Pilot') {
+                    pilots.push(employee.name);
+                } else {
+                    attendants.push(employee.name);
+                }
+            }
+        });
+
+        if (pilots.length > 0 && attendants.length > 0) {
+            content.append($(`<p class="card-text" style="font-weight: bold"/>`).text(`Pilot(s)`));
+            pilots.sort().forEach(pilot => content.append($(`<p class="card-text mx-2"/>`).text(pilot)));
+            content.append($(`<p class="card-text" style="font-weight: bold"/>`).text(`Attendant(s)`));
+            attendants.sort().forEach(attendant => content.append($(`<p class="card-text mx-2"/>`).text(attendant)));
+            byFlightItemData.add({
+                id: flight.flightNumber,
+                group: flight.flightNumber,
+                content: $('<div class="d-flex flex-column" />').append(content).html(),
+                start: flight.departureUTCDateTime,
+                end: flight.arrivalUTCDateTime,
+            });
+        }
+        if (countUnassigned > 0) {
+            unassignedElement.append($(`<p class="card-text ms-2 mb-0"/>`).text(`Unassigned skill(s): ${missingSkills.sort().join(", ")}`));
+            unassignedCrew.append($(`<div class="pl-1"/>`).append($(`<div class="card"/>`).append(unassignedElement)));
+        }
+    });
+
+    byFlightTimeline.setWindow(JSJoda.LocalDateTime.now().minusMinutes(1).toString(),
+        JSJoda.LocalDateTime.now().plusDays(4).withHour(23).withMinute(59).toString());
+    byFlightTimeline.redraw();
 }
 
 function solve() {

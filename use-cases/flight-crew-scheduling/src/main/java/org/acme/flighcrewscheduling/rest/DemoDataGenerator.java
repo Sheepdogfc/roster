@@ -1,14 +1,14 @@
 package org.acme.flighcrewscheduling.rest;
 
-import static java.time.temporal.TemporalAdjusters.firstInMonth;
 import static java.util.Collections.unmodifiableList;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -20,7 +20,6 @@ import java.util.stream.IntStream;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import ai.timefold.solver.core.impl.util.MutableInt;
-import ai.timefold.solver.core.impl.util.Pair;
 
 import org.acme.flighcrewscheduling.domain.Airport;
 import org.acme.flighcrewscheduling.domain.Employee;
@@ -45,28 +44,42 @@ public class DemoDataGenerator {
         FlightCrewSchedule schedule = new FlightCrewSchedule();
         // Airports
         List<Airport> airports = List.of(
-                new Airport("BRU", "BRU", 50.901389, 4.484444),
                 new Airport("LHR", "LHR", 51.4775, -0.461389),
-                new Airport("CDG", "CDG", 49.009722, 2.547778),
-                new Airport("AMS", "AMS", 52.308056, 4.764167),
-                new Airport("FRA", "FRA", 50.033333, 8.570556));
+                new Airport("JFK", "JFK", 40.639722, -73.778889),
+                new Airport("CNF", "CNF", -19.624444, -43.971944),
+                new Airport("BRU", "BRU", 50.901389, 4.484444));
+        Map<String, Integer> distances = new HashMap<>();
+        distances.put("LHR-JFK", 8);
+        distances.put("LHR-CNF", 12);
+        distances.put("LHR-BRU", 13);
+        distances.put("JFK-LHR", 8);
+        distances.put("JFK-BRU", 14);
+        distances.put("JFK-CNF", 10);
+        distances.put("CNF-LHR", 12);
+        distances.put("CNF-JFK", 10);
+        distances.put("CNF-BRU", 19);
+        distances.put("BRU-LHR", 13);
+        distances.put("BRU-JFK", 14);
+        distances.put("BRU-CNF", 19);
 
         // Flights
-        LocalDate firstMonthMonday = LocalDate.now().with(firstInMonth(DayOfWeek.MONDAY)); // First Monday of the month
-        int countDays = 7;
+        LocalDate firstDate = LocalDate.now();
+        int countDays = 5;
         List<LocalDate> dates = new ArrayList<>(countDays);
-        dates.add(firstMonthMonday);
+        dates.add(firstDate);
         for (int i = 1; i < countDays; i++) {
-            dates.add(firstMonthMonday.with(firstInMonth(DayOfWeek.MONDAY)).plusDays(i));
+            dates.add(firstDate.plusDays(i));
         }
-        List<Airport> homeAirports = new ArrayList(2);
+        List<Airport> homeAirports = new ArrayList<>(2);
         homeAirports.add(pickRandomAirport(airports, ""));
         homeAirports.add(pickRandomAirport(airports, homeAirports.get(0).getCode()));
-        List<LocalTime> times = IntStream.range(6, 20)
+        List<LocalTime> times = IntStream.range(0, 23)
                 .mapToObj(i -> LocalTime.of(i, 0))
                 .toList();
-        int countFlights = 50;
-        List<Flight> flights = generateFlights(countFlights, airports, homeAirports, dates, times);
+        int countFlights = 14;
+        List<Flight> flights =
+                generateFlights(countFlights, LocalDateTime.now().plusMinutes(1), airports, homeAirports, dates, times,
+                        distances);
 
         // Flight assignments
         List<FlightAssignment> flightAssignments = generateFlightAssignments(flights);
@@ -100,14 +113,18 @@ public class DemoDataGenerator {
         List<Employee> employees = new ArrayList<>(flightAirports.size() * 5);
 
         MutableInt count = new MutableInt();
-        // Three teams per airport
-        flightAirports.forEach(airport -> IntStream.range(0, 3).forEach(i -> {
+        // Two teams per airport
+        flightAirports.forEach(airport -> IntStream.range(0, 2).forEach(i -> {
             employees.add(new Employee(String.valueOf(count.increment()), nameSupplier.get(), airport, List.of(PILOT_SKILL)));
             employees.add(new Employee(String.valueOf(count.increment()), nameSupplier.get(), airport, List.of(PILOT_SKILL)));
             employees.add(
                     new Employee(String.valueOf(count.increment()), nameSupplier.get(), airport, List.of(ATTENDANT_SKILL)));
             employees.add(
                     new Employee(String.valueOf(count.increment()), nameSupplier.get(), airport, List.of(ATTENDANT_SKILL)));
+            if (airport.getCode().equals("CNF")) {
+                employees.add(
+                        new Employee(String.valueOf(count.increment()), nameSupplier.get(), airport, List.of(ATTENDANT_SKILL)));
+            }
         }));
 
         // Unavailable dates - 28% one date; 4% two dates
@@ -128,8 +145,8 @@ public class DemoDataGenerator {
         return employees;
     }
 
-    private List<Flight> generateFlights(int size, List<Airport> airports, List<Airport> homeAirports,
-            List<LocalDate> dates, List<LocalTime> timeGroups) {
+    private List<Flight> generateFlights(int size, LocalDateTime startDatetime, List<Airport> airports,
+            List<Airport> homeAirports, List<LocalDate> dates, List<LocalTime> timeGroups, Map<String, Integer> distances) {
         if (size % 2 != 0) {
             throw new IllegalArgumentException("The size of flights must be even");
         }
@@ -160,23 +177,17 @@ public class DemoDataGenerator {
         IntStream.range(0, flights.size()).forEach(i -> flights.get(i)
                 .setFlightNumber("%s%s".formatted(flights.get(i).getDepartureAirport().getCode(), String.valueOf(i))));
 
-        // Flight duration - 1h 16%; 2h 32%; 3h 48%; 4h 4%
-        List<Pair<Float, Integer>> timeCount = List.of(
-                new Pair<>(0.16f, 1),
-                new Pair<>(0.48f, 2),
-                new Pair<>(0.96f, 3),
-                new Pair<>(1f, 4));
+        // Flight duration
         int countDates = size / dates.size();
         BiConsumer<Flight, LocalDate> flightConsumer = (flight, date) -> {
-            double nextCountHours = random.nextDouble();
-            int countHours = timeCount.stream()
-                    .filter(p -> nextCountHours <= p.key())
-                    .mapToInt(Pair::value)
-                    .findFirst()
-                    .getAsInt();
-            LocalTime startTime = timeGroups.get(random.nextInt(timeGroups.size() - countHours));
+            int countHours = distances
+                    .get("%s-%s".formatted(flight.getDepartureAirport().getCode(), flight.getArrivalAirport().getCode()));
+            LocalTime startTime = timeGroups.get(random.nextInt(timeGroups.size()));
             LocalDateTime departureDateTime = LocalDateTime.of(date, startTime);
-            LocalDateTime arrivalDateTime = LocalDateTime.of(date, startTime.plusHours(countHours));
+            if (departureDateTime.isBefore(startDatetime)) {
+                departureDateTime = startDatetime.plusHours(random.nextInt(4));
+            }
+            LocalDateTime arrivalDateTime = departureDateTime.plusHours(countHours);
             flight.setDepartureUTCDateTime(departureDateTime);
             flight.setArrivalUTCDateTime(arrivalDateTime);
         };
@@ -186,7 +197,7 @@ public class DemoDataGenerator {
         flights.stream()
                 .filter(flight -> flight.getDepartureUTCDateTime() == null)
                 .forEach(flight -> flightConsumer.accept(flight, dates.get(random.nextInt(dates.size()))));
-        return flights;
+        return unmodifiableList(flights);
     }
 
     private Airport pickRandomAirport(List<Airport> airports, String excludeCode) {
@@ -214,7 +225,7 @@ public class DemoDataGenerator {
     }
 
     private List<FlightAssignment> generateFlightAssignments(List<Flight> flights) {
-        // 2 pilots and 3 attendants
+        // 2 pilots and 2 or 3 attendants
         List<FlightAssignment> flightAssignments = new ArrayList<>(flights.size() * 5);
         MutableInt count = new MutableInt();
         flights.forEach(flight -> {
@@ -229,8 +240,13 @@ public class DemoDataGenerator {
             flightAssignments
                     .add(new FlightAssignment(String.valueOf(count.increment()), flight, indexSkill.increment(),
                             ATTENDANT_SKILL));
+            if (flight.getDepartureAirport().getCode().equals("CNF") || flight.getArrivalAirport().getCode().equals("CNF")) {
+                flightAssignments
+                        .add(new FlightAssignment(String.valueOf(count.increment()), flight, indexSkill.increment(),
+                                ATTENDANT_SKILL));
+            }
         });
-        return flightAssignments;
+        return unmodifiableList(flightAssignments);
     }
 
     private <T> void applyRandomValue(int count, List<T> values, Predicate<T> filter, Consumer<T> consumer) {

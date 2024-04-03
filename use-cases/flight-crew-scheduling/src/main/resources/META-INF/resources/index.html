@@ -12,6 +12,7 @@
         .vis-time-axis .vis-grid.vis-sunday {
             background: #D3D7CFFF;
         }
+
         .vis-item-content {
             width: 100%;
         }
@@ -49,16 +50,26 @@
                                 aria-selected="true">By crew
                         </button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="byFlightTab" data-bs-toggle="tab"
+                                data-bs-target="#byFlightPanel" type="button" role="tab" aria-controls="byFlightPanel"
+                                aria-selected="true">By Flight
+                        </button>
+                    </li>
                 </ul>
             </div>
         </div>
         <div class="tab-content">
             <div class="tab-pane fade show active" id="byCrewPanel" role="tabpanel" aria-labelledby="byCrewTab">
+                <div id="crewVisualization"></div>
+            </div>
+            <div class="tab-pane fade" id="byFlightPanel" role="tabpanel" aria-labelledby="byFlightTab">
+                <div id="flightVisualization"></div>
             </div>
         </div>
 
-        <h2>Unassigned flights</h2>
-        <div id="unassignedCrew" class="row row-cols-3 g-3 mb-4"></div>
+        <h2>Unassigned</h2>
+        <div id="unassignedCrew" class="row row-cols-4 g-3 mb-4"></div>
     </div>
 
     <div id="rest" class="tab-pane fade  container-fluid">
