@@ -118,8 +118,8 @@ function renderScheduleByCrew(schedule) {
     byCrewItemData.clear();
 
     $.each(schedule.employees.sort((e1, e2) => e1.name.localeCompare(e2.name)), (_, employee) => {
-        const crewIcon = employee.skills.indexOf("Pilot") >= 0 ? '<span class="fas fa-solid fa-plane-departure"></span>' :
-            '<span class="fas fa-solid fa-glass-martini"></span>';
+        const crewIcon = employee.skills.indexOf("Pilot") >= 0 ? '<span class="fas fa-solid fa-plane-departure" title="Pilot"></span>' :
+            '<span class="fas fa-solid fa-glass-martini" title="Flight Attendant"></span>';
         let content = `<div class="d-flex flex-column"><div><h5 class="card-title mb-1">${employee.name} (${employee.homeAirport}) ${crewIcon}</h5></div>`;
 
         byCrewGroupData.add({

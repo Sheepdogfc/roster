@@ -63,14 +63,14 @@ public class FlightCrewSchedulingConstraintProvider implements ConstraintProvide
     public Constraint firstAssignmentNotDepartingFromHome(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Employee.class)
                 .filter(employee -> !employee.isFirstAssignmentDepartingFromHome())
-                .penalize(HardSoftLongScore.ofSoft(1_000_000))
+                .penalize(HardSoftLongScore.ofSoft(1000))
                 .asConstraint("First assignment not departing from home");
     }
 
     public Constraint lastAssignmentNotArrivingAtHome(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Employee.class)
                 .filter(employee -> !employee.isLastAssignmentArrivingAtHome())
-                .penalize(HardSoftLongScore.ofSoft(1_000_000))
+                .penalize(HardSoftLongScore.ofSoft(1000))
                 .asConstraint("Last assignment not arriving at home");
     }
 

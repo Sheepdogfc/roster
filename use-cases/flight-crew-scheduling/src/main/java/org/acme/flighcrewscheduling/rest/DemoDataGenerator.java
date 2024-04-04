@@ -47,20 +47,40 @@ public class DemoDataGenerator {
                 new Airport("LHR", "LHR", 51.4775, -0.461389),
                 new Airport("JFK", "JFK", 40.639722, -73.778889),
                 new Airport("CNF", "CNF", -19.624444, -43.971944),
-                new Airport("BRU", "BRU", 50.901389, 4.484444));
+                new Airport("BRU", "BRU", 50.901389, 4.484444),
+                new Airport("ATL", "ATL", 33.636667, -84.428056),
+                new Airport("BNE", "BNE", -27.383333, 153.118333));
         Map<String, Integer> distances = new HashMap<>();
         distances.put("LHR-JFK", 8);
         distances.put("LHR-CNF", 12);
         distances.put("LHR-BRU", 13);
+        distances.put("LHR-ATL", 9);
+        distances.put("LHR-BNE", 21);
         distances.put("JFK-LHR", 8);
         distances.put("JFK-BRU", 14);
         distances.put("JFK-CNF", 10);
+        distances.put("JFK-ATL", 2);
+        distances.put("JFK-BNE", 20);
         distances.put("CNF-LHR", 12);
         distances.put("CNF-JFK", 10);
         distances.put("CNF-BRU", 19);
+        distances.put("CNF-ATL", 10);
+        distances.put("CNF-BNE", 19);
         distances.put("BRU-LHR", 13);
         distances.put("BRU-JFK", 14);
         distances.put("BRU-CNF", 19);
+        distances.put("BRU-ATL", 9);
+        distances.put("BRU-BNE", 21);
+        distances.put("ATL-LHR", 9);
+        distances.put("ATL-JFK", 2);
+        distances.put("ATL-CNF", 10);
+        distances.put("ATL-BRU", 9);
+        distances.put("ATL-BNE", 18);
+        distances.put("BNE-LHR", 21);
+        distances.put("BNE-JFK", 20);
+        distances.put("BNE-CNF", 19);
+        distances.put("BNE-BRU", 21);
+        distances.put("BNE-ATL", 18);
 
         // Flights
         LocalDate firstDate = LocalDate.now();
@@ -175,7 +195,7 @@ public class DemoDataGenerator {
 
         // Flight number
         IntStream.range(0, flights.size()).forEach(i -> flights.get(i)
-                .setFlightNumber("%s%s".formatted(flights.get(i).getDepartureAirport().getCode(), String.valueOf(i))));
+                .setFlightNumber("Flight %d".formatted(i + 1)));
 
         // Flight duration
         int countDates = size / dates.size();
