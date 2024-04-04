@@ -7,7 +7,6 @@ import jakarta.inject.Inject;
 
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
 
-import org.acme.meetingschedule.domain.Day;
 import org.acme.meetingschedule.domain.Meeting;
 import org.acme.meetingschedule.domain.MeetingAssignment;
 import org.acme.meetingschedule.domain.MeetingSchedule;
@@ -232,12 +231,9 @@ class MeetingSchedulingConstraintProviderTest {
 
     @Test
     void startAndEndOnSameDayUnpenalized() {
-        Day day = new Day();
-        day.setDayOfYear(0);
-
         TimeGrain startingTimeGrain = new TimeGrain();
         startingTimeGrain.setGrainIndex(0);
-        startingTimeGrain.setDay(day);
+        startingTimeGrain.setDayOfYear(0);
 
         Meeting meeting = new Meeting();
         meeting.setDurationInGrains(4);
@@ -248,7 +244,7 @@ class MeetingSchedulingConstraintProviderTest {
 
         TimeGrain timeGrain = new TimeGrain();
         timeGrain.setGrainIndex(3);
-        timeGrain.setDay(day);
+        timeGrain.setDayOfYear(0);
 
         constraintVerifier.verifyThat(MeetingSchedulingConstraintProvider::startAndEndOnSameDay)
                 .given(meetingAssignment, timeGrain)
@@ -257,12 +253,9 @@ class MeetingSchedulingConstraintProviderTest {
 
     @Test
     void startAndEndOnSameDayPenalized() {
-        Day day = new Day();
-        day.setDayOfYear(0);
-
         TimeGrain startingTimeGrain = new TimeGrain();
         startingTimeGrain.setGrainIndex(0);
-        startingTimeGrain.setDay(day);
+        startingTimeGrain.setDayOfYear(0);
 
         Meeting meeting = new Meeting();
         meeting.setDurationInGrains(4);
@@ -581,8 +574,6 @@ class MeetingSchedulingConstraintProviderTest {
 
     @Test
     void roomStabilityUnpenalized() {
-        Day day = new Day();
-        day.setDayOfYear(1);
         Person person = new Person();
 
         Meeting leftMeeting = new Meeting();
@@ -600,7 +591,7 @@ class MeetingSchedulingConstraintProviderTest {
         rightAttendance.setPerson(person);
 
         TimeGrain leftStartTimeGrain = new TimeGrain();
-        leftStartTimeGrain.setDay(day);
+        leftStartTimeGrain.setDayOfYear(1);
         leftStartTimeGrain.setStartingMinuteOfDay(0);
         leftStartTimeGrain.setGrainIndex(0);
 
@@ -609,7 +600,7 @@ class MeetingSchedulingConstraintProviderTest {
         MeetingAssignment leftAssignment = new MeetingAssignment("0", leftMeeting, leftStartTimeGrain, leftRoom);
 
         TimeGrain rightStartTimeGrain = new TimeGrain();
-        rightStartTimeGrain.setDay(day);
+        rightStartTimeGrain.setDayOfYear(1);
         rightStartTimeGrain.setStartingMinuteOfDay(8 * TimeGrain.GRAIN_LENGTH_IN_MINUTES);
         rightStartTimeGrain.setGrainIndex(8);
 
@@ -624,8 +615,6 @@ class MeetingSchedulingConstraintProviderTest {
 
     @Test
     void roomStabilityPenalized() {
-        Day day = new Day();
-        day.setDayOfYear(1);
         Person person = new Person();
 
         Meeting leftMeeting = new Meeting();
@@ -643,7 +632,7 @@ class MeetingSchedulingConstraintProviderTest {
         rightAttendance.setPerson(person);
 
         TimeGrain leftStartTimeGrain = new TimeGrain();
-        leftStartTimeGrain.setDay(day);
+        leftStartTimeGrain.setDayOfYear(1);
         leftStartTimeGrain.setStartingMinuteOfDay(0);
         leftStartTimeGrain.setGrainIndex(0);
 
@@ -652,7 +641,7 @@ class MeetingSchedulingConstraintProviderTest {
         MeetingAssignment leftAssignment = new MeetingAssignment("0", leftMeeting, leftStartTimeGrain, leftRoom);
 
         TimeGrain rightStartTimeGrain = new TimeGrain();
-        rightStartTimeGrain.setDay(day);
+        rightStartTimeGrain.setDayOfYear(1);
         rightStartTimeGrain.setStartingMinuteOfDay(4 * TimeGrain.GRAIN_LENGTH_IN_MINUTES);
         rightStartTimeGrain.setGrainIndex(4);
 

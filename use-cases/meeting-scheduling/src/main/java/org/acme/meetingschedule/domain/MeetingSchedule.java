@@ -19,8 +19,6 @@ public class MeetingSchedule {
 
     @ProblemFactCollectionProperty
     private List<Meeting> meetingList;
-    @ProblemFactCollectionProperty
-    private List<Day> dayList;
     @ValueRangeProvider
     @ProblemFactCollectionProperty
     private List<TimeGrain> timeGrainList;
@@ -62,14 +60,6 @@ public class MeetingSchedule {
 
     public void setMeetingList(List<Meeting> meetingList) {
         this.meetingList = meetingList;
-    }
-
-    public List<Day> getDayList() {
-        return dayList;
-    }
-
-    public void setDayList(List<Day> dayList) {
-        this.dayList = dayList;
     }
 
     public List<TimeGrain> getTimeGrainList() {

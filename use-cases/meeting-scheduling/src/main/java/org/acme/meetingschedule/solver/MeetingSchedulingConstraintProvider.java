@@ -96,7 +96,7 @@ public class MeetingSchedulingConstraintProvider implements ConstraintProvider {
                 .join(TimeGrain.class,
                         equal(MeetingAssignment::getLastTimeGrainIndex, TimeGrain::getGrainIndex),
                         filtering((meetingAssignment,
-                                timeGrain) -> meetingAssignment.getStartingTimeGrain().getDay() != timeGrain.getDay()))
+                                timeGrain) -> meetingAssignment.getStartingTimeGrain().getDayOfYear().equals(timeGrain.getDayOfYear())))
                 .penalizeConfigurable()
                 .asConstraint("Start and end on same day");
     }

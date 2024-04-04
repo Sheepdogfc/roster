@@ -3,15 +3,19 @@ package org.acme.meetingschedule.domain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 
 public class TimeGrain implements Comparable<TimeGrain> {
 
-    private static final Comparator<TimeGrain> COMPARATOR = Comparator.comparing(TimeGrain::getDay)
+    private static final Comparator<TimeGrain> COMPARATOR = Comparator.comparing(TimeGrain::getDayOfYear)
             .thenComparingInt(TimeGrain::getStartingMinuteOfDay);
+
+    private static final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("E", Locale.ENGLISH);
 
     /**
      * Time granularity is 15 minutes (which is often recommended when dealing with humans for practical purposes).
@@ -21,7 +25,7 @@ public class TimeGrain implements Comparable<TimeGrain> {
     @PlanningId
     private String id;
     private int grainIndex;
-    private Day day;
+    private Integer dayOfYear;
     private int startingMinuteOfDay;
 
     public TimeGrain() {
@@ -31,10 +35,10 @@ public class TimeGrain implements Comparable<TimeGrain> {
         this.id = id;
     }
 
-    public TimeGrain(String id, int grainIndex, Day day, int startingMinuteOfDay) {
+    public TimeGrain(String id, int grainIndex, Integer dayOfYear, int startingMinuteOfDay) {
         this(id);
         this.grainIndex = grainIndex;
-        this.day = day;
+        this.dayOfYear = dayOfYear;
         this.startingMinuteOfDay = startingMinuteOfDay;
     }
 
@@ -54,12 +58,12 @@ public class TimeGrain implements Comparable<TimeGrain> {
         this.grainIndex = grainIndex;
     }
 
-    public Day getDay() {
-        return day;
+    public Integer getDayOfYear() {
+        return dayOfYear;
     }
 
-    public void setDay(Day day) {
-        this.day = day;
+    public void setDayOfYear(Integer dayOfYear) {
+        this.dayOfYear = dayOfYear;
     }
 
     public int getStartingMinuteOfDay() {
@@ -71,7 +75,7 @@ public class TimeGrain implements Comparable<TimeGrain> {
     }
 
     public LocalDate getDate() {
-        return day.toDate();
+        return LocalDate.now().withDayOfYear(dayOfYear);
     }
 
     public LocalTime getTime() {
@@ -90,7 +94,7 @@ public class TimeGrain implements Comparable<TimeGrain> {
     }
 
     public String getDateTimeString() {
-        return day.getDateString() + " " + getTimeString();
+        return DAY_FORMATTER.format(getDate()) + " " + getTimeString();
     }
 
     @Override
@@ -109,12 +113,12 @@ public class TimeGrain implements Comparable<TimeGrain> {
 
         if (startingMinuteOfDay != timeGrain.startingMinuteOfDay)
             return false;
-        return Objects.equals(day, timeGrain.day);
+        return Objects.equals(dayOfYear, timeGrain.dayOfYear);
     }
 
     @Override
     public int hashCode() {
-        int result = day != null ? day.hashCode() : 0;
+        int result = dayOfYear != null ? dayOfYear.hashCode() : 0;
         result = 31 * result + startingMinuteOfDay;
         return result;
     }
