@@ -6,6 +6,8 @@ import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.Objects;
 
+import ai.timefold.solver.core.api.domain.lookup.PlanningId;
+
 public class TimeGrain implements Comparable<TimeGrain> {
 
     private static final Comparator<TimeGrain> COMPARATOR = Comparator.comparing(TimeGrain::getDay)
@@ -16,6 +18,7 @@ public class TimeGrain implements Comparable<TimeGrain> {
      */
     public static final int GRAIN_LENGTH_IN_MINUTES = 15;
 
+    @PlanningId
     private String id;
     private int grainIndex;
     private Day day;
@@ -88,10 +91,6 @@ public class TimeGrain implements Comparable<TimeGrain> {
 
     public String getDateTimeString() {
         return day.getDateString() + " " + getTimeString();
-    }
-
-    public String getLabel() {
-        return getTimeString();
     }
 
     @Override
