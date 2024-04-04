@@ -53,12 +53,13 @@ public class FlightCrewSchedulingConstraintProvider implements ConstraintProvide
                         filtering((flightAssignment,
                                 flightAssignment2) -> !flightAssignment.getId().equals(flightAssignment2.getId())))
                 .ifNotExists(FlightAssignment.class,
+                        equal(((flightAssignment, flightAssignment2) -> flightAssignment.getEmployee()),
+                                FlightAssignment::getEmployee),
                         filtering((flightAssignment, flightAssignment2,
                                 otherFlightAssignment) -> !otherFlightAssignment.getId().equals(flightAssignment.getId())
                                         && !otherFlightAssignment.getId().equals(flightAssignment2.getId())
                                         && !otherFlightAssignment.getDepartureUTCDateTime()
                                                 .isBefore(flightAssignment.getDepartureUTCDateTime())
-                                        && otherFlightAssignment.getEmployee().equals(flightAssignment2.getEmployee())
                                         && otherFlightAssignment.getDepartureUTCDateTime()
                                                 .isBefore(flightAssignment2.getDepartureUTCDateTime())))
                 .filter((flightAssignment,
