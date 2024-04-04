@@ -1,6 +1,5 @@
 package org.acme.flighcrewscheduling.domain;
 
-import java.util.Comparator;
 import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
@@ -10,11 +9,7 @@ import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @PlanningEntity
-public class FlightAssignment implements Comparable<FlightAssignment> {
-
-    // Needs to be kept consistent with equals on account of Employee's flightAssignmentSet, which is a SortedSet.
-    private static final Comparator<FlightAssignment> COMPARATOR = Comparator.comparing(FlightAssignment::getFlight)
-            .thenComparing(FlightAssignment::getIndexInFlight);
+public class FlightAssignment {
 
     @PlanningId
     private String id;
@@ -93,11 +88,6 @@ public class FlightAssignment implements Comparable<FlightAssignment> {
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
-    }
-
-    @Override
-    public int compareTo(FlightAssignment o) {
-        return COMPARATOR.compare(this, o);
     }
 
     @Override

@@ -59,7 +59,7 @@ public class DemoDataGenerator {
         distances.put("JFK-LHR", 8);
         distances.put("JFK-BRU", 14);
         distances.put("JFK-CNF", 10);
-        distances.put("JFK-ATL", 2);
+        distances.put("JFK-ATL", 6);
         distances.put("JFK-BNE", 20);
         distances.put("CNF-LHR", 12);
         distances.put("CNF-JFK", 10);
@@ -72,7 +72,7 @@ public class DemoDataGenerator {
         distances.put("BRU-ATL", 9);
         distances.put("BRU-BNE", 21);
         distances.put("ATL-LHR", 9);
-        distances.put("ATL-JFK", 2);
+        distances.put("ATL-JFK", 6);
         distances.put("ATL-CNF", 10);
         distances.put("ATL-BRU", 9);
         distances.put("ATL-BNE", 18);
