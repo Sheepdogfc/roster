@@ -1,5 +1,6 @@
 package org.acme.flighcrewscheduling.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
@@ -43,6 +44,11 @@ public class FlightAssignment {
     @JsonIgnore
     public boolean isUnavailableEmployee() {
         return !getEmployee().isAvailable(getFlight().getDepartureUTCDate());
+    }
+
+    @JsonIgnore
+    public LocalDateTime getDepartureUTCDateTime() {
+        return flight.getDepartureUTCDateTime();
     }
 
     @Override

@@ -71,12 +71,14 @@ class FlightCrewSchedulingConstraintProviderTest {
         firstAssignment.setEmployee(employee);
 
         Flight firstInvalidFlight =
-                new Flight("2", firstAirport, LocalDateTime.now().plusMinutes(11), secondAirport, LocalDateTime.now().plusMinutes(12));
+                new Flight("2", firstAirport, LocalDateTime.now().plusMinutes(11), secondAirport,
+                        LocalDateTime.now().plusMinutes(12));
         FlightAssignment firstInvalidAssignment = new FlightAssignment("2", firstInvalidFlight);
         firstInvalidAssignment.setEmployee(employee);
 
         Flight secondInvalidFlight =
-                new Flight("3", firstAirport, LocalDateTime.now().plusMinutes(13), secondAirport, LocalDateTime.now().plusMinutes(14));
+                new Flight("3", firstAirport, LocalDateTime.now().plusMinutes(13), secondAirport,
+                        LocalDateTime.now().plusMinutes(14));
         FlightAssignment secondInvalidAssignment = new FlightAssignment("3", secondInvalidFlight);
         secondInvalidAssignment.setEmployee(employee);
 
@@ -112,18 +114,30 @@ class FlightCrewSchedulingConstraintProviderTest {
         FlightAssignment assignment = new FlightAssignment("1", flight);
         assignment.setEmployee(employee);
 
-        Employee employee2 = new Employee("2");
-        employee2.setHomeAirport(new Airport("3"));
-        employee2.setUnavailableDays(List.of(LocalDate.now()));
-
-        Flight flight2 =
-                new Flight("2", new Airport("3"), LocalDateTime.now(), new Airport("4"),
+        Flight secondFlight =
+                new Flight("2", new Airport("2"), LocalDateTime.now().plusMinutes(1), new Airport("3"),
                         LocalDateTime.now().plusMinutes(10));
-        FlightAssignment assignment2 = new FlightAssignment("2", flight2);
-        assignment2.setEmployee(employee2);
+        FlightAssignment secondAssignment = new FlightAssignment("2", secondFlight);
+        secondAssignment.setEmployee(employee);
+
+        Flight thirdFlight =
+                new Flight("3", new Airport("2"), LocalDateTime.now().plusMinutes(1), new Airport("3"),
+                        LocalDateTime.now().plusMinutes(10));
+        FlightAssignment thirdAssignment = new FlightAssignment("3", thirdFlight);
+        thirdAssignment.setEmployee(employee);
+
+        Employee secondEmployee = new Employee("2");
+        secondEmployee.setHomeAirport(new Airport("3"));
+        secondEmployee.setUnavailableDays(List.of(LocalDate.now()));
+
+        Flight fourthFlight =
+                new Flight("4", new Airport("3"), LocalDateTime.now(), new Airport("4"),
+                        LocalDateTime.now().plusMinutes(10));
+        FlightAssignment fourthAssignment = new FlightAssignment("4", fourthFlight);
+        fourthAssignment.setEmployee(secondEmployee);
 
         constraintVerifier.verifyThat(FlightCrewSchedulingConstraintProvider::firstAssignmentNotDepartingFromHome)
-                .given(employee, employee2, assignment, assignment2)
+                .given(employee, secondEmployee, assignment, secondAssignment, thirdAssignment, fourthAssignment)
                 .penalizesBy(1); // invalid first airport
     }
 
@@ -145,24 +159,25 @@ class FlightCrewSchedulingConstraintProviderTest {
         FlightAssignment secondAssignment = new FlightAssignment("2", secondFlight);
         secondAssignment.setEmployee(employee);
 
-        Employee employee2 = new Employee("2");
-        employee2.setHomeAirport(new Airport("2"));
-        employee2.setUnavailableDays(List.of(LocalDate.now()));
+        Employee secondEmployee = new Employee("2");
+        secondEmployee.setHomeAirport(new Airport("2"));
+        secondEmployee.setUnavailableDays(List.of(LocalDate.now()));
 
         Flight thirdFlight =
                 new Flight("3", new Airport("2"), LocalDateTime.now(), new Airport("3"),
                         LocalDateTime.now().plusMinutes(10));
         FlightAssignment thirdFlightAssignment = new FlightAssignment("3", thirdFlight);
-        thirdFlightAssignment.setEmployee(employee2);
+        thirdFlightAssignment.setEmployee(secondEmployee);
 
         Flight fourthFlight =
                 new Flight("4", new Airport("3"), LocalDateTime.now().plusMinutes(11), new Airport("2"),
                         LocalDateTime.now().plusMinutes(12));
         FlightAssignment fourthFlightAssignment = new FlightAssignment("4", fourthFlight);
-        fourthFlightAssignment.setEmployee(employee2);
+        fourthFlightAssignment.setEmployee(secondEmployee);
 
         constraintVerifier.verifyThat(FlightCrewSchedulingConstraintProvider::lastAssignmentNotArrivingAtHome)
-                .given(employee, employee2, firstAssignment, secondAssignment, thirdFlightAssignment, fourthFlightAssignment)
+                .given(employee, secondEmployee, firstAssignment, secondAssignment, thirdFlightAssignment,
+                        fourthFlightAssignment)
                 .penalizesBy(1); // invalid last airport
     }
 }
