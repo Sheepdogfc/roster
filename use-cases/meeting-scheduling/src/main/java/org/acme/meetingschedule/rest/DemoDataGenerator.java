@@ -148,19 +148,15 @@ public class DemoDataGenerator {
                 new Meeting(String.valueOf(count.increment()), "Reinvigorate multitasking"));
         // Duration
         List<Pair<Float, Integer>> durationGrainsCount = List.of(
-                new Pair<>(0.18f, 1), // 18% with one grain
-                new Pair<>(0.04f, 2), // 4% with two grains, etc
-                new Pair<>(0.20f, 3),
-                new Pair<>(0.1f, 4),
-                new Pair<>(0.14f, 6),
-                new Pair<>(0.16f, 8),
-                new Pair<>(0.18f, 16));
+                new Pair<>(0.33f, 8),
+                new Pair<>(0.33f, 12),
+                new Pair<>(0.33f, 16));
         durationGrainsCount.forEach(p -> applyRandomValue((int) (p.key() * meetings.size()), meetings,
                 m -> m.getDurationInGrains() == 0, m -> m.setDurationInGrains(p.value())));
         // Ensure there are no empty duration
         meetings.stream()
                 .filter(m -> m.getDurationInGrains() == 0)
-                .forEach(m -> m.setDurationInGrains(1));
+                .forEach(m -> m.setDurationInGrains(8));
         // Attendants
         MutableInt attendantCount = new MutableInt();
         // Required

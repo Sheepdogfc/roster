@@ -9,8 +9,11 @@ import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+@JsonIdentityInfo(scope = TimeGrain.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class TimeGrain implements Comparable<TimeGrain> {
 
     private static final Comparator<TimeGrain> COMPARATOR = Comparator.comparing(TimeGrain::getDayOfYear)
