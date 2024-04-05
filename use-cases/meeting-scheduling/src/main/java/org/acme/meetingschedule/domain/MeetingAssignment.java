@@ -87,6 +87,11 @@ public class MeetingAssignment {
     // ************************************************************************
 
     @JsonIgnore
+    public int getGrainIndex() {
+        return getStartingTimeGrain().getGrainIndex();
+    }
+
+    @JsonIgnore
     public int calculateOverlap(MeetingAssignment other) {
         if (startingTimeGrain == null || other.getStartingTimeGrain() == null) {
             return 0;
