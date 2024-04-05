@@ -49,5 +49,4 @@ public abstract class Attendance {
     public String toString() {
         return person + "-" + meeting;
     }
-
 }

@@ -1,7 +1,6 @@
 package org.acme.meetingschedule.domain;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -9,6 +8,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class TimeGrain implements Comparable<TimeGrain> {
 
@@ -74,18 +75,17 @@ public class TimeGrain implements Comparable<TimeGrain> {
         this.startingMinuteOfDay = startingMinuteOfDay;
     }
 
+    @JsonIgnore
     public LocalDate getDate() {
         return LocalDate.now().withDayOfYear(dayOfYear);
     }
 
+    @JsonIgnore
     public LocalTime getTime() {
         return LocalTime.of(startingMinuteOfDay / 60, startingMinuteOfDay % 60);
     }
 
-    public LocalDateTime getDateTime() {
-        return LocalDateTime.of(getDate(), getTime());
-    }
-
+    @JsonIgnore
     public String getTimeString() {
         int hourOfDay = startingMinuteOfDay / 60;
         int minuteOfHour = startingMinuteOfDay % 60;
@@ -93,6 +93,7 @@ public class TimeGrain implements Comparable<TimeGrain> {
                 + ":" + (minuteOfHour < 10 ? "0" : "") + minuteOfHour;
     }
 
+    @JsonIgnore
     public String getDateTimeString() {
         return DAY_FORMATTER.format(getDate()) + " " + getTimeString();
     }

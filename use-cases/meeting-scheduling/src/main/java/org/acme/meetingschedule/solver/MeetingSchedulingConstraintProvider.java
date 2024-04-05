@@ -96,7 +96,8 @@ public class MeetingSchedulingConstraintProvider implements ConstraintProvider {
                 .join(TimeGrain.class,
                         equal(MeetingAssignment::getLastTimeGrainIndex, TimeGrain::getGrainIndex),
                         filtering((meetingAssignment,
-                                timeGrain) -> meetingAssignment.getStartingTimeGrain().getDayOfYear().equals(timeGrain.getDayOfYear())))
+                                timeGrain) -> !meetingAssignment.getStartingTimeGrain().getDayOfYear()
+                                        .equals(timeGrain.getDayOfYear())))
                 .penalizeConfigurable()
                 .asConstraint("Start and end on same day");
     }
@@ -169,7 +170,7 @@ public class MeetingSchedulingConstraintProvider implements ConstraintProvider {
                 .join(constraintFactory.forEachIncludingUnassigned(MeetingAssignment.class)
                         .filter(assignment -> assignment.getStartingTimeGrain() != null),
                         equal(MeetingAssignment::getLastTimeGrainIndex,
-                                (rightAssignment) -> rightAssignment.getStartingTimeGrain().getGrainIndex() - 1))
+                                rightAssignment -> rightAssignment.getStartingTimeGrain().getGrainIndex() - 1))
                 .penalizeConfigurable()
                 .asConstraint("One TimeGrain break between two consecutive meetings");
     }
@@ -179,8 +180,8 @@ public class MeetingSchedulingConstraintProvider implements ConstraintProvider {
                 .filter(meetingAssignment -> meetingAssignment.getStartingTimeGrain() != null)
                 .join(constraintFactory.forEachIncludingUnassigned(MeetingAssignment.class)
                         .filter(meetingAssignment -> meetingAssignment.getStartingTimeGrain() != null),
-                        greaterThan((leftAssignment) -> leftAssignment.getMeeting().getId(),
-                                (rightAssignment) -> rightAssignment.getMeeting().getId()),
+                        greaterThan(leftAssignment -> leftAssignment.getMeeting().getId(),
+                                rightAssignment -> rightAssignment.getMeeting().getId()),
                         overlapping(assignment -> assignment.getStartingTimeGrain().getGrainIndex(),
                                 assignment -> assignment.getStartingTimeGrain().getGrainIndex() +
                                         assignment.getMeeting().getDurationInGrains()))

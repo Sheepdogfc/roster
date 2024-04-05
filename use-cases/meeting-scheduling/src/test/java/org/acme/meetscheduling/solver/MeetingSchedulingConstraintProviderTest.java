@@ -115,7 +115,7 @@ class MeetingSchedulingConstraintProviderTest {
 
     @Test
     void requiredAttendanceConflictUnpenalized() {
-        Person person = new Person();
+        Person person = new Person("1");
         Meeting leftMeeting = new Meeting();
         leftMeeting.setDurationInGrains(4);
 
@@ -147,7 +147,7 @@ class MeetingSchedulingConstraintProviderTest {
 
     @Test
     void requiredAttendanceConflictPenalized() {
-        Person person = new Person();
+        Person person = new Person("1");
         Meeting leftMeeting = new Meeting();
         leftMeeting.setDurationInGrains(4);
 
@@ -191,8 +191,8 @@ class MeetingSchedulingConstraintProviderTest {
         preferredAttendanceList.add(preferredAttendance);
 
         Meeting meeting = new Meeting();
-        meeting.setRequiredAttendanceList(requiredAttendanceList);
-        meeting.setPreferredAttendanceList(preferredAttendanceList);
+        meeting.setRequiredAttendances(requiredAttendanceList);
+        meeting.setPreferredAttendances(preferredAttendanceList);
 
         TimeGrain startingTimeGrain = new TimeGrain();
 
@@ -217,8 +217,8 @@ class MeetingSchedulingConstraintProviderTest {
         preferredAttendanceList.add(preferredAttendance);
 
         Meeting meeting = new Meeting();
-        meeting.setRequiredAttendanceList(requiredAttendanceList);
-        meeting.setPreferredAttendanceList(preferredAttendanceList);
+        meeting.setRequiredAttendances(requiredAttendanceList);
+        meeting.setPreferredAttendances(preferredAttendanceList);
 
         TimeGrain startingTimeGrain = new TimeGrain();
 
@@ -274,7 +274,7 @@ class MeetingSchedulingConstraintProviderTest {
 
     @Test
     void requiredAndPreferredAttendanceConflictUnpenalized() {
-        Person person = new Person();
+        Person person = new Person("1");
 
         Meeting leftMeeting = new Meeting();
         leftMeeting.setDurationInGrains(4);
@@ -309,7 +309,7 @@ class MeetingSchedulingConstraintProviderTest {
 
     @Test
     void requiredAndPreferredAttendanceConflictPenalized() {
-        Person person = new Person();
+        Person person = new Person("1");
 
         Meeting leftMeeting = new Meeting();
         leftMeeting.setDurationInGrains(4);
@@ -344,7 +344,7 @@ class MeetingSchedulingConstraintProviderTest {
 
     @Test
     void preferredAttendanceConflictUnpenalized() {
-        Person person = new Person();
+        Person person = new Person("1");
 
         Meeting leftMeeting = new Meeting();
         leftMeeting.setDurationInGrains(4);
@@ -377,7 +377,7 @@ class MeetingSchedulingConstraintProviderTest {
 
     @Test
     void preferredAttendanceConflictPenalized() {
-        Person person = new Person();
+    Person person = new Person("1");
 
         Meeting leftMeeting = new Meeting();
         leftMeeting.setDurationInGrains(4);
@@ -574,7 +574,7 @@ class MeetingSchedulingConstraintProviderTest {
 
     @Test
     void roomStabilityUnpenalized() {
-        Person person = new Person();
+        Person person = new Person("1");
 
         Meeting leftMeeting = new Meeting();
         leftMeeting.setDurationInGrains(4);
@@ -615,7 +615,7 @@ class MeetingSchedulingConstraintProviderTest {
 
     @Test
     void roomStabilityPenalized() {
-        Person person = new Person();
+        Person person = new Person("1");
 
         Meeting leftMeeting = new Meeting();
         leftMeeting.setDurationInGrains(4);

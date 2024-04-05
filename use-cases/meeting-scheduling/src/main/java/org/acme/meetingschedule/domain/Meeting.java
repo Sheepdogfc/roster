@@ -1,12 +1,18 @@
 package org.acme.meetingschedule.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+@JsonIdentityInfo(scope = Meeting.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Meeting {
 
     private String id;
     private String topic;
-    private List<Person> speakerList;
+    private List<Person> speakers;
     private String content;
     private boolean entireGroupMeeting;
     /**
@@ -14,14 +20,21 @@ public class Meeting {
      */
     private int durationInGrains;
 
-    private List<RequiredAttendance> requiredAttendanceList;
-    private List<PreferredAttendance> preferredAttendanceList;
+    private List<RequiredAttendance> requiredAttendances;
+    private List<PreferredAttendance> preferredAttendances;
 
     public Meeting() {
     }
 
     public Meeting(String id) {
         this.id = id;
+        this.requiredAttendances = new ArrayList<>();
+        this.preferredAttendances = new ArrayList<>();
+    }
+
+    public Meeting(String id, String topic) {
+        this(id);
+        this.topic = topic;
     }
 
     public Meeting(String id, String topic, int durationInGrains) {
@@ -46,12 +59,12 @@ public class Meeting {
         this.topic = topic;
     }
 
-    public List<Person> getSpeakerList() {
-        return speakerList;
+    public List<Person> getSpeakers() {
+        return speakers;
     }
 
-    public void setSpeakerList(List<Person> speakerList) {
-        this.speakerList = speakerList;
+    public void setSpeakers(List<Person> speakers) {
+        this.speakers = speakers;
     }
 
     public String getContent() {
@@ -78,32 +91,41 @@ public class Meeting {
         this.durationInGrains = durationInGrains;
     }
 
-    public List<RequiredAttendance> getRequiredAttendanceList() {
-        return requiredAttendanceList;
+    public List<RequiredAttendance> getRequiredAttendances() {
+        return requiredAttendances;
     }
 
-    public void setRequiredAttendanceList(List<RequiredAttendance> requiredAttendanceList) {
-        this.requiredAttendanceList = requiredAttendanceList;
+    public void setRequiredAttendances(List<RequiredAttendance> requiredAttendances) {
+        this.requiredAttendances = requiredAttendances;
     }
 
-    public List<PreferredAttendance> getPreferredAttendanceList() {
-        return preferredAttendanceList;
+    public List<PreferredAttendance> getPreferredAttendances() {
+        return preferredAttendances;
     }
 
-    public void setPreferredAttendanceList(List<PreferredAttendance> preferredAttendanceList) {
-        this.preferredAttendanceList = preferredAttendanceList;
+    public void setPreferredAttendances(List<PreferredAttendance> preferredAttendances) {
+        this.preferredAttendances = preferredAttendances;
     }
 
     // ************************************************************************
     // Complex methods
     // ************************************************************************
 
+    @JsonIgnore
     public int getRequiredCapacity() {
-        return requiredAttendanceList.size() + preferredAttendanceList.size();
+        return requiredAttendances.size() + preferredAttendances.size();
     }
 
-    public String getDurationString() {
-        return (durationInGrains * TimeGrain.GRAIN_LENGTH_IN_MINUTES) + " minutes";
+    public void addAttendant(String id, Person person, boolean isRequired) {
+        if (isRequired) {
+            if (requiredAttendances.stream().noneMatch(r -> r.getPerson().equals(person))) {
+                requiredAttendances.add(new RequiredAttendance(id, this, person));
+            }
+        } else {
+            if (preferredAttendances.stream().noneMatch(r -> r.getPerson().equals(person))) {
+                preferredAttendances.add(new PreferredAttendance(id, this, person));
+            }
+        }
     }
 
     @Override

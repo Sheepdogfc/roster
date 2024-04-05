@@ -9,4 +9,8 @@ public class RequiredAttendance extends Attendance {
         super(id, meeting);
     }
 
+    public RequiredAttendance(String id, Meeting meeting, Person person) {
+        super(id, meeting);
+        setPerson(person);
+    }
 }

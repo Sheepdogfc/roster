@@ -1,6 +1,7 @@
 package org.acme.meetingschedule.domain;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import ai.timefold.solver.core.api.domain.constraintweight.ConstraintConfigurationProvider;
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
@@ -11,6 +12,10 @@ import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @PlanningSolution
 public class MeetingSchedule {
 
@@ -18,20 +23,20 @@ public class MeetingSchedule {
     private MeetingConstraintConfiguration constraintConfiguration;
 
     @ProblemFactCollectionProperty
-    private List<Meeting> meetingList;
+    private List<Person> people;
+    @ProblemFactCollectionProperty
     @ValueRangeProvider
+    private List<TimeGrain> timeGrains;
     @ProblemFactCollectionProperty
-    private List<TimeGrain> timeGrainList;
     @ValueRangeProvider
+    private List<Room> rooms;
     @ProblemFactCollectionProperty
-    private List<Room> roomList;
+    private List<Meeting> meetings;
+    @JsonIgnore
     @ProblemFactCollectionProperty
-    private List<Person> personList;
-    @ProblemFactCollectionProperty
-    private List<Attendance> attendanceList;
-
+    private List<Attendance> attendances;
     @PlanningEntityCollectionProperty
-    private List<MeetingAssignment> meetingAssignmentList;
+    private List<MeetingAssignment> meetingAssignments;
 
     @PlanningScore
     private HardMediumSoftScore score;
@@ -39,6 +44,23 @@ public class MeetingSchedule {
     private SolverStatus solverStatus;
 
     public MeetingSchedule() {
+    }
+
+    @JsonCreator
+    public MeetingSchedule(@JsonProperty("people") List<Person> people, @JsonProperty("timeGrains") List<TimeGrain> timeGrains,
+            @JsonProperty("rooms") List<Room> rooms, @JsonProperty("meetings") List<Meeting> meetings,
+            @JsonProperty("meetingAssignments") List<MeetingAssignment> meetingAssignments,
+            @JsonProperty("constraintConfiguration") MeetingConstraintConfiguration constraintConfiguration) {
+        this.people = people;
+        this.timeGrains = timeGrains;
+        this.rooms = rooms;
+        this.meetings = meetings;
+        this.meetingAssignments = meetingAssignments;
+        this.constraintConfiguration = constraintConfiguration;
+        this.attendances = Stream.concat(
+                this.meetings.stream().flatMap(m -> m.getRequiredAttendances().stream()),
+                this.meetings.stream().flatMap(m -> m.getPreferredAttendances().stream()))
+                .toList();
     }
 
     public MeetingSchedule(HardMediumSoftScore score, SolverStatus solverStatus) {
@@ -54,52 +76,52 @@ public class MeetingSchedule {
         this.constraintConfiguration = constraintConfiguration;
     }
 
-    public List<Meeting> getMeetingList() {
-        return meetingList;
+    public List<Meeting> getMeetings() {
+        return meetings;
     }
 
-    public void setMeetingList(List<Meeting> meetingList) {
-        this.meetingList = meetingList;
+    public void setMeetings(List<Meeting> meetings) {
+        this.meetings = meetings;
     }
 
-    public List<TimeGrain> getTimeGrainList() {
-        return timeGrainList;
+    public List<TimeGrain> getTimeGrains() {
+        return timeGrains;
     }
 
-    public void setTimeGrainList(List<TimeGrain> timeGrainList) {
-        this.timeGrainList = timeGrainList;
+    public void setTimeGrains(List<TimeGrain> timeGrains) {
+        this.timeGrains = timeGrains;
     }
 
-    public List<Room> getRoomList() {
-        return roomList;
+    public List<Room> getRooms() {
+        return rooms;
     }
 
-    public void setRoomList(List<Room> roomList) {
-        this.roomList = roomList;
+    public void setRooms(List<Room> rooms) {
+        this.rooms = rooms;
     }
 
-    public List<Person> getPersonList() {
-        return personList;
+    public List<Person> getPeople() {
+        return people;
     }
 
-    public void setPersonList(List<Person> personList) {
-        this.personList = personList;
+    public void setPeople(List<Person> people) {
+        this.people = people;
     }
 
-    public List<Attendance> getAttendanceList() {
-        return attendanceList;
+    public List<Attendance> getAttendances() {
+        return attendances;
     }
 
-    public void setAttendanceList(List<Attendance> attendanceList) {
-        this.attendanceList = attendanceList;
+    public void setAttendances(List<Attendance> attendances) {
+        this.attendances = attendances;
     }
 
-    public List<MeetingAssignment> getMeetingAssignmentList() {
-        return meetingAssignmentList;
+    public List<MeetingAssignment> getMeetingAssignments() {
+        return meetingAssignments;
     }
 
-    public void setMeetingAssignmentList(List<MeetingAssignment> meetingAssignmentList) {
-        this.meetingAssignmentList = meetingAssignmentList;
+    public void setMeetingAssignments(List<MeetingAssignment> meetingAssignments) {
+        this.meetingAssignments = meetingAssignments;
     }
 
     public HardMediumSoftScore getScore() {

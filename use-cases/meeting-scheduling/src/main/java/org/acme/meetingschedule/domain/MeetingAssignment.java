@@ -7,6 +7,8 @@ import ai.timefold.solver.core.api.domain.entity.PlanningPin;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @PlanningEntity
 public class MeetingAssignment {
 
@@ -84,6 +86,7 @@ public class MeetingAssignment {
     // Complex methods
     // ************************************************************************
 
+    @JsonIgnore
     public int calculateOverlap(MeetingAssignment other) {
         if (startingTimeGrain == null || other.getStartingTimeGrain() == null) {
             return 0;
@@ -102,6 +105,7 @@ public class MeetingAssignment {
         return Math.min(end, otherEnd) - Math.max(start, otherStart);
     }
 
+    @JsonIgnore
     public Integer getLastTimeGrainIndex() {
         if (startingTimeGrain == null) {
             return null;
@@ -109,13 +113,7 @@ public class MeetingAssignment {
         return startingTimeGrain.getGrainIndex() + meeting.getDurationInGrains() - 1;
     }
 
-    public String getStartingDateTimeString() {
-        if (startingTimeGrain == null) {
-            return null;
-        }
-        return startingTimeGrain.getDateTimeString();
-    }
-
+    @JsonIgnore
     public int getRoomCapacity() {
         if (room == null) {
             return 0;
@@ -123,6 +121,7 @@ public class MeetingAssignment {
         return room.getCapacity();
     }
 
+    @JsonIgnore
     public int getRequiredCapacity() {
         return meeting.getRequiredCapacity();
     }
