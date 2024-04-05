@@ -16,9 +16,6 @@ import java.util.stream.Stream;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
-import ai.timefold.solver.core.impl.util.MutableInt;
-import ai.timefold.solver.core.impl.util.Pair;
-
 import org.acme.meetingschedule.domain.Meeting;
 import org.acme.meetingschedule.domain.MeetingAssignment;
 import org.acme.meetingschedule.domain.MeetingConstraintConfiguration;
@@ -26,6 +23,7 @@ import org.acme.meetingschedule.domain.MeetingSchedule;
 import org.acme.meetingschedule.domain.Person;
 import org.acme.meetingschedule.domain.Room;
 import org.acme.meetingschedule.domain.TimeGrain;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 @ApplicationScoped
 public class DemoDataGenerator {
@@ -86,15 +84,15 @@ public class DemoDataGenerator {
     private List<TimeGrain> generateTimeGrain() {
         List<TimeGrain> timeGrains = new ArrayList<>();
         LocalDate currentDate = LocalDate.now().plusDays(1);
-        MutableInt count = new MutableInt();
+        int count = 0;
         while (currentDate.isBefore(LocalDate.now().plusDays(6))) {
             LocalTime currentTime = LocalTime.of(8, 0);
-            timeGrains.add(new TimeGrain(String.valueOf(count.increment()), count.intValue(),
+            timeGrains.add(new TimeGrain(String.valueOf(++count), count,
                     LocalDateTime.of(currentDate, currentTime).getDayOfYear(),
                     currentTime.getHour() * 60 + currentTime.getMinute()));
             while (currentTime.isBefore(LocalTime.of(17, 45))) {
                 currentTime = currentTime.plusMinutes(15);
-                timeGrains.add(new TimeGrain(String.valueOf(count.increment()), count.intValue(),
+                timeGrains.add(new TimeGrain(String.valueOf(++count), count,
                         LocalDateTime.of(currentDate, currentTime).getDayOfYear(),
                         currentTime.getHour() * 60 + currentTime.getMinute()));
             }
@@ -104,48 +102,48 @@ public class DemoDataGenerator {
     }
 
     private List<Meeting> generateMeetings(List<Person> people) {
-        MutableInt count = new MutableInt();
+        int count = 0;
         List<Meeting> meetings = List.of(
-                new Meeting(String.valueOf(count.increment()), "Strategize B2B"),
-                new Meeting(String.valueOf(count.increment()), "Fast track e-business"),
-                new Meeting(String.valueOf(count.increment()), "Cross sell virtualization"),
-                new Meeting(String.valueOf(count.increment()), "Profitize multitasking"),
-                new Meeting(String.valueOf(count.increment()), "Transform one stop shop"),
-                new Meeting(String.valueOf(count.increment()), "Engage braindumps"),
-                new Meeting(String.valueOf(count.increment()), "Downsize data mining"),
-                new Meeting(String.valueOf(count.increment()), "Ramp up policies"),
-                new Meeting(String.valueOf(count.increment()), "On board synergies"),
-                new Meeting(String.valueOf(count.increment()), "Reinvigorate user experience"),
-                new Meeting(String.valueOf(count.increment()), "Strategize e-business"),
-                new Meeting(String.valueOf(count.increment()), "Fast track virtualization"),
-                new Meeting(String.valueOf(count.increment()), "Cross sell multitasking"),
-                new Meeting(String.valueOf(count.increment()), "Profitize one stop shop"),
-                new Meeting(String.valueOf(count.increment()), "Transform braindumps"),
-                new Meeting(String.valueOf(count.increment()), "Engage data mining"),
-                new Meeting(String.valueOf(count.increment()), "Downsize policies"),
-                new Meeting(String.valueOf(count.increment()), "Ramp up synergies"),
-                new Meeting(String.valueOf(count.increment()), "On board user experience"),
-                new Meeting(String.valueOf(count.increment()), "Reinvigorate B2B"),
-                new Meeting(String.valueOf(count.increment()), "Strategize virtualization"),
-                new Meeting(String.valueOf(count.increment()), "Fast track multitasking"),
-                new Meeting(String.valueOf(count.increment()), "Cross sell one stop shop"),
-                new Meeting(String.valueOf(count.increment()), "Profitize braindumps"),
-                new Meeting(String.valueOf(count.increment()), "Transform data mining"),
-                new Meeting(String.valueOf(count.increment()), "Engage policies"),
-                new Meeting(String.valueOf(count.increment()), "Downsize synergies"),
-                new Meeting(String.valueOf(count.increment()), "Ramp up user experience"),
-                new Meeting(String.valueOf(count.increment()), "On board B2B"),
-                new Meeting(String.valueOf(count.increment()), "Reinvigorate e-business"),
-                new Meeting(String.valueOf(count.increment()), "Strategize multitasking"),
-                new Meeting(String.valueOf(count.increment()), "Fast track one stop shop"),
-                new Meeting(String.valueOf(count.increment()), "Cross sell braindumps"),
-                new Meeting(String.valueOf(count.increment()), "Profitize data mining"),
-                new Meeting(String.valueOf(count.increment()), "Transform policies"),
-                new Meeting(String.valueOf(count.increment()), "Engage synergies"),
-                new Meeting(String.valueOf(count.increment()), "Downsize user experience"),
-                new Meeting(String.valueOf(count.increment()), "Ramp up B2B"),
-                new Meeting(String.valueOf(count.increment()), "On board e-business"),
-                new Meeting(String.valueOf(count.increment()), "Reinvigorate multitasking"));
+                new Meeting(String.valueOf(count++), "Strategize B2B"),
+                new Meeting(String.valueOf(count++), "Fast track e-business"),
+                new Meeting(String.valueOf(count++), "Cross sell virtualization"),
+                new Meeting(String.valueOf(count++), "Profitize multitasking"),
+                new Meeting(String.valueOf(count++), "Transform one stop shop"),
+                new Meeting(String.valueOf(count++), "Engage braindumps"),
+                new Meeting(String.valueOf(count++), "Downsize data mining"),
+                new Meeting(String.valueOf(count++), "Ramp up policies"),
+                new Meeting(String.valueOf(count++), "On board synergies"),
+                new Meeting(String.valueOf(count++), "Reinvigorate user experience"),
+                new Meeting(String.valueOf(count++), "Strategize e-business"),
+                new Meeting(String.valueOf(count++), "Fast track virtualization"),
+                new Meeting(String.valueOf(count++), "Cross sell multitasking"),
+                new Meeting(String.valueOf(count++), "Profitize one stop shop"),
+                new Meeting(String.valueOf(count++), "Transform braindumps"),
+                new Meeting(String.valueOf(count++), "Engage data mining"),
+                new Meeting(String.valueOf(count++), "Downsize policies"),
+                new Meeting(String.valueOf(count++), "Ramp up synergies"),
+                new Meeting(String.valueOf(count++), "On board user experience"),
+                new Meeting(String.valueOf(count++), "Reinvigorate B2B"),
+                new Meeting(String.valueOf(count++), "Strategize virtualization"),
+                new Meeting(String.valueOf(count++), "Fast track multitasking"),
+                new Meeting(String.valueOf(count++), "Cross sell one stop shop"),
+                new Meeting(String.valueOf(count++), "Profitize braindumps"),
+                new Meeting(String.valueOf(count++), "Transform data mining"),
+                new Meeting(String.valueOf(count++), "Engage policies"),
+                new Meeting(String.valueOf(count++), "Downsize synergies"),
+                new Meeting(String.valueOf(count++), "Ramp up user experience"),
+                new Meeting(String.valueOf(count++), "On board B2B"),
+                new Meeting(String.valueOf(count++), "Reinvigorate e-business"),
+                new Meeting(String.valueOf(count++), "Strategize multitasking"),
+                new Meeting(String.valueOf(count++), "Fast track one stop shop"),
+                new Meeting(String.valueOf(count++), "Cross sell braindumps"),
+                new Meeting(String.valueOf(count++), "Profitize data mining"),
+                new Meeting(String.valueOf(count++), "Transform policies"),
+                new Meeting(String.valueOf(count++), "Engage synergies"),
+                new Meeting(String.valueOf(count++), "Downsize user experience"),
+                new Meeting(String.valueOf(count++), "Ramp up B2B"),
+                new Meeting(String.valueOf(count++), "On board e-business"),
+                new Meeting(String.valueOf(count), "Reinvigorate multitasking"));
         // Duration
         List<Pair<Float, Integer>> durationGrainsCount = List.of(
                 new Pair<>(0.33f, 8),
@@ -163,7 +161,7 @@ public class DemoDataGenerator {
         BiConsumer<Meeting, Integer> requiredAttendantConsumer = (meeting, size) -> {
             do {
                 int nextPerson = random.nextInt(people.size());
-                meeting.addAttendant(String.valueOf(attendantCount.increment()), people.get(nextPerson), true);
+                meeting.addAttendant(String.valueOf(attendantCount.incrementAndGet()), people.get(nextPerson), true);
             } while (meeting.getRequiredAttendances().size() < size);
         };
         List<Pair<Float, Integer>> requiredAttendantsCount = List.of(
@@ -193,7 +191,7 @@ public class DemoDataGenerator {
                 int nextPerson = random.nextInt(people.size());
                 if (meeting.getRequiredAttendances().stream()
                         .noneMatch(requiredAttendance -> requiredAttendance.getPerson().equals(people.get(nextPerson)))) {
-                    meeting.addAttendant(String.valueOf(attendantCount.increment()), people.get(nextPerson), false);
+                    meeting.addAttendant(String.valueOf(attendantCount.incrementAndGet()), people.get(nextPerson), false);
                 }
             } while (meeting.getPreferredAttendances().size() < size);
         };
@@ -250,6 +248,21 @@ public class DemoDataGenerator {
             if (size < 0) {
                 break;
             }
+        }
+    }
+
+    private record Pair<Key_, Value_>(Key_ key, Value_ value) {
+        public Pair(Key_ key, Value_ value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public Key_ key() {
+            return this.key;
+        }
+
+        public Value_ value() {
+            return this.value;
         }
     }
 }

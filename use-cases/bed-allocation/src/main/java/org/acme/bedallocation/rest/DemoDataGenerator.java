@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -18,9 +19,6 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 import jakarta.enterprise.context.ApplicationScoped;
-
-import ai.timefold.solver.core.impl.util.MutableReference;
-import ai.timefold.solver.core.impl.util.Pair;
 
 import org.acme.bedallocation.domain.Bed;
 import org.acme.bedallocation.domain.BedPlan;
@@ -331,6 +329,53 @@ public class DemoDataGenerator {
             if (size < 0) {
                 break;
             }
+        }
+    }
+
+    private record Pair<Key_, Value_>(Key_ key, Value_ value) {
+        public Pair(Key_ key, Value_ value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public Key_ key() {
+            return this.key;
+        }
+
+        public Value_ value() {
+            return this.value;
+        }
+    }
+
+    private final class MutableReference<Value_> {
+        private Value_ value;
+
+        public MutableReference(Value_ value) {
+            this.value = value;
+        }
+
+        public Value_ getValue() {
+            return this.value;
+        }
+
+        public void setValue(Value_ value) {
+            this.value = value;
+        }
+
+        public boolean equals(Object o) {
+            if (o instanceof MutableReference<?> other) {
+                return this.value.equals(other.value);
+            } else {
+                return false;
+            }
+        }
+
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        public String toString() {
+            return this.value.toString();
         }
     }
 }
