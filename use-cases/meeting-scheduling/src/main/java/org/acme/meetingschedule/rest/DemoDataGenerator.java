@@ -23,7 +23,6 @@ import org.acme.meetingschedule.domain.MeetingSchedule;
 import org.acme.meetingschedule.domain.Person;
 import org.acme.meetingschedule.domain.Room;
 import org.acme.meetingschedule.domain.TimeGrain;
-import org.apache.commons.lang3.mutable.MutableInt;
 
 @ApplicationScoped
 public class DemoDataGenerator {
@@ -40,7 +39,7 @@ public class DemoDataGenerator {
         MeetingSchedule schedule = new MeetingSchedule();
         schedule.setConstraintConfiguration(new MeetingConstraintConfiguration());
         // People
-        int countPeople = 40;
+        int countPeople = 20;
         List<Person> people = generatePeople(countPeople);
         // Time grain
         List<TimeGrain> timeGrains = generateTimeGrain();
@@ -48,9 +47,7 @@ public class DemoDataGenerator {
         List<Room> rooms = List.of(
                 new Room("R1", "Room 1", 30),
                 new Room("R2", "Room 2", 20),
-                new Room("R3", "Room 3", 16),
-                new Room("R4", "Room 4", 14),
-                new Room("R5", "Room 5", 12));
+                new Room("R3", "Room 3", 16));
         // Meetings
         List<Meeting> meetings = generateMeetings(people);
         // Meeting assignments
@@ -85,7 +82,7 @@ public class DemoDataGenerator {
         List<TimeGrain> timeGrains = new ArrayList<>();
         LocalDate currentDate = LocalDate.now().plusDays(1);
         int count = 0;
-        while (currentDate.isBefore(LocalDate.now().plusDays(6))) {
+        while (currentDate.isBefore(LocalDate.now().plusDays(5))) {
             LocalTime currentTime = LocalTime.of(8, 0);
             timeGrains.add(new TimeGrain(String.valueOf(++count), count,
                     LocalDateTime.of(currentDate, currentTime).getDayOfYear(),
@@ -127,22 +124,6 @@ public class DemoDataGenerator {
                 new Meeting(String.valueOf(count++), "Strategize virtualization"),
                 new Meeting(String.valueOf(count++), "Fast track multitasking"),
                 new Meeting(String.valueOf(count++), "Cross sell one stop shop"),
-                new Meeting(String.valueOf(count++), "Profitize braindumps"),
-                new Meeting(String.valueOf(count++), "Transform data mining"),
-                new Meeting(String.valueOf(count++), "Engage policies"),
-                new Meeting(String.valueOf(count++), "Downsize synergies"),
-                new Meeting(String.valueOf(count++), "Ramp up user experience"),
-                new Meeting(String.valueOf(count++), "On board B2B"),
-                new Meeting(String.valueOf(count++), "Reinvigorate e-business"),
-                new Meeting(String.valueOf(count++), "Strategize multitasking"),
-                new Meeting(String.valueOf(count++), "Fast track one stop shop"),
-                new Meeting(String.valueOf(count++), "Cross sell braindumps"),
-                new Meeting(String.valueOf(count++), "Profitize data mining"),
-                new Meeting(String.valueOf(count++), "Transform policies"),
-                new Meeting(String.valueOf(count++), "Engage synergies"),
-                new Meeting(String.valueOf(count++), "Downsize user experience"),
-                new Meeting(String.valueOf(count++), "Ramp up B2B"),
-                new Meeting(String.valueOf(count++), "On board e-business"),
                 new Meeting(String.valueOf(count), "Reinvigorate multitasking"));
         // Duration
         List<Pair<Float, Integer>> durationGrainsCount = List.of(
@@ -156,12 +137,15 @@ public class DemoDataGenerator {
                 .filter(m -> m.getDurationInGrains() == 0)
                 .forEach(m -> m.setDurationInGrains(8));
         // Attendants
-        MutableInt attendantCount = new MutableInt();
         // Required
         BiConsumer<Meeting, Integer> requiredAttendantConsumer = (meeting, size) -> {
             do {
                 int nextPerson = random.nextInt(people.size());
-                meeting.addAttendant(String.valueOf(attendantCount.incrementAndGet()), people.get(nextPerson), true);
+                boolean assignedToRequired = meeting.getRequiredAttendances().stream()
+                        .anyMatch(requiredAttendance -> requiredAttendance.getPerson().equals(people.get(nextPerson)));
+                if (!assignedToRequired) {
+                    meeting.addRequiredAttendant(people.get(nextPerson));
+                }
             } while (meeting.getRequiredAttendances().size() < size);
         };
         List<Pair<Float, Integer>> requiredAttendantsCount = List.of(
@@ -169,16 +153,10 @@ public class DemoDataGenerator {
                 new Pair<>(0.08f, 3), // 8% with three attendants, etc
                 new Pair<>(0.02f, 4),
                 new Pair<>(0.08f, 5),
-                new Pair<>(0.08f, 6),
-                new Pair<>(0.03f, 7),
-                new Pair<>(0.02f, 8),
-                new Pair<>(0.02f, 11),
-                new Pair<>(0.03f, 12),
-                new Pair<>(0.02f, 13),
-                new Pair<>(0.03f, 14),
-                new Pair<>(0.02f, 15),
-                new Pair<>(0.02f, 17),
-                new Pair<>(0.02f, 19));
+                new Pair<>(0.1f, 6),
+                new Pair<>(0.05f, 7),
+                new Pair<>(0.05f, 8),
+                new Pair<>(0.05f, 10));
         requiredAttendantsCount.forEach(p -> applyRandomValue((int) (p.key() * meetings.size()), meetings, p.value(),
                 m -> m.getRequiredAttendances().isEmpty(), requiredAttendantConsumer));
         // Ensure there are no empty required attendants
@@ -189,9 +167,12 @@ public class DemoDataGenerator {
         BiConsumer<Meeting, Integer> preferredAttendantConsumer = (meeting, size) -> {
             do {
                 int nextPerson = random.nextInt(people.size());
-                if (meeting.getRequiredAttendances().stream()
-                        .noneMatch(requiredAttendance -> requiredAttendance.getPerson().equals(people.get(nextPerson)))) {
-                    meeting.addAttendant(String.valueOf(attendantCount.incrementAndGet()), people.get(nextPerson), false);
+                boolean assignedToPreferred = meeting.getPreferredAttendances().stream()
+                        .anyMatch(preferredAttendance -> preferredAttendance.getPerson().equals(people.get(nextPerson)));
+                boolean assignedToRequired = meeting.getRequiredAttendances().stream()
+                        .anyMatch(requiredAttendance -> requiredAttendance.getPerson().equals(people.get(nextPerson)));
+                if (!assignedToPreferred && !assignedToRequired) {
+                    meeting.addPreferredAttendant(people.get(nextPerson));
                 }
             } while (meeting.getPreferredAttendances().size() < size);
         };
@@ -201,16 +182,11 @@ public class DemoDataGenerator {
                 new Pair<>(0.18f, 3),
                 new Pair<>(0.06f, 4),
                 new Pair<>(0.04f, 5),
-                new Pair<>(0.02f, 6),
-                new Pair<>(0.02f, 7),
-                new Pair<>(0.02f, 8),
-                new Pair<>(0.06f, 9),
-                new Pair<>(0.02f, 10),
-                new Pair<>(0.04f, 11),
-                new Pair<>(0.02f, 14),
-                new Pair<>(0.02f, 15),
-                new Pair<>(0.02f, 19),
-                new Pair<>(0.02f, 24));
+                new Pair<>(0.04f, 6),
+                new Pair<>(0.04f, 7),
+                new Pair<>(0.04f, 8),
+                new Pair<>(0.08f, 9),
+                new Pair<>(0.04f, 10));
         preferredAttendantsCount.forEach(p -> applyRandomValue((int) (p.key() * meetings.size()), meetings, p.value(),
                 m -> m.getPreferredAttendances().isEmpty(), preferredAttendantConsumer));
         return meetings;
@@ -251,18 +227,6 @@ public class DemoDataGenerator {
         }
     }
 
-    private record Pair<Key_, Value_>(Key_ key, Value_ value) {
-        public Pair(Key_ key, Value_ value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        public Key_ key() {
-            return this.key;
-        }
-
-        public Value_ value() {
-            return this.value;
-        }
+    private record Pair<K, V>(K key, V value) {
     }
 }

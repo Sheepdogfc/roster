@@ -1,10 +1,8 @@
 package org.acme.meetingschedule.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.Locale;
 import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
@@ -14,12 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(scope = TimeGrain.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class TimeGrain implements Comparable<TimeGrain> {
-
-    private static final Comparator<TimeGrain> COMPARATOR = Comparator.comparing(TimeGrain::getDayOfYear)
-            .thenComparingInt(TimeGrain::getStartingMinuteOfDay);
-
-    private static final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("E", Locale.ENGLISH);
+public class TimeGrain {
 
     /**
      * Time granularity is 15 minutes (which is often recommended when dealing with humans for practical purposes).
@@ -89,21 +82,8 @@ public class TimeGrain implements Comparable<TimeGrain> {
     }
 
     @JsonIgnore
-    public String getTimeString() {
-        int hourOfDay = startingMinuteOfDay / 60;
-        int minuteOfHour = startingMinuteOfDay % 60;
-        return (hourOfDay < 10 ? "0" : "") + hourOfDay
-                + ":" + (minuteOfHour < 10 ? "0" : "") + minuteOfHour;
-    }
-
-    @JsonIgnore
-    public String getDateTimeString() {
-        return DAY_FORMATTER.format(getDate()) + " " + getTimeString();
-    }
-
-    @Override
-    public String toString() {
-        return grainIndex + "(" + getDateTimeString() + ")";
+    public LocalDateTime getDateTime() {
+        return LocalDateTime.of(getDate(), getTime());
     }
 
     @Override
@@ -125,10 +105,5 @@ public class TimeGrain implements Comparable<TimeGrain> {
         int result = dayOfYear != null ? dayOfYear.hashCode() : 0;
         result = 31 * result + startingMinuteOfDay;
         return result;
-    }
-
-    @Override
-    public int compareTo(TimeGrain other) {
-        return COMPARATOR.compare(this, other);
     }
 }

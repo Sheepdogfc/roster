@@ -116,16 +116,22 @@ public class Meeting {
         return requiredAttendances.size() + preferredAttendances.size();
     }
 
-    public void addAttendant(String id, Person person, boolean isRequired) {
-        if (isRequired) {
-            if (requiredAttendances.stream().noneMatch(r -> r.getPerson().equals(person))) {
-                requiredAttendances.add(new RequiredAttendance(id, this, person));
-            }
-        } else {
-            if (preferredAttendances.stream().noneMatch(r -> r.getPerson().equals(person))) {
-                preferredAttendances.add(new PreferredAttendance(id, this, person));
-            }
+    public void addRequiredAttendant(Person person) {
+        if (requiredAttendances.stream().anyMatch(r -> r.getPerson().equals(person))) {
+            throw new IllegalArgumentException(
+                    "The person %s is already assigned to the meeting %s.".formatted(person.getId(), getId()));
         }
+        requiredAttendances
+                .add(new RequiredAttendance("%s-%s".formatted(id, String.valueOf(getRequiredCapacity() + 1)), this, person));
+    }
+
+    public void addPreferredAttendant(Person person) {
+        if (preferredAttendances.stream().anyMatch(r -> r.getPerson().equals(person))) {
+            throw new IllegalArgumentException(
+                    "The person %s is already assigned to the meeting %s.".formatted(person.getId(), getId()));
+        }
+        preferredAttendances
+                .add(new PreferredAttendance("%s-%s".formatted(id, String.valueOf(getRequiredCapacity() + 1)), this, person));
     }
 
     @Override

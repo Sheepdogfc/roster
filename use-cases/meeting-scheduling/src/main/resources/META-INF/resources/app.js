@@ -2,7 +2,7 @@ let autoRefreshIntervalId = null;
 const formatter = JSJoda.DateTimeFormatter.ofPattern("MM/dd/YYYY HH:mm").withLocale(JSJodaLocale.Locale.ENGLISH);
 
 const zoomMin = 1000 * 60 * 60 // one hour in milliseconds
-const zoomMax = 5 * 1000 * 60 * 60 * 24 // 5 days in milliseconds
+const zoomMax = 4 * 1000 * 60 * 60 * 24 // 5 days in milliseconds
 
 const byTimelineOptions = {
     timeAxis: {scale: "hour", step: 1},
@@ -41,13 +41,14 @@ $(document).ready(function () {
     });
     $("#byRoomTab").click(function () {
         viewType = "R";
+        byRoomTimeline.redraw();
         refreshSchedule();
     });
     $("#byPersonTab").click(function () {
         viewType = "P";
+        byPersonTimeline.redraw();
         refreshSchedule();
     });
-
     setupAjax();
     refreshSchedule();
 });
@@ -150,7 +151,6 @@ function renderScheduleByRoom(schedule) {
 
     byRoomTimeline.setWindow(JSJoda.LocalDateTime.now().plusDays(1).withHour(8).toString(),
         JSJoda.LocalDateTime.now().plusDays(1).withHour(17).withMinute(45).toString());
-    byRoomTimeline.redraw();
 }
 
 function renderScheduleByPerson(schedule) {
@@ -166,7 +166,6 @@ function renderScheduleByPerson(schedule) {
             content: content,
         });
     });
-
     const meetingMap = new Map();
     schedule.meetings.forEach(m => meetingMap.set(m.id, m));
     const timeGrainMap = new Map();
@@ -220,7 +219,6 @@ function renderScheduleByPerson(schedule) {
 
     byPersonTimeline.setWindow(JSJoda.LocalDateTime.now().plusDays(1).withHour(8).toString(),
         JSJoda.LocalDateTime.now().plusDays(1).withHour(17).withMinute(45).toString());
-    byPersonTimeline.redraw();
 }
 
 function solve() {

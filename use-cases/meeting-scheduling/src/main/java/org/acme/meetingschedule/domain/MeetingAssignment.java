@@ -1,5 +1,6 @@
 package org.acme.meetingschedule.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
@@ -69,6 +70,11 @@ public class MeetingAssignment {
         return startingTimeGrain;
     }
 
+    @JsonIgnore
+    public LocalDateTime getStartingDateTimeGrain() {
+        return startingTimeGrain.getDateTime();
+    }
+
     public void setStartingTimeGrain(TimeGrain startingTimeGrain) {
         this.startingTimeGrain = startingTimeGrain;
     }
@@ -99,23 +105,30 @@ public class MeetingAssignment {
         // start is inclusive, end is exclusive
         int start = startingTimeGrain.getGrainIndex();
         int otherStart = other.startingTimeGrain.getGrainIndex();
-        int otherEnd = otherStart + other.meeting.getDurationInGrains();
-        if (otherEnd < start) {
+        if (other.getEndingTimeGrainDuration() < start) {
             return 0;
         }
-        int end = start + meeting.getDurationInGrains();
-        if (end < otherStart) {
+        if (getEndingTimeGrainDuration() < otherStart) {
             return 0;
         }
-        return Math.min(end, otherEnd) - Math.max(start, otherStart);
+        return Math.min(getEndingTimeGrainDuration(), other.getEndingTimeGrainDuration()) - Math.max(start, otherStart);
     }
 
     @JsonIgnore
-    public Integer getLastTimeGrainIndex() {
-        if (startingTimeGrain == null) {
+    public Integer getEndingTimeGrainIndex() {
+        int duration = getEndingTimeGrainDuration();
+        if (duration == 0) {
             return null;
         }
-        return startingTimeGrain.getGrainIndex() + meeting.getDurationInGrains() - 1;
+        return duration - 1;
+    }
+
+    @JsonIgnore
+    public int getEndingTimeGrainDuration() {
+        if (startingTimeGrain == null) {
+            return 0;
+        }
+        return startingTimeGrain.getGrainIndex() + meeting.getDurationInGrains();
     }
 
     @JsonIgnore
