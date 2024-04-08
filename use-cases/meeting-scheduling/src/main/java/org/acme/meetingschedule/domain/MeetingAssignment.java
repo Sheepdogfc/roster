@@ -98,31 +98,24 @@ public class MeetingAssignment {
         }
         // start is inclusive, end is exclusive
         int start = startingTimeGrain.getGrainIndex();
+        int end = getLastTimeGrainIndex() + 1;
         int otherStart = other.startingTimeGrain.getGrainIndex();
-        if (other.getEndingTimeGrainDuration() < start) {
+        int otherEnd = other.getLastTimeGrainIndex() + 1;
+        if (otherEnd < start) {
             return 0;
         }
-        if (getEndingTimeGrainDuration() < otherStart) {
+        if (end < otherStart) {
             return 0;
         }
-        return Math.min(getEndingTimeGrainDuration(), other.getEndingTimeGrainDuration()) - Math.max(start, otherStart);
+        return Math.min(end, otherEnd) - Math.max(start, otherStart);
     }
 
     @JsonIgnore
-    public Integer getEndingTimeGrainIndex() {
-        int duration = getEndingTimeGrainDuration();
-        if (duration == 0) {
+    public Integer getLastTimeGrainIndex() {
+        if (startingTimeGrain == null) {
             return null;
         }
-        return duration - 1;
-    }
-
-    @JsonIgnore
-    public int getEndingTimeGrainDuration() {
-        if (startingTimeGrain == null) {
-            return 0;
-        }
-        return startingTimeGrain.getGrainIndex() + meeting.getDurationInGrains();
+        return startingTimeGrain.getGrainIndex() + meeting.getDurationInGrains() - 1;
     }
 
     @JsonIgnore

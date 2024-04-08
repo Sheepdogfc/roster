@@ -1,6 +1,7 @@
 let autoRefreshIntervalId = null;
-const formatter = JSJoda.DateTimeFormatter.ofPattern("MM/dd/YYYY HH:mm").withLocale(JSJodaLocale.Locale.ENGLISH);
-
+const formatter = JSJoda.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withLocale(JSJodaLocale.Locale.ENGLISH);
+const startTime = formatter.format(JSJoda.LocalDateTime.now().withHour(20).withMinute(0).withSecond(0));
+const endTime = formatter.format(JSJoda.LocalDateTime.now().plusDays(1).withHour(8).withMinute(0).withSecond(0));
 const zoomMin = 1000 * 60 * 60 // one hour in milliseconds
 const zoomMax = 4 * 1000 * 60 * 60 * 24 // 5 days in milliseconds
 
@@ -11,6 +12,14 @@ const byTimelineOptions = {
     xss: {disabled: true}, // Items are XSS safe through JQuery
     zoomMin: zoomMin,
     zoomMax: zoomMax,
+    showCurrentTime: false,
+    hiddenDates: [
+        {
+            start: startTime,
+            end: endTime,
+            repeat: 'daily'
+        }
+    ],
 };
 
 const byRoomPanel = document.getElementById("byRoomPanel");
