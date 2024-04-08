@@ -1,18 +1,18 @@
 package org.acme.meetingschedule.domain;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(scope = TimeGrain.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class TimeGrain {
+public class TimeGrain implements Comparable<TimeGrain> {
+
+    private static final Comparator<TimeGrain> COMPARATOR = Comparator.comparing(TimeGrain::getDayOfYear)
+            .thenComparingInt(TimeGrain::getStartingMinuteOfDay);
 
     /**
      * Time granularity is 15 minutes (which is often recommended when dealing with humans for practical purposes).
@@ -71,21 +71,6 @@ public class TimeGrain {
         this.startingMinuteOfDay = startingMinuteOfDay;
     }
 
-    @JsonIgnore
-    public LocalDate getDate() {
-        return LocalDate.now().withDayOfYear(dayOfYear);
-    }
-
-    @JsonIgnore
-    public LocalTime getTime() {
-        return LocalTime.of(startingMinuteOfDay / 60, startingMinuteOfDay % 60);
-    }
-
-    @JsonIgnore
-    public LocalDateTime getDateTime() {
-        return LocalDateTime.of(getDate(), getTime());
-    }
-
     @Override
     public boolean equals(Object other) {
         if (this == other)
@@ -105,5 +90,10 @@ public class TimeGrain {
         int result = dayOfYear != null ? dayOfYear.hashCode() : 0;
         result = 31 * result + startingMinuteOfDay;
         return result;
+    }
+
+    @Override
+    public int compareTo(TimeGrain other) {
+        return COMPARATOR.compare(this, other);
     }
 }

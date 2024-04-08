@@ -1,6 +1,5 @@
 package org.acme.meetingschedule.domain;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
@@ -68,11 +67,6 @@ public class MeetingAssignment {
     @PlanningVariable
     public TimeGrain getStartingTimeGrain() {
         return startingTimeGrain;
-    }
-
-    @JsonIgnore
-    public LocalDateTime getStartingDateTimeGrain() {
-        return startingTimeGrain.getDateTime();
     }
 
     public void setStartingTimeGrain(TimeGrain startingTimeGrain) {
