@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -149,23 +148,25 @@ public class DemoDataGenerator {
                 new Pair<>(0.95f, 3),
                 new Pair<>(1f, 4));
         for (int i = 0; i < rooms.size(); i++) {
-            MutableReference<LocalDate> currentDate = new MutableReference<>(LocalDate.from(initialDate));
-            while (currentDate.getValue().isBefore(maxDate)) {
+            LocalDate currentDate = LocalDate.from(initialDate);
+            while (currentDate.isBefore(maxDate)) {
                 double countDays = random.nextDouble();
                 int numDays = periodCount.stream()
                         .filter(p -> countDays <= p.key())
                         .mapToInt(Pair::value)
                         .findFirst()
                         .getAsInt();
-                MutableReference<LocalDate> nextDate = new MutableReference<>(currentDate.getValue().plusDays(numDays));
-                if (nextDate.getValue().isAfter(maxDate)) {
-                    nextDate.setValue(maxDate);
+                LocalDate nextDate = currentDate.plusDays(numDays);
+                if (nextDate.isAfter(maxDate)) {
+                    nextDate = maxDate;
                 }
+                LocalDate finalCurrentDate = currentDate;
+                LocalDate finalNexDate = nextDate;
                 applyRandomValue(1, updatedStays, stay -> stay.getArrivalDate() == null, stay -> {
-                    stay.setArrivalDate(currentDate.getValue());
-                    stay.setDepartureDate(nextDate.getValue());
+                    stay.setArrivalDate(finalCurrentDate);
+                    stay.setDepartureDate(finalNexDate);
                 });
-                currentDate.setValue(nextDate.getValue().plusDays(1));
+                currentDate = nextDate.plusDays(1);
             }
         }
         return updatedStays.stream().filter(s -> s.getArrivalDate() != null).toList();
@@ -332,50 +333,6 @@ public class DemoDataGenerator {
         }
     }
 
-    private record Pair<Key_, Value_>(Key_ key, Value_ value) {
-        public Pair(Key_ key, Value_ value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        public Key_ key() {
-            return this.key;
-        }
-
-        public Value_ value() {
-            return this.value;
-        }
-    }
-
-    private final class MutableReference<Value_> {
-        private Value_ value;
-
-        public MutableReference(Value_ value) {
-            this.value = value;
-        }
-
-        public Value_ getValue() {
-            return this.value;
-        }
-
-        public void setValue(Value_ value) {
-            this.value = value;
-        }
-
-        public boolean equals(Object o) {
-            if (o instanceof MutableReference<?> other) {
-                return this.value.equals(other.value);
-            } else {
-                return false;
-            }
-        }
-
-        public int hashCode() {
-            return Objects.hash(this.value);
-        }
-
-        public String toString() {
-            return this.value.toString();
-        }
+    private record Pair<K, V>(K key, V value) {
     }
 }
