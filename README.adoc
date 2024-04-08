@@ -14,9 +14,9 @@ a|* <<vehicle-routing, Vehicle Routing>>
 * <<food-packaging, Food packaging>>
 * <<order-picking, Order Picking>>
 * <<school-timetabling, School timetabling>>
-* <<facility-location, Facility location problem>>
+* <<facility-location-problem, Facility location problem>>
 * <<conference-scheduling, Conference Scheduling>>
-* <<bed-scheduling, Bed Allocation Scheduling>>
+* <<bed-allocation-scheduling, Bed Allocation Scheduling>>
 * <<flight-crew-scheduling, Flight Crew Scheduling>>
 * <<meeting-scheduling, Meeting Scheduling>>
 
