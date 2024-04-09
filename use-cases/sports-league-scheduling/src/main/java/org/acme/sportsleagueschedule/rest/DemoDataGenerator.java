@@ -36,7 +36,7 @@ public class DemoDataGenerator {
     public LeagueSchedule generateDemoData() {
         LeagueSchedule schedule = new LeagueSchedule();
         // Days
-        int countDays = 21;
+        int countDays = 27;
         List<Day> days = generateDays(countDays);
         // Teams
         List<Team> teams = generateTeams();

@@ -33,7 +33,8 @@ public class SportsLeagueSchedulingConstraintProvider implements ConstraintProvi
                 .forEachUniquePair(Match.class,
                         equal(Match::getDayIndex),
                         filtering((match1, match2) -> match1.getHomeTeam().equals(match2.getHomeTeam())
-                                || match1.getHomeTeam().equals(match2.getAwayTeam())))
+                                || match1.getHomeTeam().equals(match2.getAwayTeam())
+                                || match1.getAwayTeam().equals(match2.getAwayTeam())))
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("matches on the same day");
     }
