@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -49,16 +50,9 @@ public class DemoDataGenerator {
     }
 
     private List<Day> generateDays(int countDays) {
-        List<Day> days = new ArrayList<>(countDays);
-        Day previousDay = null;
-        for (int i = 0; i < countDays; i++) {
-            days.add(new Day(i));
-            if (previousDay != null) {
-                previousDay.setNextDay(days.get(i));
-            }
-            previousDay = days.get(i);
-        }
-        return days;
+        return IntStream.range(0, countDays)
+                .mapToObj(Day::new)
+                .toList();
     }
 
     private List<Team> generateTeams() {
