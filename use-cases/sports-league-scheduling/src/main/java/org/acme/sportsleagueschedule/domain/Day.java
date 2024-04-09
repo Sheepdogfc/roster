@@ -1,4 +1,4 @@
-package domain;
+package org.acme.sportsleagueschedule.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;

@@ -1,6 +1,7 @@
-package domain;
+package org.acme.sportsleagueschedule.domain;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
+import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @PlanningEntity
 public class Match {
 
+    @PlanningId
     private String id;
     private Team homeTeam;
     private Team awayTeam;

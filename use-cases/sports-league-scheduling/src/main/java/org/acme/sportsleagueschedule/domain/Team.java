@@ -1,4 +1,4 @@
-package domain;
+package org.acme.sportsleagueschedule.domain;
 
 import java.util.Map;
 import java.util.Objects;
@@ -12,7 +12,7 @@ public class Team {
 
     private String id;
     private String name;
-    private Map<Team, Integer> distanceToTeamMap;
+    private Map<Team, Integer> distanceToTeam;
 
     public Team() {
     }
@@ -42,22 +42,22 @@ public class Team {
         this.name = name;
     }
 
-    public Map<Team, Integer> getDistanceToTeamMap() {
-        return distanceToTeamMap;
+    public Map<Team, Integer> getDistanceToTeam() {
+        return distanceToTeam;
     }
 
-    public void setDistanceToTeamMap(Map<Team, Integer> distanceToTeamMap) {
-        this.distanceToTeamMap = distanceToTeamMap;
+    public void setDistanceToTeam(Map<Team, Integer> distanceToTeam) {
+        this.distanceToTeam = distanceToTeam;
     }
 
     @JsonIgnore
     public int getDistance(Team other) {
-        return distanceToTeamMap.get(other);
+        return distanceToTeam.get(other);
     }
 
     @Override
     public String toString() {
-        return getName();
+        return getId();
     }
 
     @Override

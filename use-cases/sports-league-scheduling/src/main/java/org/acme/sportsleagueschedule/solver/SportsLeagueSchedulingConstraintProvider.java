@@ -1,20 +1,22 @@
-package solver;
+package org.acme.sportsleagueschedule.solver;
 
 import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
+import static ai.timefold.solver.core.api.score.stream.Joiners.filtering;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
 
-import domain.Day;
-import domain.Match;
+import org.acme.sportsleagueschedule.domain.Day;
+import org.acme.sportsleagueschedule.domain.Match;
 
-public class TravelingTournamentConstraintProvider implements ConstraintProvider {
+public class SportsLeagueSchedulingConstraintProvider implements ConstraintProvider {
 
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
+                matchesOnSameDay(constraintFactory),
                 fourConsecutiveHomeMatches(constraintFactory),
                 fourConsecutiveAwayMatches(constraintFactory),
                 repeatMatchOnTheNextDay(constraintFactory),
@@ -24,6 +26,16 @@ public class TravelingTournamentConstraintProvider implements ConstraintProvider
                 awayToHomeHop(constraintFactory),
                 awayToEndHop(constraintFactory)
         };
+    }
+
+    protected Constraint matchesOnSameDay(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEachUniquePair(Match.class,
+                        equal(Match::getDayIndex),
+                        filtering((match1, match2) -> match1.getHomeTeam().equals(match2.getHomeTeam())
+                                || match1.getHomeTeam().equals(match2.getAwayTeam())))
+                .penalize(HardSoftScore.ONE_HARD)
+                .asConstraint("matches on the same day");
     }
 
     protected Constraint fourConsecutiveHomeMatches(ConstraintFactory constraintFactory) {
