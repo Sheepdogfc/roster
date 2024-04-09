@@ -3,6 +3,8 @@ package domain;
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @PlanningEntity
 public class Match {
 
@@ -62,4 +64,11 @@ public class Match {
         return homeTeam + "+" + awayTeam;
     }
 
+    // ************************************************************************
+    // Complex methods
+    // ************************************************************************
+    @JsonIgnore
+    public int getDayIndex() {
+        return getDay().getIndex();
+    }
 }
