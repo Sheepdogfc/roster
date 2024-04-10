@@ -1,16 +1,21 @@
 package org.acme.sportsleagueschedule.rest;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
-import org.acme.sportsleagueschedule.domain.Day;
 import org.acme.sportsleagueschedule.domain.LeagueSchedule;
 import org.acme.sportsleagueschedule.domain.Match;
+import org.acme.sportsleagueschedule.domain.Round;
 import org.acme.sportsleagueschedule.domain.Team;
 
 @ApplicationScoped
@@ -33,32 +38,42 @@ public class DemoDataGenerator {
             { 2054, 202, 202, 161, 600, 600, 202, 1836, 714, 1545, 1340, 1077, 14, 0 },
     };
 
+    private final Random random = new Random(0);
+
     public LeagueSchedule generateDemoData() {
         LeagueSchedule schedule = new LeagueSchedule();
-        // Days
-        int countDays = 27;
-        List<Day> days = generateDays(countDays);
+        // Days - 2 * (N - 1) + 1
+        int countRounds = 27;
+        List<Round> rounds = generateRounds(countRounds);
         // Teams
         List<Team> teams = generateTeams();
         // Matches
-        List<Match> matches = generateMacthes(teams);
+        List<Match> matches = generateMatches(teams);
         // Update schedule
-        schedule.setDays(days);
+        schedule.setRounds(rounds);
         schedule.setTeams(teams);
         schedule.setMatches(matches);
         return schedule;
     }
 
-    private List<Day> generateDays(int countDays) {
-        return IntStream.range(0, countDays)
-                .mapToObj(Day::new)
+    private List<Round> generateRounds(int countRounds) {
+        List<Round> rounds = IntStream.range(0, countRounds)
+                .mapToObj(Round::new)
                 .toList();
+
+        // Rounds at weekends set as important
+        LocalDate today = LocalDate.now();
+        rounds.stream()
+                .filter(round -> today.plusDays(round.getIndex()).getDayOfWeek() == DayOfWeek.SATURDAY
+                        || today.plusDays(round.getIndex()).getDayOfWeek() == DayOfWeek.SUNDAY)
+                .forEach(round -> round.setImportantRound(true));
+        return rounds;
     }
 
     private List<Team> generateTeams() {
         List<Team> teams = List.of(
                 new Team("1", "Cruzeiro"),
-                new Team("2", "Argentinos Juniors"),
+                new Team("2", "Argentinos Jr."),
                 new Team("3", "Boca Juniors"),
                 new Team("4", "Estudiantes"),
                 new Team("5", "Independente"),
@@ -86,7 +101,7 @@ public class DemoDataGenerator {
         return teams;
     }
 
-    private List<Match> generateMacthes(List<Team> teams) {
+    private List<Match> generateMatches(List<Team> teams) {
         List<Match> matches = new ArrayList<>(teams.size() * teams.size());
         for (int i = 0; i < teams.size(); i++) {
             for (int j = 0; j < teams.size(); j++) {
@@ -96,6 +111,24 @@ public class DemoDataGenerator {
                 }
             }
         }
+
+        // 5% classic matches
+        applyRandomValue((int) (matches.size() * 0.05), matches, match -> !match.isClassicMatch(),
+                round -> round.setClassicMatch(true));
         return matches;
+    }
+
+    private <T> void applyRandomValue(int count, List<T> values, Predicate<T> filter, Consumer<T> consumer) {
+        int size = (int) values.stream().filter(filter).count();
+        for (int i = 0; i < count; i++) {
+            values.stream()
+                    .filter(filter)
+                    .skip(size > 0 ? random.nextInt(size) : 0).findFirst()
+                    .ifPresent(consumer::accept);
+            size--;
+            if (size < 0) {
+                break;
+            }
+        }
     }
 }

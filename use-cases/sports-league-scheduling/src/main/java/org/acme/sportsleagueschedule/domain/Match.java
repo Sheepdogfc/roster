@@ -13,8 +13,9 @@ public class Match {
     private String id;
     private Team homeTeam;
     private Team awayTeam;
+    private boolean classicMatch;
     @PlanningVariable
-    private Day day;
+    private Round round;
 
     public Match() {
     }
@@ -27,6 +28,11 @@ public class Match {
         this(id);
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
+    }
+
+    public Match(String id, Team homeTeam, Team awayTeam, boolean classicMatch) {
+        this(id, homeTeam, awayTeam);
+        this.classicMatch = classicMatch;
     }
 
     public String getId() {
@@ -53,12 +59,20 @@ public class Match {
         this.awayTeam = awayTeam;
     }
 
-    public Day getDay() {
-        return day;
+    public boolean isClassicMatch() {
+        return classicMatch;
     }
 
-    public void setDay(Day day) {
-        this.day = day;
+    public void setClassicMatch(boolean classicMatch) {
+        this.classicMatch = classicMatch;
+    }
+
+    public Round getRound() {
+        return round;
+    }
+
+    public void setRound(Round round) {
+        this.round = round;
     }
 
     @Override
@@ -70,7 +84,7 @@ public class Match {
     // Complex methods
     // ************************************************************************
     @JsonIgnore
-    public int getDayIndex() {
-        return getDay().getIndex();
+    public int getRoundIndex() {
+        return getRound().getIndex();
     }
 }

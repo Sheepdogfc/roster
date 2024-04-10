@@ -6,9 +6,9 @@ import jakarta.inject.Inject;
 
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
 
-import org.acme.sportsleagueschedule.domain.Day;
 import org.acme.sportsleagueschedule.domain.LeagueSchedule;
 import org.acme.sportsleagueschedule.domain.Match;
+import org.acme.sportsleagueschedule.domain.Round;
 import org.acme.sportsleagueschedule.domain.Team;
 import org.junit.jupiter.api.Test;
 
@@ -25,9 +25,9 @@ class SportsLeagueSchedulingConstraintProviderTest {
         Team homeTeam = new Team("1");
         Team rivalTeam = new Team("2");
         Match firstMatch = new Match("1", homeTeam, rivalTeam);
-        firstMatch.setDay(new Day(0));
+        firstMatch.setRound(new Round(0));
         Match secondMatch = new Match("2", homeTeam, rivalTeam);
-        secondMatch.setDay(new Day(0));
+        secondMatch.setRound(new Round(0));
         Match thirdMatch = new Match("3", homeTeam, rivalTeam);
 
         constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::matchesOnSameDay)
@@ -40,13 +40,13 @@ class SportsLeagueSchedulingConstraintProviderTest {
         Team homeTeam = new Team("1");
         Team rivalTeam = new Team("2");
         Match firstMatch = new Match("1", homeTeam, rivalTeam);
-        firstMatch.setDay(new Day(0));
+        firstMatch.setRound(new Round(0));
         Match secondMatch = new Match("2", homeTeam, rivalTeam);
-        secondMatch.setDay(new Day(1));
+        secondMatch.setRound(new Round(1));
         Match thirdMatch = new Match("3", homeTeam, rivalTeam);
-        thirdMatch.setDay(new Day(2));
+        thirdMatch.setRound(new Round(2));
         Match fourthMatch = new Match("4", homeTeam, rivalTeam);
-        fourthMatch.setDay(new Day(3));
+        fourthMatch.setRound(new Round(3));
         Match fifthMatch = new Match("5", new Team("3"), homeTeam);
 
         constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::fourConsecutiveHomeMatches)
@@ -59,13 +59,13 @@ class SportsLeagueSchedulingConstraintProviderTest {
         Team homeTeam = new Team("1");
         Team rivalTeam = new Team("2");
         Match firstMatch = new Match("1", homeTeam, rivalTeam);
-        firstMatch.setDay(new Day(0));
+        firstMatch.setRound(new Round(0));
         Match secondMatch = new Match("2", homeTeam, rivalTeam);
-        secondMatch.setDay(new Day(1));
+        secondMatch.setRound(new Round(1));
         Match thirdMatch = new Match("3", homeTeam, rivalTeam);
-        thirdMatch.setDay(new Day(2));
+        thirdMatch.setRound(new Round(2));
         Match fourthMatch = new Match("4", homeTeam, rivalTeam);
-        fourthMatch.setDay(new Day(3));
+        fourthMatch.setRound(new Round(3));
         Match fifthMatch = new Match("5", new Team("3"), homeTeam);
 
         constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::fourConsecutiveAwayMatches)
@@ -78,13 +78,13 @@ class SportsLeagueSchedulingConstraintProviderTest {
         Team homeTeam = new Team("1");
         Team rivalTeam = new Team("2");
         Match firstMatch = new Match("1", homeTeam, rivalTeam);
-        firstMatch.setDay(new Day(0));
+        firstMatch.setRound(new Round(0));
         Match secondMatch = new Match("2", rivalTeam, homeTeam);
-        secondMatch.setDay(new Day(1));
+        secondMatch.setRound(new Round(1));
         Match thirdMatch = new Match("3", homeTeam, rivalTeam);
-        thirdMatch.setDay(new Day(4));
+        thirdMatch.setRound(new Round(4));
         Match fourthMatch = new Match("4", rivalTeam, homeTeam);
-        fourthMatch.setDay(new Day(6));
+        fourthMatch.setRound(new Round(6));
 
         constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::repeatMatchOnTheNextDay)
                 .given(firstMatch, secondMatch, thirdMatch, fourthMatch)
@@ -98,14 +98,14 @@ class SportsLeagueSchedulingConstraintProviderTest {
         secondTeam.setDistanceToTeam(Map.of(homeTeam, 5));
         Team thirdTeam = new Team("3");
         Match firstMatch = new Match("1", homeTeam, secondTeam);
-        Day firstDay = new Day(0);
-        firstMatch.setDay(firstDay);
+        Round firstRound = new Round(0);
+        firstMatch.setRound(firstRound);
         Match secondMatch = new Match("2", homeTeam, thirdTeam);
-        Day secondDay = new Day(1);
-        secondMatch.setDay(secondDay);
+        Round secondRound = new Round(1);
+        secondMatch.setRound(secondRound);
 
         constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::startToAwayHop)
-                .given(firstMatch, secondMatch, firstDay, secondDay)
+                .given(firstMatch, secondMatch, firstRound, secondRound)
                 .penalizesBy(5); // match with the second team
     }
 
@@ -116,14 +116,14 @@ class SportsLeagueSchedulingConstraintProviderTest {
         Team thirdTeam = new Team("3");
         homeTeam.setDistanceToTeam(Map.of(thirdTeam, 7));
         Match firstMatch = new Match("1", homeTeam, secondTeam);
-        Day firstDay = new Day(0);
-        firstMatch.setDay(firstDay);
+        Round firstRound = new Round(0);
+        firstMatch.setRound(firstRound);
         Match secondMatch = new Match("2", thirdTeam, homeTeam);
-        Day secondDay = new Day(1);
-        secondMatch.setDay(secondDay);
+        Round secondRound = new Round(1);
+        secondMatch.setRound(secondRound);
 
         constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::homeToAwayHop)
-                .given(firstMatch, secondMatch, firstDay, secondDay)
+                .given(firstMatch, secondMatch, firstRound, secondRound)
                 .penalizesBy(7); // match with the home team
     }
 
@@ -134,14 +134,14 @@ class SportsLeagueSchedulingConstraintProviderTest {
         Team thirdTeam = new Team("3");
         secondTeam.setDistanceToTeam(Map.of(thirdTeam, 2));
         Match firstMatch = new Match("1", secondTeam, homeTeam);
-        Day firstDay = new Day(0);
-        firstMatch.setDay(firstDay);
+        Round firstRound = new Round(0);
+        firstMatch.setRound(firstRound);
         Match secondMatch = new Match("2", thirdTeam, homeTeam);
-        Day secondDay = new Day(1);
-        secondMatch.setDay(secondDay);
+        Round secondRound = new Round(1);
+        secondMatch.setRound(secondRound);
 
         constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::awayToAwayHop)
-                .given(firstMatch, secondMatch, firstDay, secondDay)
+                .given(firstMatch, secondMatch, firstRound, secondRound)
                 .penalizesBy(2); // match with the home team
     }
 
@@ -152,14 +152,14 @@ class SportsLeagueSchedulingConstraintProviderTest {
         Team thirdTeam = new Team("3");
         secondTeam.setDistanceToTeam(Map.of(homeTeam, 20));
         Match firstMatch = new Match("1", secondTeam, homeTeam);
-        Day firstDay = new Day(0);
-        firstMatch.setDay(firstDay);
+        Round firstRound = new Round(0);
+        firstMatch.setRound(firstRound);
         Match secondMatch = new Match("2", homeTeam, thirdTeam);
-        Day secondDay = new Day(1);
-        secondMatch.setDay(secondDay);
+        Round secondRound = new Round(1);
+        secondMatch.setRound(secondRound);
 
         constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::awayToHomeHop)
-                .given(firstMatch, secondMatch, firstDay, secondDay)
+                .given(firstMatch, secondMatch, firstRound, secondRound)
                 .penalizesBy(20); // match with the home team
     }
 
@@ -170,14 +170,30 @@ class SportsLeagueSchedulingConstraintProviderTest {
         Team thirdTeam = new Team("3");
         thirdTeam.setDistanceToTeam(Map.of(homeTeam, 15));
         Match firstMatch = new Match("1", homeTeam, secondTeam);
-        Day firstDay = new Day(0);
-        firstMatch.setDay(firstDay);
+        Round firstRound = new Round(0);
+        firstMatch.setRound(firstRound);
         Match secondMatch = new Match("2", thirdTeam, homeTeam);
-        Day secondDay = new Day(1);
-        secondMatch.setDay(secondDay);
+        Round secondRound = new Round(1);
+        secondMatch.setRound(secondRound);
 
         constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::awayToEndHop)
-                .given(firstMatch, secondMatch, firstDay, secondDay)
+                .given(firstMatch, secondMatch, firstRound, secondRound)
                 .penalizesBy(15); // match with the home team
+    }
+
+    @Test
+    void classicMatches() {
+        Team homeTeam = new Team("1");
+        Team rivalTeam = new Team("2");
+        Match firstMatch = new Match("1", homeTeam, rivalTeam, true);
+        firstMatch.setRound(new Round(0, false));
+        Match secondMatch = new Match("2", rivalTeam, homeTeam, false);
+        secondMatch.setRound(new Round(1, false));
+        Match thirdMatch = new Match("3", homeTeam, rivalTeam, true);
+        thirdMatch.setRound(new Round(4, false));
+
+        constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::classicMatches)
+                .given(firstMatch, secondMatch, thirdMatch)
+                .penalizesBy(2); // two classic matches
     }
 }

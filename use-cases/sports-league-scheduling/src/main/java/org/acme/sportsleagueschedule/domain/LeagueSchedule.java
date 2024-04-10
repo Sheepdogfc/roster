@@ -15,7 +15,7 @@ public class LeagueSchedule {
 
     @ValueRangeProvider
     @ProblemFactCollectionProperty
-    private List<Day> days;
+    private List<Round> rounds;
     @ProblemFactCollectionProperty
     private List<Team> teams;
     @PlanningEntityCollectionProperty
@@ -32,12 +32,12 @@ public class LeagueSchedule {
         this.solverStatus = solverStatus;
     }
 
-    public List<Day> getDays() {
-        return days;
+    public List<Round> getRounds() {
+        return rounds;
     }
 
-    public void setDays(List<Day> days) {
-        this.days = days;
+    public void setRounds(List<Round> rounds) {
+        this.rounds = rounds;
     }
 
     public List<Team> getTeams() {

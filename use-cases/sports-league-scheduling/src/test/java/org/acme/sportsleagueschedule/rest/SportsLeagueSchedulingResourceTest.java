@@ -47,7 +47,7 @@ class SportsLeagueSchedulingResourceTest {
         LeagueSchedule solution = get("/schedules/" + jobId).then().extract().as(LeagueSchedule.class);
         assertThat(solution.getSolverStatus()).isEqualTo(SolverStatus.NOT_SOLVING);
         assertThat(solution.getMatches().stream()
-                .allMatch(match -> match.getDay() != null)).isTrue();
+                .allMatch(match -> match.getRound() != null)).isTrue();
         assertThat(solution.getScore().isFeasible()).isTrue();
     }
 

@@ -111,8 +111,8 @@ function renderScheduleByTeam(schedule) {
     $.each(schedule.matches, (_, match) => {
         const homeTeam = teamMap.get(match.homeTeam);
         const awayTeam = teamMap.get(match.awayTeam);
-        if (match.day == null) {
-            const unassignedElement = $(`<div class="card-body"/>`)
+        if (match.round == null) {
+            const unassignedElement = $(`<div class="card-body" style="background-color: ${match.classicMatch ? '#198754' : '#97b0f8'}"/>`)
                 .append($(`<h5 class="card-title mb-1"/>`).text(`${homeTeam.name} x ${awayTeam.name}`));
 
             unassigned.append($(`<div class="pl-1"/>`).append($(`<div class="card"/>`).append(unassignedElement)));
@@ -122,9 +122,9 @@ function renderScheduleByTeam(schedule) {
                 id: match.id,
                 group: homeTeam.id,
                 content: byTeamElement.html(),
-                start: currentDate.plusDays(match.day).toString(),
-                end: currentDate.plusDays(match.day + 1).toString(),
-                style: `background-color: ${pickColor(awayTeam.id)}`
+                start: currentDate.plusDays(match.round).toString(),
+                end: currentDate.plusDays(match.round + 1).toString(),
+                style: `background-color: ${match.classicMatch ? '#198754' : '#97b0f8'}`
             });
         }
     });
