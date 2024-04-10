@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Tag(name = "Sports League Scheduling",
-        description = "Sports League Scheduling service assigning timeslots for league matches.")
+        description = "Sports League Scheduling service assigning rounds for league matches.")
 @Path("schedules")
 public class SportsLeagueSchedulingResource {
 
