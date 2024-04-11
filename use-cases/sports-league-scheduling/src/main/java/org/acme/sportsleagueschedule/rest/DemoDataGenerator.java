@@ -42,8 +42,8 @@ public class DemoDataGenerator {
 
     public LeagueSchedule generateDemoData() {
         LeagueSchedule schedule = new LeagueSchedule();
-        // Days - 2 * (N - 1) + 1
-        int countRounds = 27;
+        // Rounds
+        int countRounds = 32;
         List<Round> rounds = generateRounds(countRounds);
         // Teams
         List<Team> teams = generateTeams();
@@ -115,6 +115,11 @@ public class DemoDataGenerator {
         // 5% classic matches
         applyRandomValue((int) (matches.size() * 0.05), matches, match -> !match.isClassicMatch(),
                 round -> round.setClassicMatch(true));
+        matches.stream()
+                .filter(match -> matches.stream()
+                        .anyMatch(otherMatch -> match.getHomeTeam().equals(otherMatch.getAwayTeam())
+                                && match.getAwayTeam().equals(otherMatch.getHomeTeam()) && otherMatch.isClassicMatch()))
+                .forEach(match -> match.setClassicMatch(true));
         return matches;
     }
 

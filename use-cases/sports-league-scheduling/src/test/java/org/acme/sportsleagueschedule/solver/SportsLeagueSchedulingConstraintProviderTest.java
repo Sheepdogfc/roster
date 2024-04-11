@@ -22,6 +22,7 @@ class SportsLeagueSchedulingConstraintProviderTest {
 
     @Test
     void matchesSameDay() {
+        // Two matches for the home team
         Team homeTeam = new Team("1");
         Team rivalTeam = new Team("2");
         Match firstMatch = new Match("1", homeTeam, rivalTeam);
@@ -32,7 +33,17 @@ class SportsLeagueSchedulingConstraintProviderTest {
 
         constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::matchesOnSameDay)
                 .given(firstMatch, secondMatch, thirdMatch)
-                .penalizesBy(1); // home team plays two matches
+                .penalizesBy(1);
+
+        // Two matches, one for home and another for away match
+        Team otherTeam = new Team("3");
+        firstMatch = new Match("1", homeTeam, rivalTeam);
+        firstMatch.setRound(new Round(0));
+        secondMatch = new Match("2", rivalTeam, otherTeam);
+        secondMatch.setRound(new Round(0));
+        constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::matchesOnSameDay)
+                .given(firstMatch, secondMatch, thirdMatch)
+                .penalizesBy(1);
     }
 
     @Test

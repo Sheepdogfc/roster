@@ -117,14 +117,23 @@ function renderScheduleByTeam(schedule) {
 
             unassigned.append($(`<div class="pl-1"/>`).append($(`<div class="card"/>`).append(unassignedElement)));
         } else {
-            const byTeamElement = $("<div />").append($("<div class='d-flex justify-content-center' />").append($(`<h5 class="card-title mb-1"/>`).text(awayTeam.name)));
+            const byHomeTeamElement = $("<div />").append($("<div class='d-flex justify-content-center' />").append($(`<h5 class="card-title mb-1"/>`).text(awayTeam.name))).append($(`<small class="ms-2 mt-1 card-text text-muted align-bottom float-end"/>`).append("<span class='fas fa-solid fa-home' title='Home Match' />"));
+            const byAwayTeamElement = $("<div />").append($("<div class='d-flex justify-content-center' />").append($(`<h5 class="card-title mb-1"/>`).text(homeTeam.name))).append($(`<small class="ms-2 mt-1 card-text text-muted align-bottom float-end"/>`).append("<span class='fas fa-plane-departure' title='Away Match' />"));
             byTeamItemData.add({
-                id: match.id,
+                id: `${match.id}-1`,
                 group: homeTeam.id,
-                content: byTeamElement.html(),
+                content: byHomeTeamElement.html(),
                 start: currentDate.plusDays(match.round).toString(),
                 end: currentDate.plusDays(match.round + 1).toString(),
-                style: `background-color: ${match.classicMatch ? '#198754' : '#97b0f8'}`
+                style: `background-color: ${match.classicMatch ? '#198754CF' : '#97b0f8'}`
+            });
+            byTeamItemData.add({
+                id: `${match.id}-2`,
+                group: awayTeam.id,
+                content: byAwayTeamElement.html(),
+                start: currentDate.plusDays(match.round).toString(),
+                end: currentDate.plusDays(match.round + 1).toString(),
+                style: `background-color: ${match.classicMatch ? '#198754CF' : '#97b0f8'}`
             });
         }
     });
