@@ -8,6 +8,7 @@ import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.bendable.BendableScore;
+import ai.timefold.solver.core.api.solver.SolverStatus;
 
 @PlanningSolution
 public class TaskAssigningSolution {
@@ -25,10 +26,17 @@ public class TaskAssigningSolution {
     @PlanningScore(bendableHardLevelsSize = 1, bendableSoftLevelsSize = 5)
     private BendableScore score;
 
+    private SolverStatus solverStatus;
+
     /** Relates to {@link Task#getStartTime()}. */
     private int frozenCutoff; // In minutes
 
     public TaskAssigningSolution() {
+    }
+
+    public TaskAssigningSolution(BendableScore score, SolverStatus solverStatus) {
+        this.score = score;
+        this.solverStatus = solverStatus;
     }
 
     public List<Customer> getCustomerList() {
@@ -61,6 +69,14 @@ public class TaskAssigningSolution {
 
     public void setScore(BendableScore score) {
         this.score = score;
+    }
+
+    public SolverStatus getSolverStatus() {
+        return solverStatus;
+    }
+
+    public void setSolverStatus(SolverStatus solverStatus) {
+        this.solverStatus = solverStatus;
     }
 
     public int getFrozenCutoff() {
