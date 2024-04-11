@@ -21,10 +21,6 @@ public class TaskAssigningConstraintProvider implements ConstraintProvider {
                 noMissingSkills(constraintFactory),
                 minimizeUnassignedTasks(constraintFactory),
                 minimizeMakespan(constraintFactory),
-                /*
-                 * TODO potential for performance improvements through API enhancements,
-                 * see https://issues.redhat.com/browse/PLANNER-1604.
-                 */
                 criticalPriorityBasedTaskEndTime(constraintFactory),
                 majorPriorityTaskEndTime(constraintFactory),
                 minorPriorityTaskEndTime(constraintFactory)
@@ -48,7 +44,8 @@ public class TaskAssigningConstraintProvider implements ConstraintProvider {
 
     private UniConstraintStream<Task> getTaskWithPriority(ConstraintFactory constraintFactory, Priority priority) {
         return constraintFactory.forEach(Task.class)
-                .filter(task -> task.getEmployee() != null && task.getPriority() == priority);
+                .filter(task -> task.getEmployee() != null)
+                .filter(task -> task.getPriority() == priority);
     }
 
     protected Constraint criticalPriorityBasedTaskEndTime(ConstraintFactory constraintFactory) {

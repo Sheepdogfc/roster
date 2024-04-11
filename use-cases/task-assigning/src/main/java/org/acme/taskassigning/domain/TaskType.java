@@ -24,6 +24,13 @@ public class TaskType {
         requiredSkillList = new ArrayList<>();
     }
 
+    public TaskType(String code, String title, int baseDuration, List<String> requiredSkillList) {
+        this.code = code;
+        this.title = title;
+        this.baseDuration = baseDuration;
+        this.requiredSkillList = requiredSkillList;
+    }
+
     public String getCode() {
         return code;
     }

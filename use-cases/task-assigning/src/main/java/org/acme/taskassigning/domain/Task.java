@@ -29,8 +29,16 @@ public class Task {
     public Task() {
     }
 
+    public Task(String id, TaskType taskType, int indexInTaskType, Customer customer, Priority priority) {
+        this.id = id;
+        this.taskType = taskType;
+        this.indexInTaskType = indexInTaskType;
+        this.customer = customer;
+        this.priority = priority;
+    }
+
     public Task(String id, TaskType taskType, int indexInTaskType, Customer customer, Employee employee, int minStartTime,
-            Priority priority) {
+                Priority priority) {
         this.id = id;
         this.taskType = taskType;
         this.indexInTaskType = indexInTaskType;

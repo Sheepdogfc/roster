@@ -42,6 +42,12 @@ public class Employee {
         tasks = new ArrayList<>();
     }
 
+    public Employee(String id, String fullName, List<String> skills, Map<Customer, Affinity> customerToAffinity) {
+        this(id, fullName);
+        this.skills = skills;
+        this.customerToAffinity = customerToAffinity;
+    }
+
     public String getId() {
         return id;
     }

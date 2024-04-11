@@ -14,14 +14,14 @@ import ai.timefold.solver.core.api.solver.SolverStatus;
 public class TaskAssigningSolution {
 
     @ProblemFactCollectionProperty
-    private List<Customer> customerList;
+    private List<Customer> customers;
 
     @ValueRangeProvider
     @PlanningEntityCollectionProperty
-    private List<Task> taskList;
+    private List<Task> tasks;
 
     @PlanningEntityCollectionProperty
-    private List<Employee> employeeList;
+    private List<Employee> employees;
 
     @PlanningScore(bendableHardLevelsSize = 1, bendableSoftLevelsSize = 5)
     private BendableScore score;
@@ -39,28 +39,28 @@ public class TaskAssigningSolution {
         this.solverStatus = solverStatus;
     }
 
-    public List<Customer> getCustomerList() {
-        return customerList;
+    public List<Customer> getCustomers() {
+        return customers;
     }
 
-    public void setCustomerList(List<Customer> customerList) {
-        this.customerList = customerList;
+    public void setCustomers(List<Customer> customers) {
+        this.customers = customers;
     }
 
-    public List<Employee> getEmployeeList() {
-        return employeeList;
+    public List<Employee> getEmployees() {
+        return employees;
     }
 
-    public void setEmployeeList(List<Employee> employeeList) {
-        this.employeeList = employeeList;
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;
     }
 
-    public List<Task> getTaskList() {
-        return taskList;
+    public List<Task> getTasks() {
+        return tasks;
     }
 
-    public void setTaskList(List<Task> taskList) {
-        this.taskList = taskList;
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
     public BendableScore getScore() {
