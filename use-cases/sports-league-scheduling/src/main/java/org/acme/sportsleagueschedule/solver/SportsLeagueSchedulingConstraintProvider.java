@@ -18,12 +18,14 @@ import org.acme.sportsleagueschedule.domain.Team;
 
 public class SportsLeagueSchedulingConstraintProvider implements ConstraintProvider {
 
+    private static final int MAX_CONSECUTIVE_MATCHES = 4;
+
     @Override
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
                 matchesOnSameDay(constraintFactory),
-                fourConsecutiveHomeMatches(constraintFactory),
-                fourConsecutiveAwayMatches(constraintFactory),
+                multipleConsecutiveHomeMatches(constraintFactory),
+                multipleConsecutiveAwayMatches(constraintFactory),
                 repeatMatchOnTheNextDay(constraintFactory),
                 startToAwayHop(constraintFactory),
                 homeToAwayHop(constraintFactory),
@@ -43,29 +45,29 @@ public class SportsLeagueSchedulingConstraintProvider implements ConstraintProvi
                                 || match1.getAwayTeam().equals(match2.getHomeTeam())
                                 || match1.getAwayTeam().equals(match2.getAwayTeam())))
                 .penalize(HardSoftScore.ONE_HARD)
-                .asConstraint("matches on the same day");
+                .asConstraint("Matches on the same day");
     }
 
-    protected Constraint fourConsecutiveHomeMatches(ConstraintFactory constraintFactory) {
+    protected Constraint multipleConsecutiveHomeMatches(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Match.class)
                 .join(Team.class, equal(Match::getHomeTeam, Function.identity()))
                 .groupBy((match, team) -> team,
                         ConstraintCollectors.toConsecutiveSequences((match, team) -> match.getRound(), Round::getIndex))
                 .flattenLast(SequenceChain::getConsecutiveSequences)
-                .filter((team, matches) -> matches.getItems().size() >= 4)
-                .penalize(HardSoftScore.ONE_HARD)
-                .asConstraint("4 consecutive home matches");
+                .filter((team, matches) -> matches.getCount() >= MAX_CONSECUTIVE_MATCHES)
+                .penalize(HardSoftScore.ONE_HARD, (team, matches) -> matches.getCount())
+                .asConstraint("4 or more consecutive home matches");
     }
 
-    protected Constraint fourConsecutiveAwayMatches(ConstraintFactory constraintFactory) {
+    protected Constraint multipleConsecutiveAwayMatches(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Match.class)
                 .join(Team.class, equal(Match::getAwayTeam, Function.identity()))
                 .groupBy((match, team) -> team,
                         ConstraintCollectors.toConsecutiveSequences((match, team) -> match.getRound(), Round::getIndex))
                 .flattenLast(SequenceChain::getConsecutiveSequences)
-                .filter((team, matches) -> matches.getItems().size() >= 4)
-                .penalize(HardSoftScore.ONE_HARD)
-                .asConstraint("4 consecutive away matches");
+                .filter((team, matches) -> matches.getCount() >= MAX_CONSECUTIVE_MATCHES)
+                .penalize(HardSoftScore.ONE_HARD, (team, matches) -> matches.getCount())
+                .asConstraint("4 or more consecutive away matches");
     }
 
     protected Constraint repeatMatchOnTheNextDay(ConstraintFactory constraintFactory) {

@@ -47,7 +47,7 @@ class SportsLeagueSchedulingConstraintProviderTest {
     }
 
     @Test
-    void fourConsecutiveHomeMatches() {
+    void multipleConsecutiveHomeMatches() {
         Team homeTeam = new Team("1");
         Team rivalTeam = new Team("2");
         Match firstMatch = new Match("1", homeTeam, rivalTeam);
@@ -60,13 +60,13 @@ class SportsLeagueSchedulingConstraintProviderTest {
         fourthMatch.setRound(new Round(3));
         Match fifthMatch = new Match("5", new Team("3"), homeTeam);
 
-        constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::fourConsecutiveHomeMatches)
+        constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::multipleConsecutiveHomeMatches)
                 .given(firstMatch, secondMatch, thirdMatch, fourthMatch, fifthMatch, homeTeam, rivalTeam)
-                .penalizesBy(1); // four consecutive matches for homeTeam
+                .penalizesBy(4); // four consecutive matches for homeTeam
     }
 
     @Test
-    void fourConsecutiveAwayMatches() {
+    void multipleConsecutiveAwayMatches() {
         Team homeTeam = new Team("1");
         Team rivalTeam = new Team("2");
         Match firstMatch = new Match("1", homeTeam, rivalTeam);
@@ -79,9 +79,9 @@ class SportsLeagueSchedulingConstraintProviderTest {
         fourthMatch.setRound(new Round(3));
         Match fifthMatch = new Match("5", new Team("3"), homeTeam);
 
-        constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::fourConsecutiveAwayMatches)
+        constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::multipleConsecutiveAwayMatches)
                 .given(firstMatch, secondMatch, thirdMatch, fourthMatch, fifthMatch, homeTeam, rivalTeam)
-                .penalizesBy(1); // four consecutive away matches for homeTeam
+                .penalizesBy(4); // four consecutive away matches for homeTeam
     }
 
     @Test
