@@ -50,7 +50,7 @@ class SportsLeagueSchedulingConstraintProviderTest {
         Match fifthMatch = new Match("5", new Team("3"), homeTeam);
 
         constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::fourConsecutiveHomeMatches)
-                .given(firstMatch, secondMatch, thirdMatch, fourthMatch, fifthMatch)
+                .given(firstMatch, secondMatch, thirdMatch, fourthMatch, fifthMatch, homeTeam, rivalTeam)
                 .penalizesBy(1); // four consecutive matches for homeTeam
     }
 
@@ -69,7 +69,7 @@ class SportsLeagueSchedulingConstraintProviderTest {
         Match fifthMatch = new Match("5", new Team("3"), homeTeam);
 
         constraintVerifier.verifyThat(SportsLeagueSchedulingConstraintProvider::fourConsecutiveAwayMatches)
-                .given(firstMatch, secondMatch, thirdMatch, fourthMatch, fifthMatch)
+                .given(firstMatch, secondMatch, thirdMatch, fourthMatch, fifthMatch, homeTeam, rivalTeam)
                 .penalizesBy(1); // four consecutive away matches for homeTeam
     }
 

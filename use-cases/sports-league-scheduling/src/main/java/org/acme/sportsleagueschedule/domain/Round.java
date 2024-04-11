@@ -10,7 +10,8 @@ public class Round {
 
     @PlanningId
     private int index;
-    private boolean importantRound;
+    // Rounds scheduled on weekends and holidays. It's common for classic matches to be scheduled on weekends or holidays.
+    private boolean weekendOrHoliday;
 
     public Round() {
     }
@@ -19,9 +20,9 @@ public class Round {
         this.index = index;
     }
 
-    public Round(int index, boolean importantRound) {
+    public Round(int index, boolean weekendOrHoliday) {
         this(index);
-        this.importantRound = importantRound;
+        this.weekendOrHoliday = weekendOrHoliday;
     }
 
     public int getIndex() {
@@ -32,17 +33,17 @@ public class Round {
         this.index = index;
     }
 
-    public boolean isImportantRound() {
-        return importantRound;
+    public boolean isWeekendOrHoliday() {
+        return weekendOrHoliday;
     }
 
-    public void setImportantRound(boolean importantRound) {
-        this.importantRound = importantRound;
+    public void setWeekendOrHoliday(boolean weekendOrHoliday) {
+        this.weekendOrHoliday = weekendOrHoliday;
     }
 
     @Override
     public String toString() {
-        return "Day-" + index;
+        return "Round-" + index;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.acme.sportsleagueschedule.domain;
 
+import java.util.Objects;
+
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
@@ -13,6 +15,7 @@ public class Match {
     private String id;
     private Team homeTeam;
     private Team awayTeam;
+    // A classic/important match can impact aspects like revenue (e.g., derby)
     private boolean classicMatch;
     @PlanningVariable
     private Round round;
@@ -86,5 +89,19 @@ public class Match {
     @JsonIgnore
     public int getRoundIndex() {
         return getRound().getIndex();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Match match))
+            return false;
+        return Objects.equals(getId(), match.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
     }
 }

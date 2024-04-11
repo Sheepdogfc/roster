@@ -3,13 +3,18 @@ package org.acme.sportsleagueschedule.solver;
 import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
 import static ai.timefold.solver.core.api.score.stream.Joiners.filtering;
 
+import java.util.function.Function;
+
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
+import ai.timefold.solver.core.api.score.stream.ConstraintCollectors;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
+import ai.timefold.solver.core.api.score.stream.common.SequenceChain;
 
 import org.acme.sportsleagueschedule.domain.Match;
 import org.acme.sportsleagueschedule.domain.Round;
+import org.acme.sportsleagueschedule.domain.Team;
 
 public class SportsLeagueSchedulingConstraintProvider implements ConstraintProvider {
 
@@ -42,24 +47,22 @@ public class SportsLeagueSchedulingConstraintProvider implements ConstraintProvi
 
     protected Constraint fourConsecutiveHomeMatches(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Match.class)
-                .ifExists(Match.class, equal(Match::getHomeTeam),
-                        equal(match -> match.getRoundIndex() + 1, Match::getRoundIndex))
-                .ifExists(Match.class, equal(Match::getHomeTeam),
-                        equal(match -> match.getRoundIndex() + 2, Match::getRoundIndex))
-                .ifExists(Match.class, equal(Match::getHomeTeam),
-                        equal(match -> match.getRoundIndex() + 3, Match::getRoundIndex))
+                .join(Team.class, equal(Match::getHomeTeam, Function.identity()))
+                .groupBy((match, team) -> team,
+                        ConstraintCollectors.toConsecutiveSequences((match, team) -> match.getRound(), Round::getIndex))
+                .flattenLast(SequenceChain::getConsecutiveSequences)
+                .filter((team, matches) -> matches.getItems().size() >= 4)
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("4 consecutive home matches");
     }
 
     protected Constraint fourConsecutiveAwayMatches(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Match.class)
-                .ifExists(Match.class, equal(Match::getAwayTeam),
-                        equal(match -> match.getRoundIndex() + 1, Match::getRoundIndex))
-                .ifExists(Match.class, equal(Match::getAwayTeam),
-                        equal(match -> match.getRoundIndex() + 2, Match::getRoundIndex))
-                .ifExists(Match.class, equal(Match::getAwayTeam),
-                        equal(match -> match.getRoundIndex() + 3, Match::getRoundIndex))
+                .join(Team.class, equal(Match::getAwayTeam, Function.identity()))
+                .groupBy((match, team) -> team,
+                        ConstraintCollectors.toConsecutiveSequences((match, team) -> match.getRound(), Round::getIndex))
+                .flattenLast(SequenceChain::getConsecutiveSequences)
+                .filter((team, matches) -> matches.getItems().size() >= 4)
                 .penalize(HardSoftScore.ONE_HARD)
                 .asConstraint("4 consecutive away matches");
     }
@@ -119,9 +122,9 @@ public class SportsLeagueSchedulingConstraintProvider implements ConstraintProvi
 
     protected Constraint classicMatches(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Match.class)
-                .filter(match -> match.isClassicMatch() && !match.getRound().isImportantRound())
+                .filter(match -> match.isClassicMatch() && !match.getRound().isWeekendOrHoliday())
                 .penalize(HardSoftScore.ofSoft(1000))
-                .asConstraint("Classic matches played on important rounds");
+                .asConstraint("Classic matches played on weekends or holidays");
     }
 
 }

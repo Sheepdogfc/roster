@@ -66,7 +66,7 @@ public class DemoDataGenerator {
         rounds.stream()
                 .filter(round -> today.plusDays(round.getIndex()).getDayOfWeek() == DayOfWeek.SATURDAY
                         || today.plusDays(round.getIndex()).getDayOfWeek() == DayOfWeek.SUNDAY)
-                .forEach(round -> round.setImportantRound(true));
+                .forEach(round -> round.setWeekendOrHoliday(true));
         return rounds;
     }
 
