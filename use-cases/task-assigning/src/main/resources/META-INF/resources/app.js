@@ -167,13 +167,17 @@ function renderScheduleByEmployee(plan) {
             const employee = employeeMap.get(task.employee);
             const customer = customerMap.get(task.customer);
             const affinity = employee.customerToAffinity[task.customer];
+            let affinityMultiplier = 4;
             let affinityIcon = "<span class='fas fa-solid fa-exclamation-circle' style='color: red' title='No Affinity'/>";
             if (affinity === 'LOW') {
                 affinityIcon = "<span class='fas fa-solid fa-arrow-down' style='color: blue' title='Low Affinity'/>";
+                affinityMultiplier = 3;
             } else if (affinity === 'MEDIUM') {
                 affinityIcon = "<span class='fas fa-solid fa-arrow-up' style='color: blue' title='Medium Affinity'/>";
+                affinityMultiplier = 2;
             } else if (affinity === 'HIGH') {
                 affinityIcon = "<span class='fas fa-solid fa-arrow-circle-up' style='color: blue' title='High Affinity'/>";
+                affinityMultiplier = 1;
             }
 
             const employeeElement = $(`<div class="card-body p-2"/>`)
@@ -200,12 +204,13 @@ function renderScheduleByEmployee(plan) {
             employeeElement.append(priority);
             const startTime = JSJoda.LocalDateTime.now().withHour(8).withMinute(0).withSecond(0)
                 .plusMinutes(task.startTime);
+            const duration = affinityMultiplier * taskType.baseDuration;
             byEmployeeItemData.add({
                 id: task.id,
                 group: task.employee,
                 content: employeeElement.html(),
                 start: startTime.toString(),
-                end: startTime.plusMinutes(task.duration).toString(),
+                end: startTime.plusMinutes(duration).toString(),
             });
         }
     });

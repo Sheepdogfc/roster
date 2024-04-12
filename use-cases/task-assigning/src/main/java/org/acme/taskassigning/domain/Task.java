@@ -134,6 +134,7 @@ public class Task {
         return count;
     }
 
+    @JsonIgnore
     public int getDuration() {
         Affinity affinity = getAffinity();
         return taskType.getBaseDuration() * affinity.getDurationMultiplier();
