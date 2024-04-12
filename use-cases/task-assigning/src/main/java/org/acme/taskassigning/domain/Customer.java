@@ -1,5 +1,7 @@
 package org.acme.taskassigning.domain;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -35,5 +37,24 @@ public class Customer {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Customer customer))
+            return false;
+        return Objects.equals(getId(), customer.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return getId();
     }
 }

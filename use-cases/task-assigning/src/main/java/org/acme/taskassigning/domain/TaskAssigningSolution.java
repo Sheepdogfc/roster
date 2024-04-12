@@ -13,6 +13,8 @@ import ai.timefold.solver.core.api.solver.SolverStatus;
 @PlanningSolution
 public class TaskAssigningSolution {
 
+    private List<TaskType> taskTypes;
+
     @ProblemFactCollectionProperty
     private List<Customer> customers;
 
@@ -28,15 +30,20 @@ public class TaskAssigningSolution {
 
     private SolverStatus solverStatus;
 
-    /** Relates to {@link Task#getStartTime()}. */
-    private int frozenCutoff; // In minutes
-
     public TaskAssigningSolution() {
     }
 
     public TaskAssigningSolution(BendableScore score, SolverStatus solverStatus) {
         this.score = score;
         this.solverStatus = solverStatus;
+    }
+
+    public List<TaskType> getTaskTypes() {
+        return taskTypes;
+    }
+
+    public void setTaskTypes(List<TaskType> taskTypes) {
+        this.taskTypes = taskTypes;
     }
 
     public List<Customer> getCustomers() {
@@ -78,13 +85,4 @@ public class TaskAssigningSolution {
     public void setSolverStatus(SolverStatus solverStatus) {
         this.solverStatus = solverStatus;
     }
-
-    public int getFrozenCutoff() {
-        return frozenCutoff;
-    }
-
-    public void setFrozenCutoff(int frozenCutoff) {
-        this.frozenCutoff = frozenCutoff;
-    }
-
 }

@@ -5,9 +5,12 @@ import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.InverseRelationShadowVariable;
 import ai.timefold.solver.core.api.domain.variable.ShadowVariable;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @PlanningEntity
+@JsonIdentityInfo(scope = Task.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Task {
 
     @PlanningId
@@ -19,6 +22,7 @@ public class Task {
     private Priority priority;
 
     // Shadow variables
+    @JsonIgnore
     @InverseRelationShadowVariable(sourceVariableName = "tasks")
     private Employee employee;
 
@@ -122,7 +126,7 @@ public class Task {
             return 0;
         }
         int count = 0;
-        for (String skill : taskType.getRequiredSkillList()) {
+        for (String skill : taskType.getRequiredSkills()) {
             if (!employee.getSkills().contains(skill)) {
                 count++;
             }
@@ -130,12 +134,6 @@ public class Task {
         return count;
     }
 
-    /**
-     * In minutes
-     *
-     * @return at least 1 minute
-     */
-    @JsonIgnore
     public int getDuration() {
         Affinity affinity = getAffinity();
         return taskType.getBaseDuration() * affinity.getDurationMultiplier();

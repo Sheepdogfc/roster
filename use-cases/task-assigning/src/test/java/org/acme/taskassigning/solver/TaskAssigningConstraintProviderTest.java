@@ -31,15 +31,15 @@ class TaskAssigningConstraintProviderTest {
         employee.setSkills(List.of("3"));
         // Task 1
         TaskType invalidType = new TaskType("1", "1", 1);
-        invalidType.setRequiredSkillList(List.of("1", "2"));
+        invalidType.setRequiredSkills(List.of("1", "2"));
         Task taskInvalid = new Task("1", invalidType, 1, customer, employee, 1, Priority.CRITICAL);
         // Task 2
         TaskType validType = new TaskType("2", "2", 1);
-        validType.setRequiredSkillList(List.of("3"));
+        validType.setRequiredSkills(List.of("3"));
         Task taskValid = new Task("2", validType, 1, customer, employee, 1, Priority.CRITICAL);
         // Task 3
         TaskType invalidType2 = new TaskType("3", "3", 1);
-        invalidType2.setRequiredSkillList(List.of("5"));
+        invalidType2.setRequiredSkills(List.of("5"));
         Task taskInvalid2 = new Task("3", invalidType2, 1, customer, employee, 1, Priority.CRITICAL);
 
         constraintVerifier.verifyThat(TaskAssigningConstraintProvider::noMissingSkills)

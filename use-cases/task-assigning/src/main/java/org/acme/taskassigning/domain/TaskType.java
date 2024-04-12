@@ -12,7 +12,7 @@ public class TaskType {
     private String code;
     private String title;
     private int baseDuration; // In minutes
-    private List<String> requiredSkillList;
+    private List<String> requiredSkills;
 
     public TaskType() {
     }
@@ -21,14 +21,14 @@ public class TaskType {
         this.code = code;
         this.title = title;
         this.baseDuration = baseDuration;
-        requiredSkillList = new ArrayList<>();
+        requiredSkills = new ArrayList<>();
     }
 
-    public TaskType(String code, String title, int baseDuration, List<String> requiredSkillList) {
+    public TaskType(String code, String title, int baseDuration, List<String> requiredSkills) {
         this.code = code;
         this.title = title;
         this.baseDuration = baseDuration;
-        this.requiredSkillList = requiredSkillList;
+        this.requiredSkills = requiredSkills;
     }
 
     public String getCode() {
@@ -55,12 +55,12 @@ public class TaskType {
         this.baseDuration = baseDuration;
     }
 
-    public List<String> getRequiredSkillList() {
-        return requiredSkillList;
+    public List<String> getRequiredSkills() {
+        return requiredSkills;
     }
 
-    public void setRequiredSkillList(List<String> requiredSkillList) {
-        this.requiredSkillList = requiredSkillList;
+    public void setRequiredSkills(List<String> requiredSkills) {
+        this.requiredSkills = requiredSkills;
     }
 
     // ************************************************************************

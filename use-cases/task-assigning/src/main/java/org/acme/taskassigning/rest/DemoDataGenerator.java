@@ -29,11 +29,14 @@ public class DemoDataGenerator {
     private static final String CREATIVE_THINKING_SKILL = "Creative Thinking";
     private static final String STRATEGIC_PLANNING_SKILL = "Strategic Planning";
 
-    private static final TaskType IMPROVE_SALES_TASK_TYPE = new TaskType("IS", "Improve Sales", 46, List.of(STRATEGIC_PLANNING_SKILL));
+    private static final TaskType IMPROVE_SALES_TASK_TYPE =
+            new TaskType("IS", "Improve Sales", 46, List.of(STRATEGIC_PLANNING_SKILL));
     private static final TaskType EXPAND_TAX_TASK_TYPE =
             new TaskType("ET", "Expand Tax", 63, List.of(PROBLEM_SOLVING_SKILL, TEAM_BUILDING_SKILL));
-    private static final TaskType SHRINK_VAT_TASK_TYPE = new TaskType("SV", "Shrink VAT", 63, List.of(STRATEGIC_PLANNING_SKILL));
-    private static final TaskType APPROVE_LEGAL_TASK_TYPE = new TaskType("AL", "Approve Legal", 40, List.of(RISK_MANAGEMENT_SKILL));
+    private static final TaskType SHRINK_VAT_TASK_TYPE =
+            new TaskType("SV", "Shrink VAT", 63, List.of(STRATEGIC_PLANNING_SKILL));
+    private static final TaskType APPROVE_LEGAL_TASK_TYPE =
+            new TaskType("AL", "Approve Legal", 40, List.of(RISK_MANAGEMENT_SKILL));
 
     private static final Customer STEEL_INC_CUSTOMER = new Customer("1", "Steel Inc");
     private static final Customer PAPER_CORP_CUSTOMER = new Customer("2", "Paper Corp");
@@ -50,6 +53,8 @@ public class DemoDataGenerator {
         // Tasks
         List<Task> tasks = generateTasks();
         // Update the plan
+        plan.setTaskTypes(
+                List.of(IMPROVE_SALES_TASK_TYPE, EXPAND_TAX_TASK_TYPE, SHRINK_VAT_TASK_TYPE, APPROVE_LEGAL_TASK_TYPE));
         plan.setCustomers(customers);
         plan.setEmployees(employees);
         plan.setTasks(tasks);
@@ -81,7 +86,11 @@ public class DemoDataGenerator {
                 new Task("21", IMPROVE_SALES_TASK_TYPE, 6, STEEL_INC_CUSTOMER, MINOR),
                 new Task("22", IMPROVE_SALES_TASK_TYPE, 7, PAPER_CORP_CUSTOMER, MAJOR),
                 new Task("23", IMPROVE_SALES_TASK_TYPE, 8, WOOD_EXPRESS_CUSTOMER, CRITICAL),
-                new Task("24", APPROVE_LEGAL_TASK_TYPE, 6, WOOD_EXPRESS_CUSTOMER, MINOR));
+                new Task("24", APPROVE_LEGAL_TASK_TYPE, 6, WOOD_EXPRESS_CUSTOMER, MINOR),
+                new Task("25", APPROVE_LEGAL_TASK_TYPE, 7, STEEL_INC_CUSTOMER, CRITICAL),
+                new Task("26", IMPROVE_SALES_TASK_TYPE, 9, WOOD_EXPRESS_CUSTOMER, MAJOR),
+                new Task("27", IMPROVE_SALES_TASK_TYPE, 10, STEEL_INC_CUSTOMER, CRITICAL),
+                new Task("28", IMPROVE_SALES_TASK_TYPE, 11, WOOD_EXPRESS_CUSTOMER, MAJOR));
     }
 
     private List<Employee> generateEmployees() {
@@ -89,17 +98,17 @@ public class DemoDataGenerator {
                 new Employee("1", "Amy", List.of(PROBLEM_SOLVING_SKILL, BUSINESS_STORYTELLING_SKILL, TEAM_BUILDING_SKILL),
                         Map.of(STEEL_INC_CUSTOMER, HIGH,
                                 PAPER_CORP_CUSTOMER, MEDIUM,
-                                STONE_LIMITED_CUSTOMER, NONE,
+                                STONE_LIMITED_CUSTOMER, HIGH,
                                 WOOD_EXPRESS_CUSTOMER, MEDIUM)),
                 new Employee("2", "Beth", List.of(RISK_MANAGEMENT_SKILL, CREATIVE_THINKING_SKILL),
                         Map.of(STEEL_INC_CUSTOMER, LOW,
-                                PAPER_CORP_CUSTOMER, NONE,
+                                PAPER_CORP_CUSTOMER, HIGH,
                                 STONE_LIMITED_CUSTOMER, LOW,
-                                WOOD_EXPRESS_CUSTOMER, NONE)),
+                                WOOD_EXPRESS_CUSTOMER, MEDIUM)),
                 new Employee("3", "Chad", List.of(STRATEGIC_PLANNING_SKILL, PROBLEM_SOLVING_SKILL),
                         Map.of(STEEL_INC_CUSTOMER, MEDIUM,
                                 PAPER_CORP_CUSTOMER, HIGH,
-                                STONE_LIMITED_CUSTOMER, HIGH,
+                                STONE_LIMITED_CUSTOMER, MEDIUM,
                                 WOOD_EXPRESS_CUSTOMER, LOW)),
                 new Employee("4", "Dan", List.of(BUSINESS_STORYTELLING_SKILL, TEAM_BUILDING_SKILL),
                         Map.of(STEEL_INC_CUSTOMER, LOW,
@@ -108,18 +117,18 @@ public class DemoDataGenerator {
                                 WOOD_EXPRESS_CUSTOMER, MEDIUM)),
                 new Employee("5", "Elsa", List.of(RISK_MANAGEMENT_SKILL, STRATEGIC_PLANNING_SKILL, CREATIVE_THINKING_SKILL),
                         Map.of(STEEL_INC_CUSTOMER, MEDIUM,
-                                PAPER_CORP_CUSTOMER, NONE,
-                                STONE_LIMITED_CUSTOMER, MEDIUM,
+                                PAPER_CORP_CUSTOMER, HIGH,
+                                STONE_LIMITED_CUSTOMER, HIGH,
                                 WOOD_EXPRESS_CUSTOMER, MEDIUM)),
                 new Employee("6", "Flo", List.of(PROBLEM_SOLVING_SKILL, TEAM_BUILDING_SKILL),
                         Map.of(STEEL_INC_CUSTOMER, HIGH,
                                 PAPER_CORP_CUSTOMER, HIGH,
-                                STONE_LIMITED_CUSTOMER, MEDIUM,
+                                STONE_LIMITED_CUSTOMER, NONE,
                                 WOOD_EXPRESS_CUSTOMER, MEDIUM)),
                 new Employee("7", "Gus", List.of(RISK_MANAGEMENT_SKILL, CREATIVE_THINKING_SKILL, BUSINESS_STORYTELLING_SKILL),
                         Map.of(STEEL_INC_CUSTOMER, LOW,
                                 PAPER_CORP_CUSTOMER, MEDIUM,
-                                STONE_LIMITED_CUSTOMER, LOW,
+                                STONE_LIMITED_CUSTOMER, MEDIUM,
                                 WOOD_EXPRESS_CUSTOMER, LOW)),
                 new Employee("8", "Hugo", List.of(STRATEGIC_PLANNING_SKILL, PROBLEM_SOLVING_SKILL, TEAM_BUILDING_SKILL),
                         Map.of(STEEL_INC_CUSTOMER, NONE,
