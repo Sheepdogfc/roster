@@ -63,7 +63,7 @@ class TaskAssigningConstraintProviderTest {
     }
 
     @Test
-    void criticalPriorityBasedTaskEndTime() {
+    void criticalPriorityTaskEndTime() {
         Employee employee = new Employee();
         Customer customer = new Customer("1");
         employee.setCustomerToAffinity(Map.of(customer, Affinity.HIGH));
@@ -75,7 +75,7 @@ class TaskAssigningConstraintProviderTest {
         TaskType type2 = new TaskType("1", "1", 20);
         Task task2 = new Task("2", type2, 1, customer, employee, 2, Priority.MINOR);
 
-        constraintVerifier.verifyThat(TaskAssigningConstraintProvider::criticalPriorityBasedTaskEndTime)
+        constraintVerifier.verifyThat(TaskAssigningConstraintProvider::criticalPriorityTaskEndTime)
                 .given(task1, task2)
                 .penalizesBy(11); // penalizes task1
     }
