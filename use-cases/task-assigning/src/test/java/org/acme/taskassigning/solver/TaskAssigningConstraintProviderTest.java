@@ -77,7 +77,7 @@ class TaskAssigningConstraintProviderTest {
 
         constraintVerifier.verifyThat(TaskAssigningConstraintProvider::criticalPriorityTaskEndTime)
                 .given(task1, task2)
-                .penalizesBy(11); // penalizes task1
+                .penalizesBy(44); // penalizes task1
     }
 
     @Test
@@ -123,7 +123,7 @@ class TaskAssigningConstraintProviderTest {
 
         constraintVerifier.verifyThat(TaskAssigningConstraintProvider::majorPriorityTaskEndTime)
                 .given(task1, task2)
-                .penalizesBy(11); // penalizes task1
+                .penalizesBy(22); // penalizes task1
     }
 
     @Test

@@ -7,7 +7,7 @@ import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
-import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
+import ai.timefold.solver.core.api.score.buildin.bendable.BendableScore;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 @PlanningSolution
@@ -25,15 +25,15 @@ public class TaskAssigningSolution {
     @PlanningEntityCollectionProperty
     private List<Employee> employees;
 
-    @PlanningScore
-    private HardMediumSoftScore score;
+    @PlanningScore(bendableHardLevelsSize = 1, bendableSoftLevelsSize = 3)
+    private BendableScore score;
 
     private SolverStatus solverStatus;
 
     public TaskAssigningSolution() {
     }
 
-    public TaskAssigningSolution(HardMediumSoftScore score, SolverStatus solverStatus) {
+    public TaskAssigningSolution(BendableScore score, SolverStatus solverStatus) {
         this.score = score;
         this.solverStatus = solverStatus;
     }
@@ -70,11 +70,11 @@ public class TaskAssigningSolution {
         this.tasks = tasks;
     }
 
-    public HardMediumSoftScore getScore() {
+    public BendableScore getScore() {
         return score;
     }
 
-    public void setScore(HardMediumSoftScore score) {
+    public void setScore(BendableScore score) {
         this.score = score;
     }
 
