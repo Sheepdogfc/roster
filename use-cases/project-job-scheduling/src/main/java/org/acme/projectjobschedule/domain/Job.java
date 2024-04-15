@@ -82,4 +82,9 @@ public class Job {
     public int hashCode() {
         return getId().hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "Job-" + id;
+    }
 }

@@ -62,6 +62,7 @@ public class Allocation {
     public Allocation(String id, Job job) {
         this(id);
         this.job = job;
+        this.predecessorsDoneDate = 0;
     }
 
     // ************************************************************************
@@ -230,5 +231,10 @@ public class Allocation {
     @Override
     public int hashCode() {
         return getId().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Allocation-" + id;
     }
 }

@@ -7,6 +7,7 @@ import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
 import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
+import ai.timefold.solver.core.api.solver.SolverStatus;
 
 import org.acme.projectjobschedule.domain.resource.Resource;
 
@@ -35,19 +36,26 @@ public class ProjectJobSchedule {
 
     @PlanningScore
     private HardMediumSoftScore score;
+    private SolverStatus solverStatus;
 
     public ProjectJobSchedule() {
     }
 
     @JsonCreator
-    public ProjectJobSchedule(@JsonProperty("projects") List<Project> projects, @JsonProperty("resources") List<Resource> resources,
-                              @JsonProperty("jobs") List<Job> jobs, @JsonProperty("allocations") List<Allocation> allocations) {
+    public ProjectJobSchedule(@JsonProperty("projects") List<Project> projects,
+            @JsonProperty("resources") List<Resource> resources,
+            @JsonProperty("jobs") List<Job> jobs, @JsonProperty("allocations") List<Allocation> allocations) {
         this.projects = projects;
         this.resources = resources;
         this.jobs = jobs;
         this.allocations = allocations;
         this.executionModes = jobs.stream().flatMap(job -> job.getExecutionModes().stream()).toList();
         this.resourceRequirements = executionModes.stream().flatMap(e -> e.getResourceRequirements().stream()).toList();
+    }
+
+    public ProjectJobSchedule(HardMediumSoftScore score, SolverStatus solverStatus) {
+        this.score = score;
+        this.solverStatus = solverStatus;
     }
 
     public List<Project> getProjects() {
@@ -106,4 +114,11 @@ public class ProjectJobSchedule {
         this.score = score;
     }
 
+    public SolverStatus getSolverStatus() {
+        return solverStatus;
+    }
+
+    public void setSolverStatus(SolverStatus solverStatus) {
+        this.solverStatus = solverStatus;
+    }
 }
