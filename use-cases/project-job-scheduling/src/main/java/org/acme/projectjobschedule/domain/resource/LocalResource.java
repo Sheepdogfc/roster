@@ -10,8 +10,8 @@ public class LocalResource extends Resource {
     public LocalResource() {
     }
 
-    public LocalResource(String id, Project project, boolean renewable) {
-        super(id, 0);
+    public LocalResource(String id, Project project, int capacity, boolean renewable) {
+        super(id, capacity);
         this.project = project;
         this.renewable = renewable;
     }

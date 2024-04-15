@@ -18,9 +18,12 @@ import org.acme.projectjobschedule.domain.solver.ExecutionModeStrengthWeightFact
 import org.acme.projectjobschedule.domain.solver.NotSourceOrSinkAllocationFilter;
 import org.acme.projectjobschedule.domain.solver.PredecessorsDoneDateUpdatingVariableListener;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @PlanningEntity(pinningFilter = NotSourceOrSinkAllocationFilter.class)
+@JsonIdentityInfo(scope = Allocation.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Allocation {
 
     @PlanningId
@@ -138,12 +141,6 @@ public class Allocation {
         invalidateComputedVariables();
     }
 
-    private void invalidateComputedVariables() {
-        this.startDate = null;
-        this.endDate = null;
-        this.busyDates = null;
-    }
-
     public Integer getDelay() {
         return delay;
     }
@@ -165,6 +162,12 @@ public class Allocation {
     // ************************************************************************
     // Complex methods
     // ************************************************************************
+
+    private void invalidateComputedVariables() {
+        this.startDate = null;
+        this.endDate = null;
+        this.busyDates = null;
+    }
 
     @JsonIgnore
     public Integer getStartDate() {
@@ -188,11 +191,11 @@ public class Allocation {
             if (predecessorsDoneDate == null) {
                 busyDates = Collections.emptyList();
             } else {
-                var startDate = getStartDate();
-                var endDate = getEndDate();
-                var dates = new Integer[endDate - startDate];
+                var start = getStartDate();
+                var end = getEndDate();
+                var dates = new Integer[end - start];
                 for (int i = 0; i < dates.length; i++) {
-                    dates[i] = startDate + i;
+                    dates[i] = start + i;
                 }
                 busyDates = Arrays.asList(dates);
             }
@@ -213,5 +216,19 @@ public class Allocation {
     @JsonIgnore
     public JobType getJobType() {
         return job.getJobType();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Allocation that))
+            return false;
+        return Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
     }
 }

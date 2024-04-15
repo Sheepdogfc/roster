@@ -1,19 +1,17 @@
 package org.acme.projectjobschedule.domain;
 
-import java.util.List;
+import java.util.Objects;
 
-import org.acme.projectjobschedule.domain.resource.LocalResource;
-
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+@JsonIdentityInfo(scope = Project.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Project {
 
     private String id;
     private int releaseDate;
     private int criticalPathDuration;
-
-    private List<LocalResource> localResources;
-    private List<Job> jobs;
 
     public Project() {
     }
@@ -52,22 +50,6 @@ public class Project {
         this.criticalPathDuration = criticalPathDuration;
     }
 
-    public List<LocalResource> getLocalResources() {
-        return localResources;
-    }
-
-    public void setLocalResources(List<LocalResource> localResources) {
-        this.localResources = localResources;
-    }
-
-    public List<Job> getJobs() {
-        return jobs;
-    }
-
-    public void setJobs(List<Job> jobs) {
-        this.jobs = jobs;
-    }
-
     // ************************************************************************
     // Complex methods
     // ************************************************************************
@@ -77,4 +59,17 @@ public class Project {
         return releaseDate + criticalPathDuration;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Project project))
+            return false;
+        return Objects.equals(getId(), project.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
 }

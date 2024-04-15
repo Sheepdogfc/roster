@@ -1,5 +1,7 @@
 package org.acme.projectjobschedule.domain.resource;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -21,7 +23,7 @@ public abstract class Resource {
     protected Resource() {
     }
 
-    public Resource(String id) {
+    protected Resource(String id) {
         this.id = id;
     }
 
@@ -52,4 +54,17 @@ public abstract class Resource {
 
     public abstract boolean isRenewable();
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Resource resource))
+            return false;
+        return Objects.equals(getId(), resource.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
 }

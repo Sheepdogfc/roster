@@ -1,7 +1,12 @@
 package org.acme.projectjobschedule.domain;
 
 import java.util.List;
+import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+@JsonIdentityInfo(scope = Job.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Job {
 
     private String id;
@@ -18,9 +23,10 @@ public class Job {
         this.id = id;
     }
 
-    public Job(String id, Project project) {
+    public Job(String id, Project project, JobType jobType) {
         this(id);
         this.project = project;
+        this.jobType = jobType;
     }
 
     public String getId() {
@@ -63,4 +69,17 @@ public class Job {
         this.successorJobs = successorJobs;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Job job))
+            return false;
+        return Objects.equals(getId(), job.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
 }

@@ -10,20 +10,20 @@ import java.util.Map;
 import ai.timefold.solver.core.impl.heuristic.selector.common.decorator.SelectionSorterWeightFactory;
 
 import org.acme.projectjobschedule.domain.ExecutionMode;
+import org.acme.projectjobschedule.domain.ProjectJobSchedule;
 import org.acme.projectjobschedule.domain.ResourceRequirement;
-import org.acme.projectjobschedule.domain.Schedule;
 import org.acme.projectjobschedule.domain.resource.Resource;
 
-public class ExecutionModeStrengthWeightFactory implements SelectionSorterWeightFactory<Schedule, ExecutionMode> {
+public class ExecutionModeStrengthWeightFactory implements SelectionSorterWeightFactory<ProjectJobSchedule, ExecutionMode> {
 
     @Override
-    public ExecutionModeStrengthWeight createSorterWeight(Schedule schedule, ExecutionMode executionMode) {
+    public ExecutionModeStrengthWeight createSorterWeight(ProjectJobSchedule projectJobSchedule, ExecutionMode executionMode) {
         Map<Resource, Integer> requirementTotalMap = new HashMap<>(
-                executionMode.getResourceRequirementList().size());
-        for (ResourceRequirement resourceRequirement : executionMode.getResourceRequirementList()) {
+                executionMode.getResourceRequirements().size());
+        for (ResourceRequirement resourceRequirement : executionMode.getResourceRequirements()) {
             requirementTotalMap.put(resourceRequirement.getResource(), 0);
         }
-        for (ResourceRequirement resourceRequirement : schedule.getResourceRequirements()) {
+        for (ResourceRequirement resourceRequirement : projectJobSchedule.getResourceRequirements()) {
             Resource resource = resourceRequirement.getResource();
             Integer total = requirementTotalMap.get(resource);
             if (total != null) {
@@ -32,7 +32,7 @@ public class ExecutionModeStrengthWeightFactory implements SelectionSorterWeight
             }
         }
         double requirementDesirability = 0.0;
-        for (ResourceRequirement resourceRequirement : executionMode.getResourceRequirementList()) {
+        for (ResourceRequirement resourceRequirement : executionMode.getResourceRequirements()) {
             Resource resource = resourceRequirement.getResource();
             int total = requirementTotalMap.get(resource);
             if (total > resource.getCapacity()) {

@@ -8,41 +8,41 @@ import ai.timefold.solver.core.api.domain.variable.VariableListener;
 import ai.timefold.solver.core.api.score.director.ScoreDirector;
 
 import org.acme.projectjobschedule.domain.Allocation;
-import org.acme.projectjobschedule.domain.Schedule;
+import org.acme.projectjobschedule.domain.ProjectJobSchedule;
 
-public class PredecessorsDoneDateUpdatingVariableListener implements VariableListener<Schedule, Allocation> {
+public class PredecessorsDoneDateUpdatingVariableListener implements VariableListener<ProjectJobSchedule, Allocation> {
 
     @Override
-    public void beforeEntityAdded(ScoreDirector<Schedule> scoreDirector, Allocation allocation) {
+    public void beforeEntityAdded(ScoreDirector<ProjectJobSchedule> scoreDirector, Allocation allocation) {
         // Do nothing
     }
 
     @Override
-    public void afterEntityAdded(ScoreDirector<Schedule> scoreDirector, Allocation allocation) {
+    public void afterEntityAdded(ScoreDirector<ProjectJobSchedule> scoreDirector, Allocation allocation) {
         updateAllocation(scoreDirector, allocation);
     }
 
     @Override
-    public void beforeVariableChanged(ScoreDirector<Schedule> scoreDirector, Allocation allocation) {
+    public void beforeVariableChanged(ScoreDirector<ProjectJobSchedule> scoreDirector, Allocation allocation) {
         // Do nothing
     }
 
     @Override
-    public void afterVariableChanged(ScoreDirector<Schedule> scoreDirector, Allocation allocation) {
+    public void afterVariableChanged(ScoreDirector<ProjectJobSchedule> scoreDirector, Allocation allocation) {
         updateAllocation(scoreDirector, allocation);
     }
 
     @Override
-    public void beforeEntityRemoved(ScoreDirector<Schedule> scoreDirector, Allocation allocation) {
+    public void beforeEntityRemoved(ScoreDirector<ProjectJobSchedule> scoreDirector, Allocation allocation) {
         // Do nothing
     }
 
     @Override
-    public void afterEntityRemoved(ScoreDirector<Schedule> scoreDirector, Allocation allocation) {
+    public void afterEntityRemoved(ScoreDirector<ProjectJobSchedule> scoreDirector, Allocation allocation) {
         // Do nothing
     }
 
-    protected void updateAllocation(ScoreDirector<Schedule> scoreDirector, Allocation originalAllocation) {
+    protected void updateAllocation(ScoreDirector<ProjectJobSchedule> scoreDirector, Allocation originalAllocation) {
         Queue<Allocation> uncheckedSuccessorQueue = new ArrayDeque<>();
         uncheckedSuccessorQueue.addAll(originalAllocation.getSuccessorAllocations());
         while (!uncheckedSuccessorQueue.isEmpty()) {
@@ -59,7 +59,7 @@ public class PredecessorsDoneDateUpdatingVariableListener implements VariableLis
      * @param allocation never null
      * @return true if the startDate changed
      */
-    protected boolean updatePredecessorsDoneDate(ScoreDirector<Schedule> scoreDirector, Allocation allocation) {
+    protected boolean updatePredecessorsDoneDate(ScoreDirector<ProjectJobSchedule> scoreDirector, Allocation allocation) {
         // For the source the doneDate must be 0.
         Integer doneDate = 0;
         for (Allocation predecessorAllocation : allocation.getPredecessorAllocations()) {

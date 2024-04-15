@@ -10,17 +10,23 @@ import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftSc
 
 import org.acme.projectjobschedule.domain.resource.Resource;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @PlanningSolution
-public class Schedule {
+public class ProjectJobSchedule {
 
     @ProblemFactCollectionProperty
     private List<Project> projects;
     @ProblemFactCollectionProperty
+    private List<Resource> resources;
+    @ProblemFactCollectionProperty
     private List<Job> jobs;
+    @JsonIgnore
     @ProblemFactCollectionProperty
     private List<ExecutionMode> executionModes;
-    @ProblemFactCollectionProperty
-    private List<Resource> resources;
+    @JsonIgnore
     @ProblemFactCollectionProperty
     private List<ResourceRequirement> resourceRequirements;
 
@@ -30,7 +36,18 @@ public class Schedule {
     @PlanningScore
     private HardMediumSoftScore score;
 
-    public Schedule() {
+    public ProjectJobSchedule() {
+    }
+
+    @JsonCreator
+    public ProjectJobSchedule(@JsonProperty("projects") List<Project> projects, @JsonProperty("resources") List<Resource> resources,
+                              @JsonProperty("jobs") List<Job> jobs, @JsonProperty("allocations") List<Allocation> allocations) {
+        this.projects = projects;
+        this.resources = resources;
+        this.jobs = jobs;
+        this.allocations = allocations;
+        this.executionModes = jobs.stream().flatMap(job -> job.getExecutionModes().stream()).toList();
+        this.resourceRequirements = executionModes.stream().flatMap(e -> e.getResourceRequirements().stream()).toList();
     }
 
     public List<Project> getProjects() {
@@ -88,9 +105,5 @@ public class Schedule {
     public void setScore(HardMediumSoftScore score) {
         this.score = score;
     }
-
-    // ************************************************************************
-    // Complex methods
-    // ************************************************************************
 
 }
