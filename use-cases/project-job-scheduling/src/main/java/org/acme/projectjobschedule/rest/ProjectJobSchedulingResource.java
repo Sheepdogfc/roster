@@ -42,8 +42,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Tag(name = "Project and Job Scheduling",
-        description = "Project Scheduling service assigning jobs for execution.")
+@Tag(name = "Project Job Scheduling",
+        description = "Project Job Scheduling service assigning jobs for execution.")
 @Path("schedules")
 public class ProjectJobSchedulingResource {
 

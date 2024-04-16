@@ -14,7 +14,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-@Tag(name = "Demo data", description = "Timefold-provided demo project scheduling data.")
+@Tag(name = "Demo data", description = "Timefold-provided demo project job scheduling data.")
 @Path("demo-data")
 public class ProjectJobSchedulingDemoResource {
 

@@ -138,11 +138,12 @@ public class DemoDataGenerator {
                     new Pair<>(0.75f, 2),
                     new Pair<>(1f, 3));
             List<ExecutionMode> executionModes = new ArrayList<>(3);
-            int requirementsSize = RANDOM.nextInt(1, 4);
             // Three execution modes
+            int requirementsSize = RANDOM.nextInt(1, 4);
             for (int i = 0; i < 3; i++) {
-                // [0, 10] duration
-                ExecutionMode executionMode = new ExecutionMode(String.valueOf(countExecutionMode++), job, RANDOM.nextInt(11));
+                // [1, 5] duration
+                ExecutionMode executionMode =
+                        new ExecutionMode(String.valueOf(countExecutionMode++), job, RANDOM.nextInt(1, 6));
                 List<ResourceRequirement> requirements = new ArrayList<>(requirementsSize);
                 while (requirements.size() < requirementsSize) {
                     double rProb = RANDOM.nextDouble();
@@ -153,9 +154,9 @@ public class DemoDataGenerator {
                             .map(resources::get)
                             .get();
                     if (requirements.stream().noneMatch(r -> r.getResource().equals(resource))) {
-                        // [1, 9] requirement
+                        // [1, 5] requirement
                         requirements.add(new ResourceRequirement(String.valueOf(countRequirements++), executionMode,
-                                resource, RANDOM.nextInt(1, 10)));
+                                resource, RANDOM.nextInt(1, 6)));
                     }
                 }
                 executionMode.setResourceRequirements(requirements);
@@ -167,6 +168,7 @@ public class DemoDataGenerator {
 
     private List<Allocation> generateAllocations(List<Job> jobs) {
         List<Allocation> allocations = new ArrayList<>(jobs.size());
+        int doneDate = 0;
         for (int i = 0; i < jobs.size(); i++) {
             allocations.add(new Allocation(String.valueOf(i), jobs.get(i)));
         }
@@ -194,9 +196,15 @@ public class DemoDataGenerator {
             allocation.setSinkAllocation(sinkAllocation);
             allocation.setPredecessorAllocations(predecessorAllocations);
             allocation.setSuccessorAllocations(successorAllocations);
-            if (allocation.getJob().getJobType() == SOURCE || allocation.getJob().getJobType() == SINK) {
+            allocation.setPredecessorsDoneDate(doneDate);
+            boolean isSource = allocation.getJob().getJobType() == SOURCE;
+            boolean isSink = allocation.getJob().getJobType() == SINK;
+            if (isSource || isSink) {
                 allocation.setExecutionMode(allocation.getJob().getExecutionModes().get(0));
                 allocation.setDelay(0);
+                if (isSink) {
+                    doneDate += 4;
+                }
             }
         }
 

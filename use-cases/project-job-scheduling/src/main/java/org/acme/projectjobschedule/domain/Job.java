@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @JsonIdentityInfo(scope = Job.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
@@ -13,7 +14,7 @@ public class Job {
     private Project project;
     private JobType jobType;
     private List<ExecutionMode> executionModes;
-
+    @JsonIdentityReference(alwaysAsId = true)
     private List<Job> successorJobs;
 
     public Job() {

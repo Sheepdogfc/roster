@@ -19,6 +19,7 @@ import org.acme.projectjobschedule.domain.solver.NotSourceOrSinkAllocationFilter
 import org.acme.projectjobschedule.domain.solver.PredecessorsDoneDateUpdatingVariableListener;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -30,9 +31,13 @@ public class Allocation {
     private String id;
     private Job job;
 
+    @JsonIdentityReference(alwaysAsId = true)
     private Allocation sourceAllocation;
+    @JsonIdentityReference(alwaysAsId = true)
     private Allocation sinkAllocation;
+    @JsonIdentityReference(alwaysAsId = true)
     private List<Allocation> predecessorAllocations;
+    @JsonIdentityReference(alwaysAsId = true)
     private List<Allocation> successorAllocations;
 
     // Planning variables: changes during planning, between score calculations.
@@ -170,17 +175,15 @@ public class Allocation {
         this.busyDates = null;
     }
 
-    @JsonIgnore
     public Integer getStartDate() {
-        if (startDate == null && predecessorsDoneDate != null) {
+        if (predecessorsDoneDate != null) {
             startDate = predecessorsDoneDate + Objects.requireNonNullElse(delay, 0);
         }
         return startDate;
     }
 
-    @JsonIgnore
     public Integer getEndDate() {
-        if (endDate == null && predecessorsDoneDate != null) {
+        if (predecessorsDoneDate != null) {
             endDate = getStartDate() + (executionMode == null ? 0 : executionMode.getDuration());
         }
         return endDate;
