@@ -27,7 +27,7 @@ public class DemoDataGenerator {
 
     private static final Project FIRST_PROJECT = new Project("0", 0, 10);
     private static final Project SECOND_PROJECT = new Project("1", 4, 19);
-    private static final Random RANDOM = new Random(0);
+    private final Random RANDOM = new Random(0);
 
     public ProjectJobSchedule generateDemoData() {
         ProjectJobSchedule projectJobSchedule = new ProjectJobSchedule();

@@ -97,8 +97,6 @@ function renderScheduleByJob(schedule) {
     byJobGroupData.clear();
     byJobItemData.clear();
 
-    console.log(schedule)
-
     const jobMap = new Map();
     $.each(schedule.jobs.sort((j1, j2) => (+j1.id) - (+j2.id)), (_, job) => {
         jobMap.set(job.id, job);
@@ -109,6 +107,8 @@ function renderScheduleByJob(schedule) {
         });
     });
 
+    const resourceMap = new Map();
+    schedule.resources.forEach(r => resourceMap.set(r.id, r));
     const currentDate = JSJoda.LocalDate.now();
     let countAssigned = 0;
     $.each(schedule.allocations, (_, allocation) => {
@@ -134,9 +134,25 @@ function renderScheduleByJob(schedule) {
 
                 unassigned.append($(`<div class="pl-1"/>`).append($(`<div class="card"/>`).append(unassignedElement)));
             }
-            const jobElement = $(`<div class="card-body"/>`)
+
+            let jobElement = $(`<div class="card-body"/>`)
                 .append($("<div class='d-flex justify-content-start' />").append($(`<span class="badge" style="background-color: ${pickColor(job.jobType)}"/>`).text(job.jobType)))
                 .append($("<div class='d-flex justify-content-start mt-2' />").append($(`<span class="badge" style="background-color: ${pickColor(job.project)}"/>`).text(`Project ${job.project}`)));
+            if (!isSource && !isSink) {
+                const executionMode = job.executionModes.filter(e => e.id === allocation.executionMode)[0];
+                const successorJobs = job.successorJobs.sort().map(j => `Job ${j}`).join(", ");
+                jobElement = $(`<div class="card-body"/>`)
+                    .append($(`<p class="card-text mt-2 mb-2"/>`).text(`Successor(s): ${successorJobs}`))
+                    .append($("<div class='d-flex justify-content-start' />").append($(`<span class="badge" style="background-color: ${pickColor(job.jobType)}"/>`).text(job.jobType)))
+                    .append($("<div class='d-flex justify-content-start mt-2' />").append($(`<span class="badge" style="background-color: ${pickColor(job.project)}"/>`).text(`Project ${job.project}`)));
+                const resourcesElement = $("<div class='d-flex justify-content-start mt-2' />");
+                executionMode.resourceRequirements.sort((r1, r2) => r1.resource.localeCompare(r2.resource)).forEach(r => {
+                    console.log(resourceMap.get(r.resource))
+                    const resourceType = resourceMap.get(r.resource)['@type'];
+                    resourcesElement.append($(`<span class="badge me-1 text-bg-secondary" />`).text(`Resource ${r.resource}`))
+                });
+                jobElement.append(resourcesElement);
+            }
 
             let startDate = currentDate.plusDays(allocation.startDate);
             const endDate = currentDate.plusDays(allocation.endDate);
