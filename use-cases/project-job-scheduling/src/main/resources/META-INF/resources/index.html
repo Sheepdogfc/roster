@@ -44,12 +44,21 @@
                                 aria-selected="true">By Job
                         </button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="byResourceTab" data-bs-toggle="tab"
+                                data-bs-target="#byResourcePanel" type="button" role="tab" aria-controls="byResourcePanel"
+                                aria-selected="true">By Resource
+                        </button>
+                    </li>
                 </ul>
             </div>
         </div>
         <div class="tab-content">
             <div class="tab-pane fade show active" id="byJobPanel" role="tabpanel" aria-labelledby="byJobTab">
                 <div id="jobVisualization"></div>
+            </div>
+            <div class="tab-pane fade show active" id="byResourcePanel" role="tabpanel" aria-labelledby="byResourceTab">
+                <div id="resourceVisualization"></div>
             </div>
         </div>
 

@@ -18,6 +18,20 @@ let byJobGroupData = new vis.DataSet();
 let byJobItemData = new vis.DataSet();
 let byJobTimeline = new vis.Timeline(byJobPanel, byJobItemData, byJobGroupData, byTimelineOptions);
 
+const byResourceTimelineOptions = {
+    timeAxis: {scale: "day"},
+    orientation: {axis: "top"},
+    stack: true,
+    xss: {disabled: true}, // Items are XSS safe through JQuery
+    zoomMin: zoomMin,
+    showCurrentTime: false,
+};
+
+const byResourcePanel = document.getElementById("byResourcePanel");
+let byResourceGroupData = new vis.DataSet();
+let byResourceItemData = new vis.DataSet();
+let byResourceTimeline = new vis.Timeline(byResourcePanel, byResourceItemData, byResourceGroupData, byResourceTimelineOptions);
+
 let scheduleId = null;
 let loadedSchedule = null;
 let viewType = "J";
@@ -36,6 +50,10 @@ $(document).ready(function () {
     });
     $("#byJobTab").click(function () {
         viewType = "J";
+        refreshSchedule();
+    });
+    $("#byResourceTab").click(function () {
+        viewType = "R";
         refreshSchedule();
     });
 
@@ -88,6 +106,8 @@ function renderSchedule(schedule) {
 
     if (viewType === "J") {
         renderScheduleByJob(schedule);
+    } else if (viewType === "R") {
+        renderScheduleByResource(schedule);
     }
 }
 
@@ -147,14 +167,13 @@ function renderScheduleByJob(schedule) {
                     .append($("<div class='d-flex justify-content-start mt-2' />").append($(`<span class="badge" style="background-color: ${pickColor(job.project)}"/>`).text(`Project ${job.project}`)));
                 const resourcesElement = $("<div class='d-flex justify-content-start mt-2' />");
                 executionMode.resourceRequirements.sort((r1, r2) => r1.resource.localeCompare(r2.resource)).forEach(r => {
-                    console.log(resourceMap.get(r.resource))
                     const resourceType = resourceMap.get(r.resource)['@type'];
-                    resourcesElement.append($(`<span class="badge me-1 text-bg-secondary" />`).text(`Resource ${r.resource}`))
+                    resourcesElement.append($(`<span class="badge me-1 text-bg-secondary" />`).text(`${resourceType} ${r.resource}`))
                 });
                 jobElement.append(resourcesElement);
             }
 
-            let startDate = currentDate.plusDays(allocation.startDate);
+            const startDate = currentDate.plusDays(allocation.startDate);
             const endDate = currentDate.plusDays(allocation.endDate);
             byJobItemData.add({
                 id: `${allocation.id}-1`,
@@ -172,6 +191,66 @@ function renderScheduleByJob(schedule) {
     }
 
     byJobTimeline.setWindow(currentDate.minusDays(1).toString(), currentDate.plusDays(7).toString());
+}
+
+function renderScheduleByResource(schedule) {
+    const unassigned = $("#unassigned");
+    unassigned.children().remove();
+    byResourceGroupData.clear();
+    byResourceItemData.clear();
+
+    const jobMap = new Map();
+    schedule.jobs.forEach(j => jobMap.set(j.id, j));
+    const resourceMap = new Map();
+    $.each(schedule.resources.sort((r1, r2) => (+r1.id) - (+r2.id)), (_, resource) => {
+        resourceMap.set(resource.id, resource);
+        let content = `<div class="d-flex flex-column"><div><h5 class="card-title mb-1">${resource['@type']} ${resource.id}</h5></div>`;
+        byResourceGroupData.add({
+            id: resource.id,
+            content: content,
+        });
+    });
+
+    const currentDate = JSJoda.LocalDate.now();
+    $.each(schedule.allocations, (_, allocation) => {
+        const job = jobMap.get(allocation.job);
+        const isSource = job.jobType === 'SOURCE';
+        const isSink = job.jobType === 'SINK';
+
+        if (isSink || isSource) {
+            return;
+        }
+
+        if (allocation.executionMode == null || allocation.delay == null) {
+            const unassignedElement = $(`<div class="card-body"/>`)
+                .append($(`<h5 class="card-title mb-1"/>`).text(`Job ${job.id}`))
+                .append($("<div class='d-flex justify-content-start' />").append($(`<span class="badge" style="background-color: ${pickColor(job.jobType)}"/>`).text(job.jobType)))
+                .append($("<div class='d-flex justify-content-start mt-2' />").append($(`<span class="badge" style="background-color: ${pickColor(job.project)}"/>`).text(`Project ${job.project}`)));
+
+            unassigned.append($(`<div class="pl-1"/>`).append($(`<div class="card"/>`).append(unassignedElement)));
+        } else {
+            const executionMode = job.executionModes.filter(e => e.id === allocation.executionMode)[0];
+            const successorJobs = job.successorJobs.sort().map(j => `Job ${j}`).join(", ");
+            const startDate = currentDate.plusDays(allocation.startDate);
+            const endDate = currentDate.plusDays(allocation.endDate);
+            executionMode.resourceRequirements.sort((r1, r2) => r1.resource.localeCompare(r2.resource)).forEach(r => {
+                const jobElement = $(`<div class="card-body"/>`)
+                    .append($(`<h5 class="card-title mb-1"/>`).text(`Job ${job.id}`))
+                    .append($(`<p class="card-text mt-2 mb-2"/>`).text(`Successor(s): ${successorJobs}`))
+                    .append($("<div class='d-flex justify-content-start' />").append($(`<span class="badge" style="background-color: ${pickColor(job.jobType)}"/>`).text(job.jobType)))
+                    .append($("<div class='d-flex justify-content-start mt-2' />").append($(`<span class="badge" style="background-color: ${pickColor(job.project)}"/>`).text(`Project ${job.project}`)));
+                byResourceItemData.add({
+                    id: `${allocation.id}-${r.resource}`,
+                    group: r.resource,
+                    content: jobElement.html(),
+                    start: startDate.toString(),
+                    end: endDate.toString(),
+                });
+
+            });
+        }
+    });
+    byResourceTimeline.setWindow(currentDate.minusDays(1).toString(), currentDate.plusDays(7).toString());
 }
 
 function solve() {
