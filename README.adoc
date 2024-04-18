@@ -129,7 +129,7 @@ image::use-cases/meeting-scheduling/quarkus-meeting-scheduling-screenshot.png[]
 
 Assign rounds to matches to produce a better schedule for league matches.
 
-image::use-cases/sports-league-scheduling/quarkus-sports-leaghe-scheduling-screenshot.png[]
+image::use-cases/sports-league-scheduling/quarkus-sports-league-scheduling-screenshot.png[]
 
 * link:use-cases/sports-league-scheduling/README.adoc[Run quarkus-sports-league-scheduling] (Java, Maven, Quarkus)
 
