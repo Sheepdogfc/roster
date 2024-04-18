@@ -88,7 +88,7 @@ class ProjectJobSchedulingConstraintProviderTest {
     @Test
     void totalProjectDelay() {
         Project project = new Project("1");
-        project.setCriticalPathDuration(155);
+        project.setCriticalPathDuration(100);
         LocalResource resource = new LocalResource("1", project, 10, true);
 
         Job firstJob = new Job("1", project, SINK);
@@ -111,7 +111,7 @@ class ProjectJobSchedulingConstraintProviderTest {
 
         constraintVerifier.verifyThat(ProjectJobSchedulingConstraintProvider::totalProjectDelay)
                 .given(firstAllocation, secondAllocation)
-                .penalizesBy(87);
+                .penalizesBy(23);
     }
 
     @Test
