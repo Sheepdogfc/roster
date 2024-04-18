@@ -218,6 +218,11 @@ public class Allocation {
     }
 
     @JsonIgnore
+    public int getProjectDelay() {
+        return getEndDate() - getProjectCriticalPathEndDate();
+    }
+
+    @JsonIgnore
     public JobType getJobType() {
         return job.getJobType();
     }
