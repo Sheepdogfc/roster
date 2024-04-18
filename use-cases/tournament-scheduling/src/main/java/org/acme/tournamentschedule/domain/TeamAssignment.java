@@ -10,9 +10,10 @@ public class TeamAssignment {
     private long id;
     private Day day;
     private int indexInDate;
+    @PlanningPin
     private boolean pinned;
 
-    // planning variable
+    @PlanningVariable
     private Team team;
 
     public TeamAssignment() {
@@ -52,7 +53,6 @@ public class TeamAssignment {
         this.indexInDate = indexInDate;
     }
 
-    @PlanningPin
     public boolean isPinned() {
         return pinned;
     }
@@ -61,7 +61,6 @@ public class TeamAssignment {
         this.pinned = pinned;
     }
 
-    @PlanningVariable
     public Team getTeam() {
         return team;
     }
