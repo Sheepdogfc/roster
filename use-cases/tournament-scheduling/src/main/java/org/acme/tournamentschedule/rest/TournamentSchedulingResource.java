@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Tag(name = "Tournament Scheduling",
-        description = "Tournament Scheduling service assigning teams to tournament assignments.")
+        description = "Tournament Scheduling service assigning teams to tournament matches.")
 @Path("schedules")
 public class TournamentSchedulingResource {
 
