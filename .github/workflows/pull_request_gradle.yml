@@ -4,17 +4,21 @@ on:
   push:
     branches: [stable, development, '*.x']
     paths:
-      - '**.gradle'
-      - '**.java'
-      - '**.kt'
-      - '**.yml'
+      - '**/*.gradle'
+      - '**/*.java'
+      - '**/*.kt'
+      - '**/*.versions.toml'
+      - '**/versions.properties'
+      - '.github/**/*.yml'
   pull_request:
     branches: [stable, development, '*.x']
     paths:
-      - '**.gradle'
-      - '**.java'
-      - '**.kt'
-      - '**.yml'
+      - '**/*.gradle'
+      - '**/*.java'
+      - '**/*.kt'
+      - '**/*.versions.toml'
+      - '**/versions.properties'
+      - '.github/**/*.yml'
 
 jobs:
   build:
@@ -69,26 +73,11 @@ jobs:
         with:
           java-version: 17
           distribution: 'temurin'
-          cache: 'maven'
+          cache: 'gradle'
       - name: Quickly build timefold-solver
         working-directory: ./timefold-solver
         run: mvn -B -Dquickly clean install
 
-        # Build and test the Gradle-enabled quickstarts
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: gradle-
       - name: Build and test timefold-quickstarts
         working-directory: ./timefold-quickstarts/${{ matrix.quickstartDir }}
         run: gradle build
-      - name: Cleanup Gradle Cache
-        # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
-        # Restoring these files from a GitHub Actions cache might cause problems for future builds.
-        run: |
-          rm -f ~/.gradle/caches/modules-2/modules-2.lock
-          rm -f ~/.gradle/caches/modules-2/gc.properties
