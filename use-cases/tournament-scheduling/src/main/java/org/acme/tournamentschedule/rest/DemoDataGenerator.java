@@ -44,13 +44,13 @@ public class DemoDataGenerator {
 
     private List<Team> generateTeams() {
         return List.of(
-                new Team(0, "Micha"),
-                new Team(1, "Angelika"),
-                new Team(2, "Katrin"),
-                new Team(3, "Susi"),
-                new Team(4, "Irene"),
-                new Team(5, "Kristina"),
-                new Team(6, "Tobias"));
+                new Team(0, "Maarten"),
+                new Team(1, "Geoffrey"),
+                new Team(2, "Lukas"),
+                new Team(3, "Chris"),
+                new Team(4, "Fred"),
+                new Team(5, "Radek"),
+                new Team(6, "Maciej"));
     }
 
     private List<UnavailabilityPenalty> generateUnavailabilityPenalties(int countUnavailabilityPenalities, List<Team> teams,

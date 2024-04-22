@@ -135,12 +135,12 @@ function renderScheduleByTeam(schedule) {
         if (assignment.team == null) {
             unassignedCount++;
             const unassignedElement = $(`<div class="card-body"/>`)
-                .append($(`<h5 class="card-title mb-1"/>`).text(`${currentDate.plusDays(assignment.day).toString()} - Spot ${assignment.indexInDay + 1}`));
+                .append($(`<h5 class="card-title mb-1"/>`).text(`${currentDate.plusDays(assignment.day).toString()} - Match ${assignment.indexInDay + 1}`));
 
             unassigned.append($(`<div class="pl-1"/>`).append($(`<div class="card"/>`).append(unassignedElement)));
         } else {
             const matchDateTime = currentDate.plusDays(assignment.day);
-            const element = $(`<div />`).append($(`<div class="d-flex justify-content-center"/>`).append($(`<h5 class="card-title mb-1"/>`).text(`Spot ${assignment.indexInDay + 1}`)));
+            const element = $(`<div />`).append($(`<div class="d-flex justify-content-center"/>`).append($(`<h5 class="card-title mb-1"/>`).text(`Match ${assignment.indexInDay + 1}`)));
             byTeamItemData.add({
                 id: `a${assignment.team}-${assignment.day}`,
                 group: assignment.team,
@@ -197,7 +197,7 @@ function renderScheduleByConfrontation(schedule) {
         if (assignment.team == null) {
             unassignedCount++;
             const unassignedElement = $(`<div class="card-body"/>`)
-                .append($(`<h5 class="card-title mb-1"/>`).text(`${currentDate.plusDays(assignment.day).toString()} - Spot ${assignment.indexInDay + 1}`));
+                .append($(`<h5 class="card-title mb-1"/>`).text(`${currentDate.plusDays(assignment.day).toString()} - Match ${assignment.indexInDay + 1}`));
 
             unassigned.append($(`<div class="pl-1"/>`).append($(`<div class="card"/>`).append(unassignedElement)));
         } else {
