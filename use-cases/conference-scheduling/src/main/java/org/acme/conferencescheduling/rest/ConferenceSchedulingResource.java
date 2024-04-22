@@ -29,7 +29,6 @@ import ai.timefold.solver.core.api.solver.SolverManager;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 import org.acme.conferencescheduling.domain.ConferenceSchedule;
-import org.acme.conferencescheduling.domain.Talk;
 import org.acme.conferencescheduling.rest.exception.ConferenceScheduleSolverException;
 import org.acme.conferencescheduling.rest.exception.ErrorInfo;
 import org.eclipse.microprofile.openapi.annotations.Operation;
