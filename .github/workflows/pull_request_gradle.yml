@@ -3,20 +3,18 @@ name: Gradle
 on:
   push:
     branches: [stable, development, '*.x']
-    paths-ignore:
-      - 'LICENSE*'
-      - '.gitignore'
-      - '**.md'
-      - '**.adoc'
-      - '*.txt'
+    paths:
+      - '**.gradle'
+      - '**.java'
+      - '**.kt'
+      - '**.yml'
   pull_request:
     branches: [stable, development, '*.x']
-    paths-ignore:
-      - 'LICENSE*'
-      - '.gitignore'
-      - '**.md'
-      - '**.adoc'
-      - '*.txt'
+    paths:
+      - '**.gradle'
+      - '**.java'
+      - '**.kt'
+      - '**.yml'
 
 jobs:
   build:
