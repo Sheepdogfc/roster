@@ -144,34 +144,6 @@ public class ConferenceSchedulingResource {
     }
 
     @Operation(
-            summary = "Updates the published rooms and timeslots of all talks.")
-    @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "The published solution.",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
-                            schema = @Schema(implementation = ConferenceSchedule.class))),
-            @APIResponse(responseCode = "404", description = "No schedule found.",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
-                            schema = @Schema(implementation = ErrorInfo.class))),
-            @APIResponse(responseCode = "500", description = "Exception during solving a schedule.",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON,
-                            schema = @Schema(implementation = ErrorInfo.class)))
-    })
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("{jobId}/publish")
-    public ConferenceSchedule
-            publishSchedule(
-                    @Parameter(description = "The job ID returned by the POST method.") @PathParam("jobId") String jobId) {
-        ConferenceSchedule schedule = getScheduleAndCheckForExceptions(jobId);
-        for (Talk talk : schedule.getTalks()) {
-            talk.setPublishedRoom(talk.getRoom());
-            talk.setPublishedTimeslot(talk.getTimeslot());
-        }
-        jobIdToJob.put(jobId, Job.ofSchedule(schedule));
-        return schedule;
-    }
-
-    @Operation(
             summary = "Get the schedule status and score for a given job ID.")
     @APIResponses(value = {
             @APIResponse(responseCode = "200", description = "The schedule status and the best score so far.",
