@@ -1,4 +1,4 @@
-name: GraalVM Native
+name: Native
 
 on:
   pull_request:
