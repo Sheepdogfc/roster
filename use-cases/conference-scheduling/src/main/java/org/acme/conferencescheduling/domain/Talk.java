@@ -8,7 +8,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
-import ai.timefold.solver.core.api.domain.entity.PlanningPin;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
@@ -41,9 +40,6 @@ public class Talk {
     private Set<Talk> prerequisiteTalks;
     private int favoriteCount;
     private int crowdControlRisk;
-
-    @PlanningPin
-    private boolean pinnedByUser = false;
 
     @PlanningVariable
     private Timeslot timeslot;
@@ -533,14 +529,6 @@ public class Talk {
 
     public void setCrowdControlRisk(int crowdControlRisk) {
         this.crowdControlRisk = crowdControlRisk;
-    }
-
-    public boolean isPinnedByUser() {
-        return pinnedByUser;
-    }
-
-    public void setPinnedByUser(boolean pinnedByUser) {
-        this.pinnedByUser = pinnedByUser;
     }
 
     public Timeslot getTimeslot() {
