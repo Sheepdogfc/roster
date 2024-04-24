@@ -11,6 +11,7 @@ import ai.timefold.solver.core.api.solver.SolverManager;
 
 import org.acme.foodpackaging.domain.PackagingSchedule;
 import org.acme.foodpackaging.persistence.PackagingScheduleRepository;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -19,6 +20,7 @@ import io.quarkus.test.junit.TestProfile;
 
 @QuarkusTest
 @TestProfile(FoodPackingFullAssertTest.FullAssertProfile.class)
+@Tag("slowly")
 class FoodPackingFullAssertTest {
 
 

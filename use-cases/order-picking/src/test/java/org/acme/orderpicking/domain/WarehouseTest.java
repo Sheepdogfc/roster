@@ -2,6 +2,7 @@ package org.acme.orderpicking.domain;
 
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -16,6 +17,7 @@ import static org.acme.orderpicking.domain.Warehouse.Row.ROW_2;
 import static org.acme.orderpicking.domain.Warehouse.Row.ROW_3;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("quickly")
 class WarehouseTest {
 
     @ParameterizedTest

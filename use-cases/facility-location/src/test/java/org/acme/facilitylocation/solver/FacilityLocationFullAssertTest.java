@@ -12,6 +12,7 @@ import ai.timefold.solver.core.api.solver.SolverManager;
 import org.acme.facilitylocation.bootstrap.DemoDataBuilder;
 import org.acme.facilitylocation.domain.FacilityLocationProblem;
 import org.acme.facilitylocation.domain.Location;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -20,6 +21,7 @@ import io.quarkus.test.junit.TestProfile;
 
 @QuarkusTest
 @TestProfile(FacilityLocationFullAssertTest.FullAssertProfile.class)
+@Tag("slowly")
 class FacilityLocationFullAssertTest {
 
     @Inject

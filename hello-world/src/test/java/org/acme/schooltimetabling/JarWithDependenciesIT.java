@@ -3,6 +3,7 @@ package org.acme.schooltimetabling;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
+@Tag("quickly")
 class JarWithDependenciesIT {
 
     // The property is set by maven-failsafe-plugin.
@@ -55,7 +57,7 @@ class JarWithDependenciesIT {
             }
             Assertions.assertThat(process.exitValue())
                     .as("Executable JAR exited abnormally.")
-                    .isEqualTo(0);
+                    .isZero();
         } catch (InterruptedException e) {
             Assertions.fail("Waiting for executable JAR to finish was interrupted.", e);
         } finally {

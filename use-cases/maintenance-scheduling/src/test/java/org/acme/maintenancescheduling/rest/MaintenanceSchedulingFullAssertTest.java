@@ -3,9 +3,6 @@ package org.acme.maintenancescheduling.rest;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
@@ -13,8 +10,8 @@ import java.util.Map;
 
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
-import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -24,6 +21,7 @@ import io.restassured.http.ContentType;
 
 @QuarkusTest
 @TestProfile(MaintenanceSchedulingFullAssertTest.FullAssertProfile.class)
+@Tag("slowly")
 class MaintenanceSchedulingFullAssertTest {
 
     @Test

@@ -14,11 +14,13 @@ import org.acme.taskassigning.domain.Priority;
 import org.acme.taskassigning.domain.Task;
 import org.acme.taskassigning.domain.TaskAssigningSolution;
 import org.acme.taskassigning.domain.TaskType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@Tag("quickly")
 class TaskAssigningConstraintProviderTest {
 
     @Inject

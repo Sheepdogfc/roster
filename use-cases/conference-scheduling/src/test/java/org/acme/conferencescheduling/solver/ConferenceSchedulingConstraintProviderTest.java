@@ -17,11 +17,13 @@ import org.acme.conferencescheduling.domain.Room;
 import org.acme.conferencescheduling.domain.Speaker;
 import org.acme.conferencescheduling.domain.Talk;
 import org.acme.conferencescheduling.domain.Timeslot;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@Tag("quickly")
 class ConferenceSchedulingConstraintProviderTest {
 
     private static final LocalDateTime START = LocalDateTime.of(2000, 2, 1, 9, 0);

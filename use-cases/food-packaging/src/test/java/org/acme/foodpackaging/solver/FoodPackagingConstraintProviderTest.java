@@ -15,11 +15,13 @@ import org.acme.foodpackaging.domain.Line;
 import org.acme.foodpackaging.domain.PackagingSchedule;
 import org.acme.foodpackaging.domain.Product;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@Tag("quickly")
 class FoodPackagingConstraintProviderTest {
 
     private static final LocalDate DAY = LocalDate.of(2021, 2, 1);

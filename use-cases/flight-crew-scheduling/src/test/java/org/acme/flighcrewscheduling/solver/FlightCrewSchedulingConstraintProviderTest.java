@@ -13,11 +13,13 @@ import org.acme.flighcrewscheduling.domain.Employee;
 import org.acme.flighcrewscheduling.domain.Flight;
 import org.acme.flighcrewscheduling.domain.FlightAssignment;
 import org.acme.flighcrewscheduling.domain.FlightCrewSchedule;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@Tag("quickly")
 class FlightCrewSchedulingConstraintProviderTest {
 
     private final ConstraintVerifier<FlightCrewSchedulingConstraintProvider, FlightCrewSchedule> constraintVerifier;

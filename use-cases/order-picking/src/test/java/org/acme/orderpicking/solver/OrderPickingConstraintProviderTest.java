@@ -18,6 +18,7 @@ import org.acme.orderpicking.domain.TrolleyOrTrolleyStep;
 import org.acme.orderpicking.domain.TrolleyStep;
 import org.acme.orderpicking.domain.Warehouse;
 import org.acme.orderpicking.domain.WarehouseLocation;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
 
@@ -31,6 +32,7 @@ import static org.acme.orderpicking.domain.Warehouse.Row.ROW_2;
 import static org.acme.orderpicking.domain.Warehouse.Row.ROW_3;
 
 @QuarkusTest
+@Tag("quickly")
 class OrderPickingConstraintProviderTest {
 
     @Inject

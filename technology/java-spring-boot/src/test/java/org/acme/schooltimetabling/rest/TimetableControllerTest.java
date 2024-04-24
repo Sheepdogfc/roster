@@ -3,6 +3,7 @@ package org.acme.schooltimetabling.rest;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 import io.restassured.http.ContentType;
 import org.acme.schooltimetabling.domain.Timetable;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "timefold.solver.termination.spent-limit=1h",
         "timefold.solver.termination.best-score-limit=0hard/*soft" },
         webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@Tag("quickly")
 class TimetableControllerTest {
 
     @Test

@@ -9,11 +9,13 @@ import org.acme.tournamentschedule.domain.Team;
 import org.acme.tournamentschedule.domain.TeamAssignment;
 import org.acme.tournamentschedule.domain.TournamentSchedule;
 import org.acme.tournamentschedule.domain.UnavailabilityPenalty;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@Tag("quickly")
 class TournamentScheduleConstraintProviderTest {
 
     @Inject

@@ -11,6 +11,7 @@ import java.util.Map;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 import org.acme.projectjobschedule.domain.ProjectJobSchedule;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -20,6 +21,7 @@ import io.restassured.http.ContentType;
 
 @QuarkusTest
 @TestProfile(ProjectJobSchedulingFullAssertTest.FullAssertProfile.class)
+@Tag("slowly")
 class ProjectJobSchedulingFullAssertTest {
 
     @Test

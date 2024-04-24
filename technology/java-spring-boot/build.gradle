@@ -6,6 +6,7 @@ plugins {
 }
 
 def timefoldVersion = "999-SNAPSHOT"
+def profile = System.properties['profile'] ?: ''
 
 group = "org.acme"
 archivesBaseName = "spring-boot-school-timetabling"
@@ -52,10 +53,21 @@ dependencies {
 }
 
 test {
-    useJUnitPlatform()
     // Log the test execution results.
     testLogging {
         events "passed", "skipped", "failed"
+    }
+
+    if (profile == 'quickly') {
+        useJUnitPlatform {
+            includeTags "quickly"
+        }
+    } else if (profile == 'slowly') {
+        useJUnitPlatform {
+            includeTags "slowly"
+        }
+    } else {
+        useJUnitPlatform()
     }
 }
 

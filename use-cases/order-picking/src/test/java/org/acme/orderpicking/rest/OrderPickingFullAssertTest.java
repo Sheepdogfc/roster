@@ -11,6 +11,7 @@ import ai.timefold.solver.core.api.solver.SolverManager;
 
 import org.acme.orderpicking.domain.OrderPickingSolution;
 import org.acme.orderpicking.persistence.OrderPickingRepository;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -19,6 +20,7 @@ import io.quarkus.test.junit.TestProfile;
 
 @QuarkusTest
 @TestProfile(OrderPickingFullAssertTest.FullAssertProfile.class)
+@Tag("slowly")
 class OrderPickingFullAssertTest {
 
     @Inject

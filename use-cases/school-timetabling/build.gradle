@@ -5,6 +5,7 @@ plugins {
 
 def quarkusVersion = "3.9.4"
 def timefoldVersion = "999-SNAPSHOT"
+def profile = System.properties['profile'] ?: ''
 
 group = "org.acme"
 version = "1.0-SNAPSHOT"
@@ -63,5 +64,17 @@ test {
     // Log the test execution results.
     testLogging {
         events "passed", "skipped", "failed"
+    }
+
+    if (profile == 'quickly') {
+        useJUnitPlatform {
+            includeTags "quickly"
+        }
+    } else if (profile == 'slowly') {
+        useJUnitPlatform {
+            includeTags "slowly"
+        }
+    } else {
+        useJUnitPlatform()
     }
 }

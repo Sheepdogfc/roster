@@ -2,8 +2,10 @@ package org.acme.vehiclerouting.domain.geo;
 
 import org.acme.vehiclerouting.domain.Location;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag("quickly")
 class HaversineDrivingTimeCalculatorTest {
 
     private final DrivingTimeCalculator drivingTimeCalculator = HaversineDrivingTimeCalculator.getInstance();

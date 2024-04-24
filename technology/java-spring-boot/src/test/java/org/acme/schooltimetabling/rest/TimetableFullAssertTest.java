@@ -9,6 +9,7 @@ import java.time.Duration;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 import org.acme.schooltimetabling.domain.Timetable;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -19,6 +20,7 @@ import io.restassured.http.ContentType;
         "timefold.solver.environment-mode=FAST_ASSERT",
         "quarkus.timefold.solver.termination.spent-limit=30s" },
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Tag("slowly")
 class TimetableFullAssertTest {
 
     @LocalServerPort

@@ -7,11 +7,13 @@ import org.acme.kotlin.schooltimetabling.domain.Lesson
 import org.acme.kotlin.schooltimetabling.domain.Room
 import org.acme.kotlin.schooltimetabling.domain.Timeslot
 import org.acme.kotlin.schooltimetabling.domain.Timetable
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.time.DayOfWeek
 import java.time.LocalTime
 
 @QuarkusTest
+@Tag("quickly")
 class TimetableConstraintProviderTest {
 
     val ROOM1: Room = Room("1", "Room1")

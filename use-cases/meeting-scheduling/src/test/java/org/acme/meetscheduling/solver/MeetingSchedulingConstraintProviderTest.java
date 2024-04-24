@@ -16,11 +16,13 @@ import org.acme.meetingschedule.domain.RequiredAttendance;
 import org.acme.meetingschedule.domain.Room;
 import org.acme.meetingschedule.domain.TimeGrain;
 import org.acme.meetingschedule.solver.MeetingSchedulingConstraintProvider;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@Tag("quickly")
 class MeetingSchedulingConstraintProviderTest {
 
     @Inject

@@ -7,12 +7,14 @@ import jakarta.inject.Inject;
 import org.acme.maintenancescheduling.domain.Crew;
 import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@Tag("quickly")
  class MaintenanceSchedulingConstraintProviderTest {
 
     private static final Crew ALPHA_CREW = new Crew("1", "Alpha crew");

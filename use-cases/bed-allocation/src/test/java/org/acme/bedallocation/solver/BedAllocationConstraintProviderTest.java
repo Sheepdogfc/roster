@@ -15,11 +15,13 @@ import org.acme.bedallocation.domain.Gender;
 import org.acme.bedallocation.domain.GenderLimitation;
 import org.acme.bedallocation.domain.Room;
 import org.acme.bedallocation.domain.Stay;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@Tag("quickly")
 class BedAllocationConstraintProviderTest {
 
     private static final LocalDate ZERO_NIGHT = LocalDate.of(2021, 2, 1);
