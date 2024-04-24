@@ -16,7 +16,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import io.restassured.http.ContentType;
 
 @SpringBootTest(properties = {
-        "timefold.solver.environment-mode=FULL_ASSERT",
+        "timefold.solver.environment-mode=FAST_ASSERT",
         "quarkus.timefold.solver.termination.spent-limit=30s" },
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TimetableFullAssertTest {

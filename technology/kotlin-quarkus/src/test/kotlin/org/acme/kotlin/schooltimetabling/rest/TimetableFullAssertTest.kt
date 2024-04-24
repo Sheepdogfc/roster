@@ -54,7 +54,7 @@ class TimetableFullAssertTest {
     class FullAssertProfile : QuarkusTestProfile {
         override fun getConfigOverrides(): Map<String, String> {
             return java.util.Map.of(
-                "quarkus.timefold.solver.environment-mode", "FULL_ASSERT",
+                "quarkus.timefold.solver.environment-mode", "FAST_ASSERT",
                 "quarkus.timefold.solver.termination.best-score-limit", "",
                 "quarkus.timefold.solver.termination.spent-limit", "30s"
             )

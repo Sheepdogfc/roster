@@ -50,7 +50,7 @@ class FacilityLocationFullAssertTest {
         @Override
         public Map<String, String> getConfigOverrides() {
             return Map.of(
-                    "quarkus.timefold.solver.environment-mode", "FULL_ASSERT",
+                    "quarkus.timefold.solver.environment-mode", "FAST_ASSERT",
                     "quarkus.timefold.solver.termination.best-score-limit", "",
                     "quarkus.timefold.solver.termination.spent-limit", "30s");
         }

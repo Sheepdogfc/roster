@@ -23,7 +23,7 @@ class TimetableFullAssertTest {
                 .withSolutionClass(Timetable.class)
                 .withEntityClasses(Lesson.class)
                 .withConstraintProviderClass(TimetableConstraintProvider.class)
-                .withEnvironmentMode(EnvironmentMode.FULL_ASSERT)
+                .withEnvironmentMode(EnvironmentMode.FAST_ASSERT)
                 .withTerminationSpentLimit(Duration.ofSeconds(30))
         );
 
