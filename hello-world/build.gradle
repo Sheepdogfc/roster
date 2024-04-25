@@ -54,15 +54,11 @@ test {
         events "passed", "skipped", "failed"
     }
 
-    if (profile == 'quickly') {
-        useJUnitPlatform {
-            includeTags "quickly"
-        }
-    } else if (profile == 'slowly') {
-        useJUnitPlatform {
-            includeTags "slowly"
-        }
-    } else {
+    if (profile == 'slowly') {
         useJUnitPlatform()
+    } else {
+        useJUnitPlatform {
+            excludeTags "slowly"
+        }
     }
 }

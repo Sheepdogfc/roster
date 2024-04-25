@@ -2,28 +2,24 @@ package org.acme.maintenancescheduling.rest;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
-import org.acme.maintenancescheduling.domain.Job;
 import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
 import org.junit.jupiter.api.Test;
 
-import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.QuarkusIntegrationTest;
 import io.restassured.http.ContentType;
 
-@QuarkusTest
-class MaintenanceScheduleResourceTest {
+@QuarkusIntegrationTest
+class MaintenanceSchedulingResourceIT {
 
     @Test
-    void solveDemoDataUntilFeasible() {
+    void solveNative() {
         MaintenanceSchedule maintenanceSchedule = given()
                 .when().get("/demo-data/SMALL")
                 .then()
@@ -49,12 +45,6 @@ class MaintenanceScheduleResourceTest {
                                 .jsonPath().get("solverStatus")));
 
         MaintenanceSchedule solution = get("/schedules/" + jobId).then().extract().as(MaintenanceSchedule.class);
-        assertEquals(SolverStatus.NOT_SOLVING, solution.getSolverStatus());
-        assertFalse(solution.getJobs().isEmpty());
-        for (Job job : solution.getJobs()) {
-            assertNotNull(job.getCrew());
-            assertNotNull(job.getStartDate());
-        }
-        assertTrue(solution.getScore().isFeasible());
+        assertThat(solution).isNotNull();
     }
 }

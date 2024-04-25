@@ -67,6 +67,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <version>3.25.3</version>
@@ -130,12 +140,6 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${version.surefire.plugin}</version>
-        <configuration>
-          <systemPropertyVariables>
-            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-            <maven.home>${maven.home}</maven.home>
-          </systemPropertyVariables>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -163,7 +167,6 @@
                   <systemPropertyVariables>
                     <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
                     <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                    <maven.home>${maven.home}</maven.home>
                   </systemPropertyVariables>
                 </configuration>
               </execution>
@@ -193,11 +196,9 @@
       </properties>
     </profile>
     <profile>
-      <id>quickly</id>
+      <id>default</id>
       <activation>
-        <property>
-          <name>quickly</name>
-        </property>
+        <activeByDefault>true</activeByDefault>
       </activation>
       <build>
         <plugins>
@@ -205,7 +206,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${version.surefire.plugin}</version>
             <configuration>
-              <groups>quickly</groups>
+              <excludedGroups>slowly</excludedGroups>
               <systemPropertyVariables>
                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
               </systemPropertyVariables>
@@ -227,7 +228,6 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${version.surefire.plugin}</version>
             <configuration>
-              <groups>slowly</groups>
               <systemPropertyVariables>
                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
               </systemPropertyVariables>

@@ -32,6 +32,7 @@ dependencies {
     testImplementation "io.rest-assured:rest-assured"
     testImplementation "ai.timefold.solver:timefold-solver-test"
     testImplementation "org.awaitility:awaitility"
+    testImplementation "org.assertj:assertj-core:3.25.3"
 
     // UI
     implementation "io.quarkus:quarkus-webjars-locator"
@@ -66,15 +67,11 @@ test {
         events "passed", "skipped", "failed"
     }
 
-    if (profile == 'quickly') {
-        useJUnitPlatform {
-            includeTags "quickly"
-        }
-    } else if (profile == 'slowly') {
-        useJUnitPlatform {
-            includeTags "slowly"
-        }
-    } else {
+    if (profile == 'slowly') {
         useJUnitPlatform()
+    } else {
+        useJUnitPlatform {
+            excludeTags "slowly"
+        }
     }
 }

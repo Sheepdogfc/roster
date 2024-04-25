@@ -6,26 +6,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 import java.time.Duration;
-import java.util.Map;
 
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 import org.acme.bedallocation.domain.BedPlan;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.QuarkusTestProfile;
-import io.quarkus.test.junit.TestProfile;
+import io.quarkus.test.junit.QuarkusIntegrationTest;
 import io.restassured.http.ContentType;
 
-@QuarkusTest
-@TestProfile(BedSchedulingFullAssertTest.FullAssertProfile.class)
-@Tag("slowly")
-class BedSchedulingFullAssertTest {
+@QuarkusIntegrationTest
+class BedSchedulingResourceIT {
 
     @Test
-    void solve() {
+    void solveNative() {
         BedPlan schedule = given()
                 .when().get("/demo-data")
                 .then()
@@ -51,17 +45,6 @@ class BedSchedulingFullAssertTest {
                                 .jsonPath().get("solverStatus")));
 
         BedPlan solution = get("/schedules/" + jobId).then().extract().as(BedPlan.class);
-        assertThat(solution.getScore().isFeasible()).isTrue();
+        assertThat(solution).isNotNull();
     }
-
-    public static class FullAssertProfile implements QuarkusTestProfile {
-        @Override
-        public Map<String, String> getConfigOverrides() {
-            return Map.of(
-                    "quarkus.timefold.solver.environment-mode", "FAST_ASSERT",
-                    "quarkus.timefold.solver.termination.best-score-limit", "",
-                    "quarkus.timefold.solver.termination.spent-limit", "30s");
-        }
-    }
-
 }

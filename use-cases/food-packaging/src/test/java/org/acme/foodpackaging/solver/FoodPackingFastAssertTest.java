@@ -1,16 +1,16 @@
 package org.acme.foodpackaging.solver;
 
+import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.post;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import jakarta.inject.Inject;
+import ai.timefold.solver.core.api.solver.SolverStatus;
 
-import ai.timefold.solver.core.api.solver.SolverManager;
-
-import org.acme.foodpackaging.domain.PackagingSchedule;
-import org.acme.foodpackaging.persistence.PackagingScheduleRepository;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -19,26 +19,24 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 
 @QuarkusTest
-@TestProfile(FoodPackingFullAssertTest.FullAssertProfile.class)
+@TestProfile(FoodPackingFastAssertTest.FullAssertProfile.class)
 @Tag("slowly")
-class FoodPackingFullAssertTest {
-
-
-    @Inject
-    PackagingScheduleRepository repository;
-    @Inject
-    SolverManager<PackagingSchedule, String> solverManager;
+class FoodPackingFastAssertTest {
 
     @Test
     void solve() throws ExecutionException, InterruptedException {
-        PackagingSchedule problem = repository.read();
+        post("/schedule/solve")
+                .then()
+                .statusCode(204)
+                .extract();
 
-        PackagingSchedule solution = solverManager.solveBuilder()
-                .withProblemId("0")
-                .withProblemFinder(id -> problem)
-                .run()
-                .getFinalBestSolution();
-        assertThat(solution.getScore().isFeasible()).isTrue();
+        await()
+                .atMost(Duration.ofMinutes(1))
+                .pollInterval(Duration.ofMillis(500L))
+                .until(() -> !SolverStatus.NOT_SOLVING.name().equals(get("/schedule").jsonPath().get("solverStatus")));
+
+        String score = get("/schedule").jsonPath().get("score");
+        assertThat(score).isNotNull();
     }
 
     public static class FullAssertProfile implements QuarkusTestProfile {

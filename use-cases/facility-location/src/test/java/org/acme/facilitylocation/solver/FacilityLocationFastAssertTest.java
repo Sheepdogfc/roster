@@ -1,16 +1,14 @@
-package org.acme.orderpicking.rest;
+package org.acme.facilitylocation.solver;
 
+import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.post;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import jakarta.inject.Inject;
-
-import ai.timefold.solver.core.api.solver.SolverManager;
-
-import org.acme.orderpicking.domain.OrderPickingSolution;
-import org.acme.orderpicking.persistence.OrderPickingRepository;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -19,25 +17,24 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 
 @QuarkusTest
-@TestProfile(OrderPickingFullAssertTest.FullAssertProfile.class)
+@TestProfile(FacilityLocationFastAssertTest.FullAssertProfile.class)
 @Tag("slowly")
-class OrderPickingFullAssertTest {
-
-    @Inject
-    OrderPickingRepository repository;
-    @Inject
-    SolverManager<OrderPickingSolution, String> solverManager;
+class FacilityLocationFastAssertTest {
 
     @Test
     void solve() throws ExecutionException, InterruptedException {
-        OrderPickingSolution problem = repository.find();
+        post("/flp/solve")
+                .then()
+                .statusCode(204)
+                .extract();
 
-        OrderPickingSolution solution = solverManager.solveBuilder()
-                .withProblemId("0")
-                .withProblemFinder(id -> problem)
-                .run()
-                .getFinalBestSolution();
-        assertThat(solution.getScore().isFeasible()).isTrue();
+        await()
+                .atMost(Duration.ofMinutes(1))
+                .pollInterval(Duration.ofMillis(500L))
+                .until(() -> !get("/flp/status").jsonPath().getBoolean("isSolving"));
+
+        String score = get("/flp/status").jsonPath().get("solution.score");
+        assertThat(score).isNotNull();
     }
 
     public static class FullAssertProfile implements QuarkusTestProfile {

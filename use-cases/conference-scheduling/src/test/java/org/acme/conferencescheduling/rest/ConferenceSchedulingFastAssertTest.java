@@ -1,4 +1,4 @@
-package org.acme.vehiclerouting.rest;
+package org.acme.conferencescheduling.rest;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
-import org.acme.vehiclerouting.domain.VehicleRoutePlan;
+import org.acme.conferencescheduling.domain.ConferenceSchedule;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -20,24 +20,24 @@ import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-@TestProfile(VehicleRoutingFullAssertTest.FullAssertProfile.class)
+@TestProfile(ConferenceSchedulingFastAssertTest.FullAssertProfile.class)
 @Tag("slowly")
-class VehicleRoutingFullAssertTest {
+class ConferenceSchedulingFastAssertTest {
 
     @Test
     void solve() {
-        VehicleRoutePlan vehicleRoutePlan = given()
-                .when().get("/demo-data/FIRENZE")
+        ConferenceSchedule schedule = given()
+                .when().get("/demo-data")
                 .then()
                 .statusCode(200)
                 .extract()
-                .as(VehicleRoutePlan.class);
+                .as(ConferenceSchedule.class);
 
         String jobId = given()
                 .contentType(ContentType.JSON)
-                .body(vehicleRoutePlan)
+                .body(schedule)
                 .expect().contentType(ContentType.TEXT)
-                .when().post("/route-plans")
+                .when().post("/schedules")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -47,10 +47,10 @@ class VehicleRoutingFullAssertTest {
                 .atMost(Duration.ofMinutes(1))
                 .pollInterval(Duration.ofMillis(500L))
                 .until(() -> SolverStatus.NOT_SOLVING.name().equals(
-                        get("/route-plans/" + jobId + "/status")
+                        get("/schedules/" + jobId + "/status")
                                 .jsonPath().get("solverStatus")));
 
-        VehicleRoutePlan solution = get("/route-plans/" + jobId).then().extract().as(VehicleRoutePlan.class);
+        ConferenceSchedule solution = get("/schedules/" + jobId).then().extract().as(ConferenceSchedule.class);
         assertThat(solution.getScore().isFeasible()).isTrue();
     }
 

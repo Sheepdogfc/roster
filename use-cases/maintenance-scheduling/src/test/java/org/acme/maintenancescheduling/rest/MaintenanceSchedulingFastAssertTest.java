@@ -1,16 +1,16 @@
-package org.acme.flighcrewscheduling.rest;
+package org.acme.maintenancescheduling.rest;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.Map;
 
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
-import org.acme.flighcrewscheduling.domain.FlightCrewSchedule;
+import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -20,22 +20,22 @@ import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-@TestProfile(FlightCrewSchedulingFullAssertTest.FullAssertProfile.class)
+@TestProfile(MaintenanceSchedulingFastAssertTest.FullAssertProfile.class)
 @Tag("slowly")
-class FlightCrewSchedulingFullAssertTest {
+class MaintenanceSchedulingFastAssertTest {
 
     @Test
     void solve() {
-        FlightCrewSchedule schedule = given()
-                .when().get("/demo-data")
+        MaintenanceSchedule maintenanceSchedule = given()
+                .when().get("/demo-data/SMALL")
                 .then()
                 .statusCode(200)
                 .extract()
-                .as(FlightCrewSchedule.class);
+                .as(MaintenanceSchedule.class);
 
         String jobId = given()
                 .contentType(ContentType.JSON)
-                .body(schedule)
+                .body(maintenanceSchedule)
                 .expect().contentType(ContentType.TEXT)
                 .when().post("/schedules")
                 .then()
@@ -50,8 +50,8 @@ class FlightCrewSchedulingFullAssertTest {
                         get("/schedules/" + jobId + "/status")
                                 .jsonPath().get("solverStatus")));
 
-        FlightCrewSchedule solution = get("/schedules/" + jobId).then().extract().as(FlightCrewSchedule.class);
-        assertThat(solution.getScore().isFeasible()).isTrue();
+        MaintenanceSchedule solution = get("/schedules/" + jobId).then().extract().as(MaintenanceSchedule.class);
+        assertTrue(solution.getScore().isFeasible());
     }
 
     public static class FullAssertProfile implements QuarkusTestProfile {

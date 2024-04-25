@@ -1,17 +1,16 @@
 package org.acme.schooltimetabling;
 
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Assumptions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
-@Tag("quickly")
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+
 class JarWithDependenciesIT {
 
     // The property is set by maven-failsafe-plugin.

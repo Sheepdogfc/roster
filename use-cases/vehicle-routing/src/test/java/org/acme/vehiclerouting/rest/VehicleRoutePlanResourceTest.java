@@ -28,7 +28,6 @@ import org.acme.vehiclerouting.domain.dto.RecommendationRequest;
 import org.acme.vehiclerouting.domain.dto.VehicleRecommendation;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,7 +37,6 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-@Tag("quickly")
 class VehicleRoutePlanResourceTest {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();

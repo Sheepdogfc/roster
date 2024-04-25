@@ -10,14 +10,12 @@ import java.time.Duration;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 import org.acme.conferencescheduling.domain.ConferenceSchedule;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-@Tag("quickly")
 class ConferenceScheduleResourceTest {
 
     @Test

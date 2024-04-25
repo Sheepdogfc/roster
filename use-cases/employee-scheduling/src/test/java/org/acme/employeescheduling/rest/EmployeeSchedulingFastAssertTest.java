@@ -1,16 +1,16 @@
-package org.acme.conferencescheduling.rest;
+package org.acme.employeescheduling.rest;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.Map;
 
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
-import org.acme.conferencescheduling.domain.ConferenceSchedule;
+import org.acme.employeescheduling.domain.EmployeeSchedule;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -20,22 +20,22 @@ import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-@TestProfile(ConferenceSchedulingFullAssertTest.FullAssertProfile.class)
+@TestProfile(EmployeeSchedulingFastAssertTest.FullAssertProfile.class)
 @Tag("slowly")
-class ConferenceSchedulingFullAssertTest {
+class EmployeeSchedulingFastAssertTest {
 
     @Test
-    void solve() {
-        ConferenceSchedule schedule = given()
-                .when().get("/demo-data")
+    void solveDemoDataUntilFeasible() {
+        EmployeeSchedule testSchedule = given()
+                .when().get("/demo-data/SMALL")
                 .then()
                 .statusCode(200)
                 .extract()
-                .as(ConferenceSchedule.class);
+                .as(EmployeeSchedule.class);
 
         String jobId = given()
                 .contentType(ContentType.JSON)
-                .body(schedule)
+                .body(testSchedule)
                 .expect().contentType(ContentType.TEXT)
                 .when().post("/schedules")
                 .then()
@@ -44,14 +44,14 @@ class ConferenceSchedulingFullAssertTest {
                 .asString();
 
         await()
-                .atMost(Duration.ofMinutes(1))
+                .atMost(Duration.ofMinutes(5))
                 .pollInterval(Duration.ofMillis(500L))
                 .until(() -> SolverStatus.NOT_SOLVING.name().equals(
                         get("/schedules/" + jobId + "/status")
                                 .jsonPath().get("solverStatus")));
 
-        ConferenceSchedule solution = get("/schedules/" + jobId).then().extract().as(ConferenceSchedule.class);
-        assertThat(solution.getScore().isFeasible()).isTrue();
+        EmployeeSchedule solution = get("/schedules/" + jobId).then().extract().as(EmployeeSchedule.class);
+        assertTrue(solution.getScore().isFeasible());
     }
 
     public static class FullAssertProfile implements QuarkusTestProfile {

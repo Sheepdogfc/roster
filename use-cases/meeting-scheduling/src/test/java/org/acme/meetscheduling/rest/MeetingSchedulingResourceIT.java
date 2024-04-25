@@ -1,4 +1,4 @@
-package org.acme.taskassigning.rest;
+package org.acme.meetscheduling.rest;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
@@ -6,32 +6,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 import java.time.Duration;
-import java.util.Map;
 
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
-import org.acme.taskassigning.domain.TaskAssigningSolution;
-import org.junit.jupiter.api.Tag;
+import org.acme.meetingschedule.domain.MeetingSchedule;
 import org.junit.jupiter.api.Test;
 
-import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.QuarkusTestProfile;
-import io.quarkus.test.junit.TestProfile;
+import io.quarkus.test.junit.QuarkusIntegrationTest;
 import io.restassured.http.ContentType;
 
-@QuarkusTest
-@TestProfile(TaskAssigningFullAssertTest.FullAssertProfile.class)
-@Tag("slowly")
-class TaskAssigningFullAssertTest {
+@QuarkusIntegrationTest
+class MeetingSchedulingResourceIT {
 
     @Test
-    void solve() {
-        TaskAssigningSolution schedule = given()
+    void solveNative() {
+        MeetingSchedule schedule = given()
                 .when().get("/demo-data")
                 .then()
                 .statusCode(200)
                 .extract()
-                .as(TaskAssigningSolution.class);
+                .as(MeetingSchedule.class);
 
         String jobId = given()
                 .contentType(ContentType.JSON)
@@ -50,18 +44,7 @@ class TaskAssigningFullAssertTest {
                         get("/schedules/" + jobId + "/status")
                                 .jsonPath().get("solverStatus")));
 
-        TaskAssigningSolution solution = get("/schedules/" + jobId).then().extract().as(TaskAssigningSolution.class);
-        assertThat(solution.getScore().isFeasible()).isTrue();
+        MeetingSchedule solution = get("/schedules/" + jobId).then().extract().as(MeetingSchedule.class);
+        assertThat(solution).isNotNull();
     }
-
-    public static class FullAssertProfile implements QuarkusTestProfile {
-        @Override
-        public Map<String, String> getConfigOverrides() {
-            return Map.of(
-                    "quarkus.timefold.solver.environment-mode", "FAST_ASSERT",
-                    "quarkus.timefold.solver.termination.best-score-limit", "",
-                    "quarkus.timefold.solver.termination.spent-limit", "30s");
-        }
-    }
-
 }

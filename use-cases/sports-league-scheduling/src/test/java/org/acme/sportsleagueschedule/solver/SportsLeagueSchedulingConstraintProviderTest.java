@@ -10,13 +10,11 @@ import org.acme.sportsleagueschedule.domain.LeagueSchedule;
 import org.acme.sportsleagueschedule.domain.Match;
 import org.acme.sportsleagueschedule.domain.Round;
 import org.acme.sportsleagueschedule.domain.Team;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-@Tag("quickly")
 class SportsLeagueSchedulingConstraintProviderTest {
 
     @Inject

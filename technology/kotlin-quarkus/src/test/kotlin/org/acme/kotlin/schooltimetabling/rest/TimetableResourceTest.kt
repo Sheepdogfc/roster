@@ -12,12 +12,10 @@ import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.time.Duration
 
 @QuarkusTest
-@Tag("quickly")
 class TimetableResourceTest {
 
     @Test

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("slowly")
-class TimetableFullAssertTest {
+class TimetableFastAssertTest {
 
     @Test
     void solve() {

@@ -1,4 +1,4 @@
-package org.acme.tournamentschedule.rest;
+package org.acme.vehiclerouting.rest;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
-import org.acme.tournamentschedule.domain.TournamentSchedule;
+import org.acme.vehiclerouting.domain.VehicleRoutePlan;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -20,24 +20,24 @@ import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-@TestProfile(TournamentSchedulingFullAssertTest.FullAssertProfile.class)
+@TestProfile(VehicleRoutingFastAssertTest.FullAssertProfile.class)
 @Tag("slowly")
-class TournamentSchedulingFullAssertTest {
+class VehicleRoutingFastAssertTest {
 
     @Test
     void solve() {
-        TournamentSchedule schedule = given()
-                .when().get("/demo-data")
+        VehicleRoutePlan vehicleRoutePlan = given()
+                .when().get("/demo-data/FIRENZE")
                 .then()
                 .statusCode(200)
                 .extract()
-                .as(TournamentSchedule.class);
+                .as(VehicleRoutePlan.class);
 
         String jobId = given()
                 .contentType(ContentType.JSON)
-                .body(schedule)
+                .body(vehicleRoutePlan)
                 .expect().contentType(ContentType.TEXT)
-                .when().post("/schedules")
+                .when().post("/route-plans")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -47,10 +47,10 @@ class TournamentSchedulingFullAssertTest {
                 .atMost(Duration.ofMinutes(1))
                 .pollInterval(Duration.ofMillis(500L))
                 .until(() -> SolverStatus.NOT_SOLVING.name().equals(
-                        get("/schedules/" + jobId + "/status")
+                        get("/route-plans/" + jobId + "/status")
                                 .jsonPath().get("solverStatus")));
 
-        TournamentSchedule solution = get("/schedules/" + jobId).then().extract().as(TournamentSchedule.class);
+        VehicleRoutePlan solution = get("/route-plans/" + jobId).then().extract().as(VehicleRoutePlan.class);
         assertThat(solution.getScore().isFeasible()).isTrue();
     }
 

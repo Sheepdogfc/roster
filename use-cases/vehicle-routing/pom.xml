@@ -161,11 +161,6 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${version.surefire.plugin}</version>
-        <configuration>
-          <systemPropertyVariables>
-            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-          </systemPropertyVariables>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -227,11 +222,9 @@
       </properties>
     </profile>
     <profile>
-      <id>quickly</id>
+      <id>default</id>
       <activation>
-        <property>
-          <name>quickly</name>
-        </property>
+        <activeByDefault>true</activeByDefault>
       </activation>
       <build>
         <plugins>
@@ -239,7 +232,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${version.surefire.plugin}</version>
             <configuration>
-              <groups>quickly</groups>
+              <excludedGroups>slowly</excludedGroups>
               <systemPropertyVariables>
                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
               </systemPropertyVariables>
@@ -261,7 +254,6 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${version.surefire.plugin}</version>
             <configuration>
-              <groups>slowly</groups>
               <systemPropertyVariables>
                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
               </systemPropertyVariables>

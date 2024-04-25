@@ -16,13 +16,11 @@ import org.acme.vehiclerouting.domain.VehicleRoutePlan;
 import org.acme.vehiclerouting.domain.Visit;
 import org.acme.vehiclerouting.domain.geo.HaversineDrivingTimeCalculator;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-@Tag("quickly")
 class VehicleRoutingConstraintProviderTest {
 
     /*

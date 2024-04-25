@@ -1,16 +1,16 @@
-package org.acme.maintenancescheduling.rest;
+package org.acme.tournamentschedule.rest;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.Map;
 
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
-import org.acme.maintenancescheduling.domain.MaintenanceSchedule;
+import org.acme.tournamentschedule.domain.TournamentSchedule;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -20,22 +20,22 @@ import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-@TestProfile(MaintenanceSchedulingFullAssertTest.FullAssertProfile.class)
+@TestProfile(TournamentSchedulingFastAssertTest.FullAssertProfile.class)
 @Tag("slowly")
-class MaintenanceSchedulingFullAssertTest {
+class TournamentSchedulingFastAssertTest {
 
     @Test
     void solve() {
-        MaintenanceSchedule maintenanceSchedule = given()
-                .when().get("/demo-data/SMALL")
+        TournamentSchedule schedule = given()
+                .when().get("/demo-data")
                 .then()
                 .statusCode(200)
                 .extract()
-                .as(MaintenanceSchedule.class);
+                .as(TournamentSchedule.class);
 
         String jobId = given()
                 .contentType(ContentType.JSON)
-                .body(maintenanceSchedule)
+                .body(schedule)
                 .expect().contentType(ContentType.TEXT)
                 .when().post("/schedules")
                 .then()
@@ -50,8 +50,8 @@ class MaintenanceSchedulingFullAssertTest {
                         get("/schedules/" + jobId + "/status")
                                 .jsonPath().get("solverStatus")));
 
-        MaintenanceSchedule solution = get("/schedules/" + jobId).then().extract().as(MaintenanceSchedule.class);
-        assertTrue(solution.getScore().isFeasible());
+        TournamentSchedule solution = get("/schedules/" + jobId).then().extract().as(TournamentSchedule.class);
+        assertThat(solution.getScore().isFeasible()).isTrue();
     }
 
     public static class FullAssertProfile implements QuarkusTestProfile {

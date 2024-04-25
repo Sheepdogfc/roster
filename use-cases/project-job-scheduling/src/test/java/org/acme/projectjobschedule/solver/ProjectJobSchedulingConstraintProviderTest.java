@@ -16,13 +16,11 @@ import org.acme.projectjobschedule.domain.Project;
 import org.acme.projectjobschedule.domain.ProjectJobSchedule;
 import org.acme.projectjobschedule.domain.ResourceRequirement;
 import org.acme.projectjobschedule.domain.resource.LocalResource;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-@Tag("quickly")
 class ProjectJobSchedulingConstraintProviderTest {
 
     private final ConstraintVerifier<ProjectJobSchedulingConstraintProvider, ProjectJobSchedule> constraintVerifier;
