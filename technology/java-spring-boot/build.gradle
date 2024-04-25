@@ -36,7 +36,7 @@ dependencies {
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("ai.timefold.solver:timefold-solver-test")
-    testImplementation "io.rest-assured:rest-assured"
+    testImplementation("org.springframework:spring-webflux")
     testImplementation "org.awaitility:awaitility"
     testImplementation "org.assertj:assertj-core:3.25.3"
 
