@@ -69,17 +69,12 @@
     </dependency>
     <dependency>
       <groupId>ai.timefold.solver</groupId>
-      <artifactId>timefold-solver-benchmark</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>ai.timefold.solver</groupId>
       <artifactId>timefold-solver-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.rest-assured</groupId>
-      <artifactId>rest-assured</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webflux</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -160,11 +155,9 @@
 
   <profiles>
     <profile>
-      <id>quickly</id>
+      <id>default</id>
       <activation>
-        <property>
-          <name>quickly</name>
-        </property>
+        <activeByDefault>true</activeByDefault>
       </activation>
       <build>
         <plugins>
@@ -172,10 +165,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${version.surefire.plugin}</version>
             <configuration>
-              <groups>quickly</groups>
-              <systemPropertyVariables>
-                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-              </systemPropertyVariables>
+              <excludedGroups>native,slowly</excludedGroups>
             </configuration>
           </plugin>
         </plugins>
@@ -194,10 +184,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${version.surefire.plugin}</version>
             <configuration>
-              <groups>slowly</groups>
-              <systemPropertyVariables>
-                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-              </systemPropertyVariables>
+              <excludedGroups>native</excludedGroups>
             </configuration>
           </plugin>
         </plugins>

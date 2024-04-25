@@ -77,9 +77,9 @@ jobs:
       - name: Quickly build timefold-solver
         working-directory: ./timefold-solver
         run: mvn -B -Dquickly clean install
-      - name: Test timefold-quickstarts (slowly tests)
+      - name: Test timefold-quickstarts (slow tests)
         working-directory: ./timefold-quickstarts/${{matrix.module}}
         run: mvn -B -Dslowly verify
       - name: Test timefold-quickstarts (native tests)
         working-directory: ./timefold-quickstarts/${{matrix.module}}
-        run: mvn -B -Dnative -Pnative verify
+        run: mvn -B -Dnative -Pnative,nativeTest verify
