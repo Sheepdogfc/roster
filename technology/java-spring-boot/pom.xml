@@ -149,6 +149,15 @@
       <plugin>
         <groupId>org.graalvm.buildtools</groupId>
         <artifactId>native-maven-plugin</artifactId>
+        <configuration>
+          <imageName>app.native</imageName>
+          <buildArgs>
+            <!-- Ob == fast build -->
+            <buildArg>-Ob</buildArg>
+            <buildArg>--no-fallback</buildArg>
+            <buildArg>--trace-class-initialization=org.junit.platform.engine.TestTag</buildArg>
+          </buildArgs>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -165,7 +174,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${version.surefire.plugin}</version>
             <configuration>
-              <excludedGroups>native,slowly</excludedGroups>
+              <excludedGroups>slowly</excludedGroups>
             </configuration>
           </plugin>
         </plugins>
@@ -183,9 +192,6 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${version.surefire.plugin}</version>
-            <configuration>
-              <excludedGroups>native</excludedGroups>
-            </configuration>
           </plugin>
         </plugins>
       </build>
