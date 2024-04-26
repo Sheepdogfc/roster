@@ -15,9 +15,9 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty
 import java.time.Duration
 
 @QuarkusTest
-@TestProfile(TimetableFastAssertTest.FastAssertProfile::class)
+@TestProfile(TimetableFullAssertTest.FullAssertProfile::class)
 @EnabledIfSystemProperty(named = "slowly", matches = "true")
-class TimetableFastAssertTest {
+class TimetableFullAssertTest {
 
     @Test
     fun solve() {
@@ -53,10 +53,10 @@ class TimetableFastAssertTest {
         assertTrue(solution.score?.isFeasible!!)
     }
 
-    class FastAssertProfile : QuarkusTestProfile {
+    class FullAssertProfile : QuarkusTestProfile {
         override fun getConfigOverrides(): Map<String, String> {
             return java.util.Map.of(
-                "quarkus.timefold.solver.environment-mode", "FAST_ASSERT",
+                "quarkus.timefold.solver.environment-mode", "FULL_ASSERT",
                 "quarkus.timefold.solver.termination.best-score-limit", "",
                 "quarkus.timefold.solver.termination.spent-limit", "30s"
             )

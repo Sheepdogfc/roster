@@ -18,9 +18,9 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 
 @QuarkusTest
-@TestProfile(OrderPickingFastAssertTest.FastAssertProfile.class)
+@TestProfile(OrderPickingFullAssertTest.FullAssertProfile.class)
 @EnabledIfSystemProperty(named = "slowly", matches = "true")
-class OrderPickingFastAssertTest {
+class OrderPickingFullAssertTest {
 
     @Test
     void solve() {
@@ -38,11 +38,11 @@ class OrderPickingFastAssertTest {
         assertThat(score).isNotNull();
     }
 
-    public static class FastAssertProfile implements QuarkusTestProfile {
+    public static class FullAssertProfile implements QuarkusTestProfile {
         @Override
         public Map<String, String> getConfigOverrides() {
             return Map.of(
-                    "quarkus.timefold.solver.environment-mode", "FAST_ASSERT",
+                    "quarkus.timefold.solver.environment-mode", "FULL_ASSERT",
                     "quarkus.timefold.solver.termination.best-score-limit", "",
                     "quarkus.timefold.solver.termination.spent-limit", "30s");
         }

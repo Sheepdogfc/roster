@@ -1,4 +1,4 @@
-package org.acme.employeescheduling.rest;
+package org.acme.schooltimetabling.rest;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
-import org.acme.employeescheduling.domain.EmployeeSchedule;
+import org.acme.schooltimetabling.domain.Timetable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -20,45 +20,45 @@ import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-@TestProfile(EmployeeSchedulingFastAssertTest.FastAssertProfile.class)
+@TestProfile(TimetableFullAssertTest.FullAssertProfile.class)
 @EnabledIfSystemProperty(named = "slowly", matches = "true")
-class EmployeeSchedulingFastAssertTest {
+class TimetableFullAssertTest {
 
     @Test
-    void solveDemoDataUntilFeasible() {
-        EmployeeSchedule testSchedule = given()
+    void solve() {
+        Timetable testTimetable = given()
                 .when().get("/demo-data/SMALL")
                 .then()
                 .statusCode(200)
                 .extract()
-                .as(EmployeeSchedule.class);
+                .as(Timetable.class);
 
         String jobId = given()
                 .contentType(ContentType.JSON)
-                .body(testSchedule)
+                .body(testTimetable)
                 .expect().contentType(ContentType.TEXT)
-                .when().post("/schedules")
+                .when().post("/timetables")
                 .then()
                 .statusCode(200)
                 .extract()
                 .asString();
 
         await()
-                .atMost(Duration.ofMinutes(5))
+                .atMost(Duration.ofMinutes(1))
                 .pollInterval(Duration.ofMillis(500L))
                 .until(() -> SolverStatus.NOT_SOLVING.name().equals(
-                        get("/schedules/" + jobId + "/status")
+                        get("/timetables/" + jobId + "/status")
                                 .jsonPath().get("solverStatus")));
 
-        EmployeeSchedule solution = get("/schedules/" + jobId).then().extract().as(EmployeeSchedule.class);
+        Timetable solution = get("/timetables/" + jobId).then().extract().as(Timetable.class);
         assertTrue(solution.getScore().isFeasible());
     }
 
-    public static class FastAssertProfile implements QuarkusTestProfile {
+    public static class FullAssertProfile implements QuarkusTestProfile {
         @Override
         public Map<String, String> getConfigOverrides() {
             return Map.of(
-                    "quarkus.timefold.solver.environment-mode", "FAST_ASSERT",
+                    "quarkus.timefold.solver.environment-mode", "FULL_ASSERT",
                     "quarkus.timefold.solver.termination.best-score-limit", "",
                     "quarkus.timefold.solver.termination.spent-limit", "30s");
         }

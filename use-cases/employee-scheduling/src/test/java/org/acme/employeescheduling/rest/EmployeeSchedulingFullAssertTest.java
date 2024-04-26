@@ -20,9 +20,9 @@ import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-@TestProfile(EmployeeSchedulingFastAssertTest.FastAssertProfile.class)
+@TestProfile(EmployeeSchedulingFullAssertTest.FullAssertProfile.class)
 @EnabledIfSystemProperty(named = "slowly", matches = "true")
-class EmployeeSchedulingFastAssertTest {
+class EmployeeSchedulingFullAssertTest {
 
     @Test
     void solveDemoDataUntilFeasible() {
@@ -54,11 +54,11 @@ class EmployeeSchedulingFastAssertTest {
         assertTrue(solution.getScore().isFeasible());
     }
 
-    public static class FastAssertProfile implements QuarkusTestProfile {
+    public static class FullAssertProfile implements QuarkusTestProfile {
         @Override
         public Map<String, String> getConfigOverrides() {
             return Map.of(
-                    "quarkus.timefold.solver.environment-mode", "FAST_ASSERT",
+                    "quarkus.timefold.solver.environment-mode", "FULL_ASSERT",
                     "quarkus.timefold.solver.termination.best-score-limit", "",
                     "quarkus.timefold.solver.termination.spent-limit", "30s");
         }

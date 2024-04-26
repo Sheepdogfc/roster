@@ -20,7 +20,7 @@ import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-@TestProfile(TaskAssigningFastAssertTest.FullAssertProfile.class)
+@TestProfile(TaskAssigningFastAssertTest.FastAssertProfile.class)
 @EnabledIfSystemProperty(named = "slowly", matches = "true")
 class TaskAssigningFastAssertTest {
 
@@ -54,7 +54,7 @@ class TaskAssigningFastAssertTest {
         assertThat(solution.getScore().isFeasible()).isTrue();
     }
 
-    public static class FullAssertProfile implements QuarkusTestProfile {
+    public static class FastAssertProfile implements QuarkusTestProfile {
         @Override
         public Map<String, String> getConfigOverrides() {
             return Map.of(

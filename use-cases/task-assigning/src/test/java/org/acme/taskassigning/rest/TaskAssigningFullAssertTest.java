@@ -1,16 +1,16 @@
-package org.acme.employeescheduling.rest;
+package org.acme.taskassigning.rest;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.Map;
 
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
-import org.acme.employeescheduling.domain.EmployeeSchedule;
+import org.acme.taskassigning.domain.TaskAssigningSolution;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
@@ -20,22 +20,22 @@ import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-@TestProfile(EmployeeSchedulingFastAssertTest.FastAssertProfile.class)
+@TestProfile(TaskAssigningFullAssertTest.FullAssertProfile.class)
 @EnabledIfSystemProperty(named = "slowly", matches = "true")
-class EmployeeSchedulingFastAssertTest {
+class TaskAssigningFullAssertTest {
 
     @Test
-    void solveDemoDataUntilFeasible() {
-        EmployeeSchedule testSchedule = given()
-                .when().get("/demo-data/SMALL")
+    void solve() {
+        TaskAssigningSolution schedule = given()
+                .when().get("/demo-data")
                 .then()
                 .statusCode(200)
                 .extract()
-                .as(EmployeeSchedule.class);
+                .as(TaskAssigningSolution.class);
 
         String jobId = given()
                 .contentType(ContentType.JSON)
-                .body(testSchedule)
+                .body(schedule)
                 .expect().contentType(ContentType.TEXT)
                 .when().post("/schedules")
                 .then()
@@ -44,21 +44,21 @@ class EmployeeSchedulingFastAssertTest {
                 .asString();
 
         await()
-                .atMost(Duration.ofMinutes(5))
+                .atMost(Duration.ofMinutes(1))
                 .pollInterval(Duration.ofMillis(500L))
                 .until(() -> SolverStatus.NOT_SOLVING.name().equals(
                         get("/schedules/" + jobId + "/status")
                                 .jsonPath().get("solverStatus")));
 
-        EmployeeSchedule solution = get("/schedules/" + jobId).then().extract().as(EmployeeSchedule.class);
-        assertTrue(solution.getScore().isFeasible());
+        TaskAssigningSolution solution = get("/schedules/" + jobId).then().extract().as(TaskAssigningSolution.class);
+        assertThat(solution.getScore().isFeasible()).isTrue();
     }
 
-    public static class FastAssertProfile implements QuarkusTestProfile {
+    public static class FullAssertProfile implements QuarkusTestProfile {
         @Override
         public Map<String, String> getConfigOverrides() {
             return Map.of(
-                    "quarkus.timefold.solver.environment-mode", "FAST_ASSERT",
+                    "quarkus.timefold.solver.environment-mode", "FULL_ASSERT",
                     "quarkus.timefold.solver.termination.best-score-limit", "",
                     "quarkus.timefold.solver.termination.spent-limit", "30s");
         }

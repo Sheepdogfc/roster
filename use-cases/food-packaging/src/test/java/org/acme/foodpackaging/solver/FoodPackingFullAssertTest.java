@@ -1,4 +1,4 @@
-package org.acme.orderpicking.rest;
+package org.acme.foodpackaging.solver;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.post;
@@ -7,6 +7,7 @@ import static org.awaitility.Awaitility.await;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
@@ -18,13 +19,13 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 
 @QuarkusTest
-@TestProfile(OrderPickingFastAssertTest.FastAssertProfile.class)
+@TestProfile(FoodPackingFullAssertTest.FullAssertProfile.class)
 @EnabledIfSystemProperty(named = "slowly", matches = "true")
-class OrderPickingFastAssertTest {
+class FoodPackingFullAssertTest {
 
     @Test
-    void solve() {
-        post("/orderPicking/solve")
+    void solve() throws ExecutionException, InterruptedException {
+        post("/schedule/solve")
                 .then()
                 .statusCode(204)
                 .extract();
@@ -32,17 +33,17 @@ class OrderPickingFastAssertTest {
         await()
                 .atMost(Duration.ofMinutes(1))
                 .pollInterval(Duration.ofMillis(500L))
-                .until(() -> !SolverStatus.NOT_SOLVING.name().equals(get("/orderPicking").jsonPath().get("solverStatus")));
+                .until(() -> !SolverStatus.NOT_SOLVING.name().equals(get("/schedule").jsonPath().get("solverStatus")));
 
-        String score = get("/orderPicking").jsonPath().getString("solution.score");
+        String score = get("/schedule").jsonPath().get("score");
         assertThat(score).isNotNull();
     }
 
-    public static class FastAssertProfile implements QuarkusTestProfile {
+    public static class FullAssertProfile implements QuarkusTestProfile {
         @Override
         public Map<String, String> getConfigOverrides() {
             return Map.of(
-                    "quarkus.timefold.solver.environment-mode", "FAST_ASSERT",
+                    "quarkus.timefold.solver.environment-mode", "FULL_ASSERT",
                     "quarkus.timefold.solver.termination.best-score-limit", "",
                     "quarkus.timefold.solver.termination.spent-limit", "30s");
         }

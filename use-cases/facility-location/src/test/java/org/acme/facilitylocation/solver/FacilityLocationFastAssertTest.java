@@ -17,7 +17,7 @@ import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
 
 @QuarkusTest
-@TestProfile(FacilityLocationFastAssertTest.FullAssertProfile.class)
+@TestProfile(FacilityLocationFastAssertTest.FastAssertProfile.class)
 @EnabledIfSystemProperty(named = "slowly", matches = "true")
 class FacilityLocationFastAssertTest {
 
@@ -37,7 +37,7 @@ class FacilityLocationFastAssertTest {
         assertThat(score).isNotNull();
     }
 
-    public static class FullAssertProfile implements QuarkusTestProfile {
+    public static class FastAssertProfile implements QuarkusTestProfile {
         @Override
         public Map<String, String> getConfigOverrides() {
             return Map.of(
