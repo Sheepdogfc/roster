@@ -37,7 +37,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-class VehicleRoutePlanResourceTest {
+class VehicleRoutingPlanResourceTest {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 

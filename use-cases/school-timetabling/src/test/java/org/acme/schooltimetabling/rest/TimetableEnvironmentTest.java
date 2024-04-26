@@ -1,23 +1,29 @@
-package org.acme.schooltimetabling.solver;
+package org.acme.schooltimetabling.rest;
 
-import static org.acme.schooltimetabling.TimetableApp.generateDemoData;
+import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
+
+import jakarta.inject.Inject;
 
 import ai.timefold.solver.core.api.solver.Solver;
 import ai.timefold.solver.core.api.solver.SolverFactory;
 import ai.timefold.solver.core.config.solver.EnvironmentMode;
 import ai.timefold.solver.core.config.solver.SolverConfig;
 
-import org.acme.schooltimetabling.TimetableApp;
-import org.acme.schooltimetabling.domain.Lesson;
 import org.acme.schooltimetabling.domain.Timetable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+import io.quarkus.test.junit.QuarkusTest;
+
+@QuarkusTest
 @EnabledIfSystemProperty(named = "slowly", matches = "true")
 class TimetableEnvironmentTest {
+
+    @Inject
+    SolverConfig solverConfig;
 
     @Test
     void solveFullAssert() {
@@ -30,20 +36,24 @@ class TimetableEnvironmentTest {
     }
 
     void solve(EnvironmentMode environmentMode) {
-        SolverFactory<Timetable> solverFactory = SolverFactory.create(new SolverConfig()
-                .withSolutionClass(Timetable.class)
-                .withEntityClasses(Lesson.class)
-                .withConstraintProviderClass(TimetableConstraintProvider.class)
-                .withEnvironmentMode(environmentMode)
-                .withTerminationSpentLimit(Duration.ofSeconds(30)));
-
         // Load the problem
-        Timetable problem = generateDemoData(TimetableApp.DemoData.SMALL);
+        Timetable problem = given()
+                .when().get("/demo-data/SMALL")
+                .then()
+                .statusCode(200)
+                .extract()
+                .as(Timetable.class);
+
+
+        // Update the environment
+        solverConfig.withEnvironmentMode(environmentMode);
+        solverConfig.withTerminationSpentLimit(Duration.ofSeconds(30));
+        solverConfig.getTerminationConfig().withBestScoreLimit(null);
+        SolverFactory<Timetable> solverFactory = SolverFactory.create(solverConfig);
 
         // Solve the problem
         Solver<Timetable> solver = solverFactory.buildSolver();
         Timetable solution = solver.solve(problem);
         assertThat(solution.getScore().isFeasible()).isTrue();
     }
-
 }
