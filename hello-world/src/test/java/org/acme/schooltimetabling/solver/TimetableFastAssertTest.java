@@ -13,10 +13,10 @@ import ai.timefold.solver.core.config.solver.SolverConfig;
 import org.acme.schooltimetabling.TimetableApp;
 import org.acme.schooltimetabling.domain.Lesson;
 import org.acme.schooltimetabling.domain.Timetable;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-@Tag("slowly")
+@EnabledIfSystemProperty(named = "slowly", matches = "true")
 class TimetableFastAssertTest {
 
     @Test

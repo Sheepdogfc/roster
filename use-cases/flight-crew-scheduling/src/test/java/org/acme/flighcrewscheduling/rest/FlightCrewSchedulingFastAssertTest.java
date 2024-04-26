@@ -11,8 +11,8 @@ import java.util.Map;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 import org.acme.flighcrewscheduling.domain.FlightCrewSchedule;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -21,7 +21,7 @@ import io.restassured.http.ContentType;
 
 @QuarkusTest
 @TestProfile(FlightCrewSchedulingFastAssertTest.FullAssertProfile.class)
-@Tag("slowly")
+@EnabledIfSystemProperty(named = "slowly", matches = "true")
 class FlightCrewSchedulingFastAssertTest {
 
     @Test

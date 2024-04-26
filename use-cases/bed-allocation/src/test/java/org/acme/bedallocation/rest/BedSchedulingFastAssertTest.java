@@ -11,8 +11,8 @@ import java.util.Map;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 import org.acme.bedallocation.domain.BedPlan;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -20,9 +20,9 @@ import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
-@TestProfile(BedSchedulingFastlAssertTest.FullAssertProfile.class)
-@Tag("slowly")
-class BedSchedulingFastlAssertTest {
+@TestProfile(BedSchedulingFastAssertTest.FullAssertProfile.class)
+@EnabledIfSystemProperty(named = "slowly", matches = "true")
+class BedSchedulingFastAssertTest {
 
     @Test
     void solve() {

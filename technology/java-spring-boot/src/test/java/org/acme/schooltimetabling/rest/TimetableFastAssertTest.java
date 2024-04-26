@@ -7,9 +7,8 @@ import java.time.Duration;
 import ai.timefold.solver.core.api.solver.SolverStatus;
 
 import org.acme.schooltimetabling.domain.Timetable;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -18,11 +17,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 @SpringBootTest(properties = {
         "timefold.solver.environment-mode=FAST_ASSERT",
-        "timefold.solver.termination.spent-limit=1s",
+        "timefold.solver.termination.spent-limit=30s",
         "logging.level.ai.timefold.solver=ERROR" },
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Tag("slowly")
-@DisabledInNativeImage
+@EnabledIfSystemProperty(named = "slowly", matches = "true")
 class TimetableFastAssertTest {
 
     @LocalServerPort

@@ -254,47 +254,6 @@
         <quarkus.container-image.build>true</quarkus.container-image.build>
       </properties>
     </profile>
-    <profile>
-      <id>default</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>${version.surefire.plugin}</version>
-            <configuration>
-              <excludedGroups>slowly</excludedGroups>
-              <systemPropertyVariables>
-                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-              </systemPropertyVariables>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>slowly</id>
-      <activation>
-        <property>
-          <name>slowly</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>${version.surefire.plugin}</version>
-            <configuration>
-              <systemPropertyVariables>
-                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-              </systemPropertyVariables>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 
 </project>

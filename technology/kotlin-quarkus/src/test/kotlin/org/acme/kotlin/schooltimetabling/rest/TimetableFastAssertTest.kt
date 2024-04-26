@@ -10,13 +10,13 @@ import io.restassured.http.ContentType
 import org.acme.kotlin.schooltimetabling.domain.Timetable
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty
 import java.time.Duration
 
 @QuarkusTest
 @TestProfile(TimetableFastAssertTest.FullAssertProfile::class)
-@Tag("slowly")
+@EnabledIfSystemProperty(named = "slowly", matches = "true")
 class TimetableFastAssertTest {
 
     @Test
