@@ -40,10 +40,12 @@ class TimetableEnvironmentTest {
             .`as`(Timetable::class.java)
 
         // Update the environment
-        solverConfig!!.withEnvironmentMode(environmentMode)
-        solverConfig!!.withTerminationSpentLimit(Duration.ofSeconds(30))
-        solverConfig!!.terminationConfig.withBestScoreLimit(null)
-        val solverFactory: SolverFactory<Timetable> = SolverFactory.create(solverConfig)
+        // Update the environment
+        val updatedConfig = solverConfig!!.copyConfig()
+        updatedConfig.withEnvironmentMode(environmentMode)
+            .withTerminationSpentLimit(Duration.ofSeconds(30))
+            .terminationConfig.withBestScoreLimit(null)
+        val solverFactory: SolverFactory<Timetable> = SolverFactory.create(updatedConfig)
 
         // Solve the problem
         val solver: Solver<Timetable> = solverFactory.buildSolver()
