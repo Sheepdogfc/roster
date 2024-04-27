@@ -43,6 +43,7 @@ class TimetableEnvironmentTest {
         // Solve the problem
         Solver<Timetable> solver = solverFactory.buildSolver();
         Timetable solution = solver.solve(problem);
-        assertThat(solution.getScore()).isNotNull();    }
+        assertThat(solution.getScore()).isNotNull();
+    }
 
 }
