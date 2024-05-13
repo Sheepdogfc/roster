@@ -1,5 +1,7 @@
 package org.acme.tournamentschedule.solver;
 
+import java.math.BigDecimal;
+
 import jakarta.inject.Inject;
 
 import ai.timefold.solver.test.api.score.stream.ConstraintVerifier;
@@ -76,11 +78,11 @@ class TournamentScheduleConstraintProviderTest {
 
         constraintVerifier.verifyThat(TournamentScheduleConstraintProvider::fairAssignmentCountPerTeam)
                 .given(assignment1, assignment2, assignment3)
-                .penalizesBy(1732);
+                .penalizesBy(BigDecimal.valueOf(1.7320508075688772));
         // Team 2 twice while everyone else just once = more unfair.
         constraintVerifier.verifyThat(TournamentScheduleConstraintProvider::fairAssignmentCountPerTeam)
                 .given(assignment1, assignment2, assignment3, assignment4)
-                .penalizesBy(2449);
+                .penalizesBy(BigDecimal.valueOf(2.449489742783178));
     }
 
     @Test
@@ -96,10 +98,10 @@ class TournamentScheduleConstraintProviderTest {
 
         constraintVerifier.verifyThat(TournamentScheduleConstraintProvider::evenlyConfrontationCount)
                 .given(assignment1, assignment2, assignment3)
-                .penalizesBy(1732);
+                .penalizesBy(BigDecimal.valueOf(1.7320508075688772));
         // Team 2 twice while everyone else just once = more unfair.
         constraintVerifier.verifyThat(TournamentScheduleConstraintProvider::evenlyConfrontationCount)
                 .given(assignment1, assignment2, assignment3, assignment4)
-                .penalizesBy(3000);
+                .penalizesBy(BigDecimal.valueOf(3));
     }
 }
