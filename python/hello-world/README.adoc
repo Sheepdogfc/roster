@@ -1,0 +1,49 @@
+= School Timetabling (Python)
+
+Assign lessons to timeslots and rooms to produce a better schedule for teachers and students.
+
+== Run the application
+
+. Git clone the timefold-quickstarts repo:
++
+[source, shell]
+----
+$ git clone https://github.com/TimefoldAI/timefold-quickstarts.git
+...
+$ cd timefold-quickstarts/python/hello-world
+----
+
+. Create a virtual environment
++
+[source, shell]
+----
+$ python -m venv .venv
+----
+
+. Activate the virtual environment
++
+[source, shell]
+----
+$ . .venv/bin/activate
+----
+
+. Install requirements
++
+[source, shell]
+----
+$ pip install -r requirements.txt
+----
+
+. Run the application
++
+[source, shell]
+----
+$ python main.py
+----
+
+. Run tests
++
+[source, shell]
+----
+$ pytest
+----
