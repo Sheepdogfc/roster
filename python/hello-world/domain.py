@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from datetime import time
 from typing import Annotated
 
+
 @dataclass
 class Timeslot:
     day_of_week: str

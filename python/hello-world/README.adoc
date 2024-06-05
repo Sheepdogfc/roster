@@ -2,6 +2,16 @@
 
 Assign lessons to timeslots and rooms to produce a better schedule for teachers and students.
 
+== Prerequisites
+
+. Install Python 3.10+
+
+. Install JDK 17+, for example with https://sdkman.io[Sdkman]:
++
+----
+$ sdk install java
+----
+
 == Run the application
 
 . Git clone the timefold-quickstarts repo:
@@ -47,3 +57,8 @@ $ python main.py
 ----
 $ pytest
 ----
+
+== More information
+
+Visit https://timefold.ai[timefold.ai].
+

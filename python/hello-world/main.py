@@ -7,8 +7,10 @@ from enum import Enum
 from datetime import time
 import logging
 
+
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger('app')
+
 
 def main():
     solver_factory = SolverFactory.create(
@@ -35,6 +37,7 @@ def main():
     # Visualize the solution
     print_timetable(solution)
 
+
 def generate_demo_data(demo_data: 'DemoData') -> Timetable:
     timeslots = [
         Timeslot(day, start, start.replace(hour=start.hour + 1))
@@ -44,6 +47,7 @@ def generate_demo_data(demo_data: 'DemoData') -> Timetable:
     rooms = [Room(f'Room {name}') for name in ('A', 'B', 'C')]
 
     lessons = []
+
     def id_generator():
         current = 0
         while True:
@@ -74,6 +78,7 @@ def generate_demo_data(demo_data: 'DemoData') -> Timetable:
     lessons.append(Lesson(next(ids), "Spanish", "P. Cruz", "10th grade"))
 
     return Timetable(demo_data.name, timeslots, rooms, lessons)
+
 
 def print_timetable(time_table: Timetable) -> None:
     LOGGER.info("")
@@ -111,9 +116,11 @@ def print_timetable(time_table: Timetable) -> None:
         for lesson in unassigned_lessons:
             LOGGER.info(f'    {lesson.subject} - {lesson.teacher} - {lesson.student_group}')
 
+
 class DemoData(Enum):
     SMALL = 'SMALL'
     LARGE = 'LARGE'
+
 
 if __name__ == '__main__':
     main()
