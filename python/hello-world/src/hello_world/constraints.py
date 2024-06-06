@@ -1,8 +1,8 @@
 from timefold.solver.score import (constraint_provider, HardSoftScore, Joiners,
                                    ConstraintFactory, Constraint)
-from domain import Lesson
 from datetime import time
 
+from .domain import Lesson
 
 @constraint_provider
 def school_timetabling_constraints(constraint_factory: ConstraintFactory):

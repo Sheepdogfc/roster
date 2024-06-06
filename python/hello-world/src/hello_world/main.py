@@ -1,11 +1,12 @@
 from timefold.solver.config import (SolverConfig, ScoreDirectorFactoryConfig,
                                     TerminationConfig, Duration)
 from timefold.solver import SolverFactory
-from domain import Lesson, Timeslot, Room, Timetable
-from constraints import school_timetabling_constraints
 from enum import Enum
 from datetime import time
 import logging
+
+from .domain import Lesson, Timeslot, Room, Timetable
+from .constraints import school_timetabling_constraints
 
 
 logging.basicConfig(level=logging.INFO)

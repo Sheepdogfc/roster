@@ -4,7 +4,7 @@ Assign lessons to timeslots and rooms to produce a better schedule for teachers 
 
 == Prerequisites
 
-. Install Python 3.10+
+. Install https://www.python.org/downloads/[Python 3.10+]
 
 . Install JDK 17+, for example with https://sdkman.io[Sdkman]:
 +
@@ -37,18 +37,18 @@ $ python -m venv .venv
 $ . .venv/bin/activate
 ----
 
-. Install requirements
+. Install the application
 +
 [source, shell]
 ----
-$ pip install -r requirements.txt
+$ pip install -e .
 ----
 
 . Run the application
 +
 [source, shell]
 ----
-$ python main.py
+$ run-app
 ----
 
 . Run tests
@@ -61,4 +61,3 @@ $ pytest
 == More information
 
 Visit https://timefold.ai[timefold.ai].
-
