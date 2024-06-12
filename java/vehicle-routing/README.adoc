@@ -110,6 +110,18 @@ $ ./target/*-runner
 
 . Click on the *Solve* button.
 
+[[enterprise]]
+== Run the application with the Enterprise Edition
+
+For high-scalability use cases, try the paid Enterprise Edition instead:
+
+. Start the application with Maven:
++
+[source,shell]
+----
+$ mvn clean quarkus:dev -Penterprise
+----
+
 == More information
 
 Visit https://timefold.ai[timefold.ai].
