@@ -58,4 +58,9 @@ async def solve_timetable(schedule: EmployeeSchedule) -> str:
     return 'ID'
 
 
+@app.delete("/schedules/{problem_id}")
+async def stop_solving(problem_id: str) -> None:
+    solver_manager.terminate_early(problem_id)
+
+
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
