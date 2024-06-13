@@ -42,12 +42,7 @@ class Employee(BaseSchema):
     skills: set[str]
 
 
-def shift_pinning_filter(employee_schedule, shift):
-    schedule_state = employee_schedule.schedule_state
-    return False and not schedule_state.is_draft(shift)
-
-
-@planning_entity(pinning_filter=shift_pinning_filter)
+@planning_entity
 class Shift(BaseSchema):
     id: Annotated[str, PlanningId]
 
@@ -69,42 +64,11 @@ class Availability(BaseSchema):
     availability_type: str
 
 
-class ScheduleState(BaseSchema):
-    tenant_id: str
-    publish_length: int  # In number of days
-    draft_length: int  # In number of days
-    first_draft_date: date
-    last_historic_date: date
-
-    def is_historic(self, date_time) -> bool:
-        if isinstance(date_time, Shift):
-            return self.is_historic(date_time.start)
-
-        return date_time < datetime.combine(self.first_published_date(), datetime.min.time())
-
-    def is_draft(self, date_time) -> bool:
-        if isinstance(date_time, Shift):
-            return self.is_draft(date_time.start)
-        return date_time >= datetime.combine(self.first_draft_date, datetime.min.time())
-
-    def is_published(self, date_time) -> bool:
-        if isinstance(date_time, Shift):
-            return self.is_published(date_time.start)
-        return not self.is_historic(date_time) and not self.is_draft(date_time)
-
-    def first_published_date(self) -> date:
-        return self.last_historic_date + timedelta(days=1)
-
-    def first_unplanned_date(self) -> date:
-        return self.first_draft_date + timedelta(days=self.draft_length)
-
-
 @planning_solution
 class EmployeeSchedule(BaseSchema):
     availabilities: Annotated[list[Availability], ProblemFactCollectionProperty]
     employees: Annotated[list[Employee], ProblemFactCollectionProperty, ValueRangeProvider]
     shifts: Annotated[list[Shift], PlanningEntityCollectionProperty]
-    schedule_state: ScheduleState
     score: Annotated[HardSoftScore | None,
                      PlanningScore,
                      ScoreSerializer,

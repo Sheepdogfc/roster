@@ -4,7 +4,7 @@ from enum import Enum
 from random import Random
 from typing import Generator
 
-from .domain import (EmployeeSchedule, ScheduleState, Employee, Availability,
+from .domain import (EmployeeSchedule, Employee, Availability,
                      Shift, DESIRED, UNDESIRED, UNAVAILABLE)
 
 
@@ -50,13 +50,6 @@ def generate_demo_data() -> EmployeeSchedule:
     global location_to_shift_start_time_list_map
     initial_roster_length_in_days = 14
     start_date = earliest_monday_on_or_after(date.today())
-    schedule_state = ScheduleState(
-        first_draft_date=start_date,
-        draft_length=initial_roster_length_in_days,
-        publish_length=7,
-        last_historic_date=start_date - timedelta(days=7),
-        tenant_id='ID'
-    )
 
     random = Random(0)
     shift_template_index = 0
@@ -111,7 +104,6 @@ def generate_demo_data() -> EmployeeSchedule:
         shift_count += 1
 
     return EmployeeSchedule(
-        schedule_state=schedule_state,
         availabilities=availabilities,
         employees=employees,
         shifts=shifts
