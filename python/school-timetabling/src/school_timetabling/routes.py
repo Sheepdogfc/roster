@@ -58,6 +58,7 @@ def update_timetable(problem_id: str, timetable: Timetable):
 
 @app.post("/timetables")
 async def solve_timetable(timetable: Timetable) -> str:
+    data_sets['ID'] = timetable
     solver_manager.solve_and_listen('ID', timetable,
                                     lambda solution: update_timetable('ID', solution))
     return 'ID'
