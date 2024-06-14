@@ -8,8 +8,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vis-timeline@7.7.2/styles/vis-timeline-graph2d.min.css"
-        integrity="sha256-svzNasPg1yR5gvEaRei2jg+n4Pc3sVyMUWeS6xRAh6U=" crossorigin="anonymous">
   <link rel="stylesheet" href="/timefold/css/timefold-webui.css"/>
   <link rel="icon" href="/timefold/img/timefold-favicon.svg" type="image/svg+xml">
 </head>
@@ -33,16 +31,6 @@
               <button class="nav-link active" id="mapTab" data-bs-toggle="tab" data-bs-target="#mapPanel"
                       type="button"
                       role="tab" aria-controls="mapPanel" aria-selected="false">Map
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="byVehicleTab" data-bs-toggle="tab" data-bs-target="#byVehiclePanel"
-                      type="button" role="tab" aria-controls="byVehiclePanel" aria-selected="true">By vehicle
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="byVisitTab" data-bs-toggle="tab" data-bs-target="#byVisitPanel"
-                      type="button" role="tab" aria-controls="byVisitPanel" aria-selected="false">By visit
               </button>
             </li>
           </ul>
@@ -107,12 +95,6 @@
             </div>
           </div>
         </div>
-      </div>
-
-
-      <div class="tab-pane fade" id="byVehiclePanel" role="tabpanel" aria-labelledby="byVehicleTab">
-      </div>
-      <div class="tab-pane fade" id="byVisitPanel" role="tabpanel" aria-labelledby="byVisitTab">
       </div>
     </div>
   </div>
@@ -183,36 +165,15 @@
     </div>
   </div>
 </div>
-<form id='visitForm' class='needs-validation' novalidate>
-    <div class="modal fadebd-example-modal-lg" id="newVisitModal" tabindex="-1"
-         aria-labelledby="newVisitModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="newVisitModalLabel">Add New Visit</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="newVisitModalContent">
-                    <!-- Filled in by app.js -->
-                </div>
-                <div class="modal-footer" id="newVisitModalFooter">
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
 <footer id="timefold-auto-footer"></footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-joda/1.11.0/js-joda.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vis-timeline@7.7.2/standalone/umd/vis-timeline-graph2d.min.js"
-        integrity="sha256-Jy2+UO7rZ2Dgik50z3XrrNpnc5+2PAx9MhL2CicodME=" crossorigin="anonymous"></script>
 <script src="/timefold/js/timefold-webui.js"></script>
 <script src="/score-analysis.js"></script>
 <script src="/recommended-fit.js"></script>

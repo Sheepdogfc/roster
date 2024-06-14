@@ -1,9 +1,12 @@
+from fastapi import FastAPI, Depends, Request
+from fastapi.staticfiles import StaticFiles
+
 from timefold.solver import SolverManager, SolverFactory, SolutionManager, set_class_output_directory
 from timefold.solver.config import (SolverConfig, ScoreDirectorFactoryConfig,
                                     TerminationConfig, Duration)
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
+from typing import Annotated
 import pathlib
+
 
 from .domain import VehicleRoutePlan, Vehicle, Visit, MatchAnalysisDTO, ConstraintAnalysisDTO
 from .constraints import vehicle_routing_constraints
@@ -22,8 +25,7 @@ solver_config = SolverConfig(
     )
 )
 
-solver_factory = SolverFactory.create(solver_config)
-solver_manager = SolverManager.create(SolverFactory.create(solver_config))
+solver_manager = SolverManager.create(solver_config)
 solution_manager = SolutionManager.create(solver_manager)
 
 app = FastAPI(docs_url='/q/swagger-ui')
@@ -60,27 +62,65 @@ def update_route(problem_id: str, route: VehicleRoutePlan):
 @app.post("/route-plans")
 async def solve_route(route: VehicleRoutePlan) -> str:
     data_sets['ID'] = route
-    solver_factory.build_solver().solve(route)
-    # solver_manager.solve_and_listen('ID', route,
-    #                                 lambda solution: update_route('ID', solution))
+    solver_manager.solve_and_listen('ID', route,
+                                    lambda solution: update_route('ID', solution))
     return 'ID'
 
 
+async def setup_context(request: Request) -> VehicleRoutePlan:
+    json = await request.json()
+    visits = {
+        visit['id']: visit for visit in json.get('visits', [])
+    }
+    vehicles = {
+        vehicle['id']: vehicle for vehicle in json.get('vehicles', [])
+    }
+
+    for visit in visits.values():
+        if 'vehicle' in visit:
+            del visit['vehicle']
+
+        if 'previousVisit' in visit:
+            del visit['previousVisit']
+
+        if 'nextVisit' in visit:
+            del visit['nextVisit']
+
+    visits = {visit_id: Visit.model_validate(visits[visit_id]) for visit_id in visits}
+    json['visits'] = list(visits.values())
+
+    for vehicle in vehicles.values():
+        vehicle['visits'] = [visits[visit_id] for visit_id in vehicle['visits']]
+
+    json['vehicles'] = list(vehicles.values())
+
+    return VehicleRoutePlan.model_validate(json, context={
+        'visits': visits,
+        'vehicles': vehicles
+    })
+
+
 @app.put("/route-plans/analyze")
-async def analyze_route(route: VehicleRoutePlan) -> dict:
+async def analyze_route(route: Annotated[VehicleRoutePlan, Depends(setup_context)]) \
+        -> dict['str', list[ConstraintAnalysisDTO]]:
     return {'constraints': [ConstraintAnalysisDTO(
         name=constraint.constraint_name,
-        weight=str(constraint.weight),
-        score=str(constraint.score),
+        weight=constraint.weight,
+        score=constraint.score,
         matches=[
             MatchAnalysisDTO(
                 name=match.constraint_ref.constraint_name,
-                score=str(match.score),
+                score=match.score,
                 justification=match.justification
             )
             for match in constraint.matches
         ]
     ) for constraint in solution_manager.analyze(route).constraint_analyses]}
+
+
+@app.delete("/schedules/{problem_id}")
+async def stop_solving(problem_id: str) -> None:
+    solver_manager.terminate_early(problem_id)
 
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")

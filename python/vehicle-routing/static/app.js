@@ -4,7 +4,6 @@ let optimizing = false;
 let demoDataId = null;
 let scheduleId = null;
 let loadedRoutePlan = null;
-let newVisit = null;
 let visitMarker = null;
 const solveButton = $('#solveButton');
 const stopSolvingButton = $('#stopSolvingButton');
@@ -21,37 +20,6 @@ const visitGroup = L.layerGroup().addTo(map);
 const homeLocationGroup = L.layerGroup().addTo(map);
 const routeGroup = L.layerGroup().addTo(map);
 
-/************************************ Time line constants and variable definitions ************************************/
-
-const byVehiclePanel = document.getElementById("byVehiclePanel");
-const byVehicleTimelineOptions = {
-    timeAxis: {scale: "hour"},
-    orientation: {axis: "top"},
-    xss: {disabled: true}, // Items are XSS safe through JQuery
-    stack: false,
-    stackSubgroups: false,
-    zoomMin: 1000 * 60 * 60, // A single hour in milliseconds
-    zoomMax: 1000 * 60 * 60 * 24 // A single day in milliseconds
-};
-const byVehicleGroupData = new vis.DataSet();
-const byVehicleItemData = new vis.DataSet();
-const byVehicleTimeline = new vis.Timeline(byVehiclePanel, byVehicleItemData, byVehicleGroupData, byVehicleTimelineOptions);
-
-const byVisitPanel = document.getElementById("byVisitPanel");
-const byVisitTimelineOptions = {
-    timeAxis: {scale: "hour"},
-    orientation: {axis: "top"},
-    verticalScroll: true,
-    xss: {disabled: true}, // Items are XSS safe through JQuery
-    stack: false,
-    stackSubgroups: false,
-    zoomMin: 1000 * 60 * 60, // A single hour in milliseconds
-    zoomMax: 1000 * 60 * 60 * 24 // A single day in milliseconds
-};
-const byVisitGroupData = new vis.DataSet();
-const byVisitItemData = new vis.DataSet();
-const byVisitTimeline = new vis.Timeline(byVisitPanel, byVisitItemData, byVisitGroupData, byVisitTimelineOptions);
-
 /************************************ Initialize ************************************/
 
 $(document).ready(function () {
@@ -67,20 +35,6 @@ $(document).ready(function () {
     analyzeButton.click(analyze);
     refreshSolvingButtons(false);
 
-    // HACK to allow vis-timeline to work within Bootstrap tabs
-    $("#byVehicleTab").on('shown.bs.tab', function (event) {
-        byVehicleTimeline.redraw();
-    })
-    $("#byVisitTab").on('shown.bs.tab', function (event) {
-        byVisitTimeline.redraw();
-    })
-    // Add new visit
-    map.on('click', function (e) {
-        visitMarker = L.circleMarker(e.latlng);
-        visitMarker.setStyle({color: 'green'});
-        visitMarker.addTo(map);
-        openRecommendationModal(e.latlng.lat, e.latlng.lng);
-    });
     // Remove visit mark
     $("#newVisitModal").on("hidden.bs.modal", function () {
         map.removeLayer(visitMarker);
@@ -103,15 +57,8 @@ Home Location`;
 }
 
 function visitPopupContent(visit) {
-    const arrival = visit.arrivalTime ? `<h6>Arrival at ${showTimeOnly(visit.arrivalTime)}.</h6>` : '';
     return `<h5>${visit.name}</h5>
-    <h6>Demand: ${visit.demand}</h6>
-    <h6>Available from ${showTimeOnly(visit.minStartTime)} to ${showTimeOnly(visit.maxEndTime)}.</h6>
-    ${arrival}`;
-}
-
-function showTimeOnly(localDateTimeString) {
-    return JSJoda.LocalDateTime.parse(localDateTimeString).toLocalTime();
+    <h6>Demand: ${visit.demand}</h6>`;
 }
 
 function getHomeLocationMarker(vehicle) {
@@ -183,222 +130,9 @@ function renderRoutes(solution) {
     $('#drivingTime').text(formatDrivingTime(solution.totalDrivingTimeSeconds));
 }
 
-function renderTimelines(routePlan) {
-    byVehicleGroupData.clear();
-    byVisitGroupData.clear();
-    byVehicleItemData.clear();
-    byVisitItemData.clear();
-
-    $.each(routePlan.vehicles, function (index, vehicle) {
-        const {totalDemand, capacity} = vehicle
-        const percentage = totalDemand / capacity * 100;
-        const vehicleWithLoad = `<h5 class="card-title mb-1">vehicle-${vehicle.id}</h5>
-                                 <div class="progress" data-bs-toggle="tooltip-load" data-bs-placement="left" 
-                                      data-html="true" title="Cargo: ${totalDemand} / Capacity: ${capacity}">
-                                   <div class="progress-bar" role="progressbar" style="width: ${percentage}%">
-                                      ${totalDemand}/${capacity}
-                                   </div>
-                                 </div>`
-        byVehicleGroupData.add({id: vehicle.id, content: vehicleWithLoad});
-    });
-
-    $.each(routePlan.visits, function (index, visit) {
-        const minStartTime = JSJoda.LocalDateTime.parse(visit.minStartTime);
-        const maxEndTime = JSJoda.LocalDateTime.parse(visit.maxEndTime);
-        const serviceDuration = JSJoda.Duration.ofSeconds(visit.serviceDuration);
-
-        const visitGroupElement = $(`<div/>`)
-            .append($(`<h5 class="card-title mb-1"/>`).text(`${visit.name}`));
-        byVisitGroupData.add({
-            id: visit.id,
-            content: visitGroupElement.html()
-        });
-
-        // Time window per visit.
-        byVisitItemData.add({
-            id: visit.id + "_readyToDue",
-            group: visit.id,
-            start: visit.minStartTime,
-            end: visit.maxEndTime,
-            type: "background",
-            style: "background-color: #8AE23433"
-        });
-
-        if (visit.vehicle == null) {
-            const byJobJobElement = $(`<div/>`)
-                .append($(`<h5 class="card-title mb-1"/>`).text(`Unassigned`));
-
-            // Unassigned are shown at the beginning of the visit's time window; the length is the service duration.
-            byVisitItemData.add({
-                id: visit.id + '_unassigned',
-                group: visit.id,
-                content: byJobJobElement.html(),
-                start: minStartTime.toString(),
-                end: minStartTime.plus(serviceDuration).toString(),
-                style: "background-color: #EF292999"
-            });
-        } else {
-            const arrivalTime = JSJoda.LocalDateTime.parse(visit.arrivalTime);
-            const beforeReady = arrivalTime.isBefore(minStartTime);
-            const arrivalPlusService = arrivalTime.plus(serviceDuration);
-            const afterDue = arrivalPlusService.isAfter(maxEndTime);
-
-            const byVehicleElement = $(`<div/>`)
-                .append('<div/>')
-                .append($(`<h5 class="card-title mb-1"/>`).text(visit.name));
-
-            const byVisitElement = $(`<div/>`)
-                // visit.vehicle is the vehicle.id due to Jackson serialization
-                .append($(`<h5 class="card-title mb-1"/>`).text('vehicle-' + visit.vehicle));
-
-            const byVehicleTravelElement = $(`<div/>`)
-                .append($(`<h5 class="card-title mb-1"/>`).text('Travel'));
-
-            const previousDeparture = arrivalTime.minusSeconds(visit.drivingTimeSecondsFromPreviousStandstill);
-            byVehicleItemData.add({
-                id: visit.id + '_travel',
-                group: visit.vehicle, // visit.vehicle is the vehicle.id due to Jackson serialization
-                subgroup: visit.vehicle,
-                content: byVehicleTravelElement.html(),
-                start: previousDeparture.toString(),
-                end: visit.arrivalTime,
-                style: "background-color: #f7dd8f90"
-            });
-            if (beforeReady) {
-                const byVehicleWaitElement = $(`<div/>`)
-                    .append($(`<h5 class="card-title mb-1"/>`).text('Wait'));
-
-                byVehicleItemData.add({
-                    id: visit.id + '_wait',
-                    group: visit.vehicle, // visit.vehicle is the vehicle.id due to Jackson serialization
-                    subgroup: visit.vehicle,
-                    content: byVehicleWaitElement.html(),
-                    start: visit.arrivalTime,
-                    end: visit.minStartTime
-                });
-            }
-            let serviceElementBackground = afterDue ? '#EF292999' : '#83C15955'
-
-            byVehicleItemData.add({
-                id: visit.id + '_service',
-                group: visit.vehicle, // visit.vehicle is the vehicle.id due to Jackson serialization
-                subgroup: visit.vehicle,
-                content: byVehicleElement.html(),
-                start: visit.startServiceTime,
-                end: visit.departureTime,
-                style: "background-color: " + serviceElementBackground
-            });
-            byVisitItemData.add({
-                id: visit.id,
-                group: visit.id,
-                content: byVisitElement.html(),
-                start: visit.startServiceTime,
-                end: visit.departureTime,
-                style: "background-color: " + serviceElementBackground
-            });
-
-        }
-
-    });
-
-    $.each(routePlan.vehicles, function (index, vehicle) {
-        if (vehicle.visits.length > 0) {
-            let lastVisit = routePlan.visits.filter((visit) => visit.id == vehicle.visits[vehicle.visits.length -1]).pop();
-            if (lastVisit) {
-                byVehicleItemData.add({
-                    id: vehicle.id + '_travelBackToHomeLocation',
-                    group: vehicle.id, // visit.vehicle is the vehicle.id due to Jackson serialization
-                    subgroup: vehicle.id,
-                    content: $(`<div/>`).append($(`<h5 class="card-title mb-1"/>`).text('Travel')).html(),
-                    start: lastVisit.departureTime,
-                    end: vehicle.arrivalTime,
-                    style: "background-color: #f7dd8f90"
-                });
-            }
-        }
-    });
-
-    if (!initialized) {
-        byVehicleTimeline.setWindow(routePlan.startDateTime, routePlan.endDateTime);
-        byVisitTimeline.setWindow(routePlan.startDateTime, routePlan.endDateTime);
-    }
-}
-
 function analyze() {
     // see score-analysis.js
     analyzeScore(loadedRoutePlan, "/route-plans/analyze")
-}
-
-function openRecommendationModal(lat, lng) {
-
-    if (!('score' in loadedRoutePlan) || optimizing) {
-        map.removeLayer(visitMarker);
-        visitMarker = null;
-        let message = "Please click the Solve button before adding new visits.";
-        if (optimizing) {
-            message = "Please wait for the solving process to finish."
-        }
-        alert(message);
-        return;
-    }
-    // see recommended-fit.js
-    const visitId = Math.max(...loadedRoutePlan.visits.map(c => parseInt(c.id))) + 1;
-    newVisit = {id: visitId, location: [lat, lng]};
-    addNewVisit(visitId, lat, lng, map, visitMarker);
-}
-
-function getRecommendationsModal() {
-    let formValid = true;
-    formValid = validateFormField(newVisit, 'name' , '#inputName') && formValid;
-    formValid = validateFormField(newVisit, 'demand' , '#inputDemand') && formValid;
-    formValid = validateFormField(newVisit, 'minStartTime' , '#inputMinStartTime') && formValid;
-    formValid = validateFormField(newVisit, 'maxEndTime' , '#inputMaxStartTime') && formValid;
-    formValid = validateFormField(newVisit, 'serviceDuration' , '#inputDuration') && formValid;
-    if (formValid) {
-        const updatedMinStartTime = JSJoda.LocalDateTime.parse(newVisit['minStartTime'], JSJoda.DateTimeFormatter.ofPattern('yyyy-M-d HH:mm')).format(JSJoda.DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        const updatedMaxEndTime = JSJoda.LocalDateTime.parse(newVisit['maxEndTime'], JSJoda.DateTimeFormatter.ofPattern('yyyy-M-d HH:mm')).format(JSJoda.DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        const updatedVisit = {...newVisit, serviceDuration: `PT${newVisit['serviceDuration']}M`, minStartTime: updatedMinStartTime, maxEndTime: updatedMaxEndTime};
-        let updatedVisitList = [...loadedRoutePlan['visits']];
-        updatedVisitList.push(updatedVisit);
-        let updatedSolution = {...loadedRoutePlan, visits: updatedVisitList};
-        // see recommended-fit.js
-        requestRecommendations(updatedVisit.id, updatedSolution, "/route-plans/recommendation")
-    }
-}
-
-function validateFormField(target, fieldName, inputName) {
-    target[fieldName] = $(inputName).val();
-    if ($(inputName).val() == "") {
-        $(inputName).addClass("is-invalid");
-    } else {
-        $(inputName).removeClass("is-invalid");
-    }
-    return $(inputName).val() != "";
-}
-
-function applyRecommendationModal(recommendations) {
-    let checkedRecommendation = null;
-    recommendations.forEach((recommendation, index) => {
-        if ($('#option'+ index).is(":checked")) {
-            checkedRecommendation = recommendations[index];
-        }
-    });
-    const updatedMinStartTime = JSJoda.LocalDateTime.parse(newVisit['minStartTime'], JSJoda.DateTimeFormatter.ofPattern('yyyy-M-d HH:mm')).format(JSJoda.DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-    const updatedMaxEndTime = JSJoda.LocalDateTime.parse(newVisit['maxEndTime'], JSJoda.DateTimeFormatter.ofPattern('yyyy-M-d HH:mm')).format(JSJoda.DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-    const updatedVisit = {...newVisit, serviceDuration: `PT${newVisit['serviceDuration']}M`, minStartTime: updatedMinStartTime, maxEndTime: updatedMaxEndTime};
-    let updatedVisitList = [...loadedRoutePlan['visits']];
-    updatedVisitList.push(updatedVisit);
-    let updatedSolution = {...loadedRoutePlan, visits: updatedVisitList};
-    // see recommended-fit.js
-    applyRecommendation(updatedSolution, newVisit.id, checkedRecommendation.proposition.vehicleId, checkedRecommendation.proposition.index,
-        "/route-plans/recommendation/apply");
-}
-
-function updateSolutionWithNewVisit(newSolution) {
-    loadedRoutePlan = newSolution;
-    renderRoutes(newSolution);
-    renderTimelines(newSolution);
-    $('#newVisitModal').modal('hide');
 }
 
 // TODO: move the general functionality to the webjar.
@@ -476,7 +210,6 @@ function refreshRoutePlan() {
         loadedRoutePlan = routePlan;
         refreshSolvingButtons(routePlan.solverStatus != null && routePlan.solverStatus !== "NOT_SOLVING");
         renderRoutes(routePlan);
-        renderTimelines(routePlan);
         initialized = true;
     }).fail(function (xhr, ajaxOptions, thrownError) {
         showError("Getting timetable has failed.", xhr);

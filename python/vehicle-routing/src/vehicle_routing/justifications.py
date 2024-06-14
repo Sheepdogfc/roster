@@ -15,17 +15,6 @@ class VehicleCapacityJustification(ConstraintJustification):
 
 
 @dataclass
-class ServiceFinishedAfterMaxEndTimeJustification(ConstraintJustification):
-    visit_id: str
-    delay_in_minutes: int
-    description: str = field(init=False)
-
-    def __post_init__(self):
-        self.description = (f"Visit '{self.visit_id}' serviced with a  "
-                            f"{self.delay_in_minutes} minute delay.")
-
-
-@dataclass
 class MinimizeTravelTimeJustification(ConstraintJustification):
     vehicle_name: str
     total_driving_time_seconds: int
@@ -39,6 +28,5 @@ class MinimizeTravelTimeJustification(ConstraintJustification):
 
 __all__ = [
     'VehicleCapacityJustification',
-    'ServiceFinishedAfterMaxEndTimeJustification',
     'MinimizeTravelTimeJustification',
 ]

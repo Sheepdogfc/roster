@@ -4,8 +4,8 @@ from timefold.solver.domain import *
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Annotated, Optional
-from pydantic import BaseModel, ConfigDict, PlainSerializer, BeforeValidator, Field, computed_field
+from typing import Annotated, Optional, Any
+from pydantic import BaseModel, ConfigDict, PlainSerializer, BeforeValidator, Field, ValidationInfo, computed_field
 from pydantic.alias_generators import to_camel
 
 
@@ -17,16 +17,64 @@ class BaseSchema(BaseModel):
     )
 
 
+def make_id_item_validator(key: str):
+    def validator(v: Any, info: ValidationInfo) -> Any:
+        if v is None:
+            return None
+
+        if not isinstance(v, str) or not info.context:
+            return v
+
+        return info.context.get(key)[v]
+
+    return BeforeValidator(validator)
+
+
+def make_id_list_item_validator(key: str):
+    def validator(v: Any, info: ValidationInfo) -> Any:
+        if v is None:
+            return None
+
+        if isinstance(v, (list, tuple)):
+            out = []
+            for item in v:
+                if not isinstance(v, str) or not info.context:
+                    return v
+                out.append(info.context.get(key)[item])
+            return out
+
+        return v
+
+    return BeforeValidator(validator)
+
+
 LocationSerializer = PlainSerializer(lambda location: [
     location.latitude,
     location.longitude,
-], return_type=list)
+], return_type=list[float])
 ScoreSerializer = PlainSerializer(lambda score: str(score), return_type=str)
 IdSerializer = PlainSerializer(lambda item: item.id if item is not None else None, return_type=str | None)
 IdListSerializer = PlainSerializer(lambda items: [item.id for item in items], return_type=list)
 
-LocationDeserializer = BeforeValidator(lambda location: location if isinstance(location, Location)
-                                       else Location(latitude=location[0], longitude=location[1]))
+LocationValidator = BeforeValidator(lambda location: location if isinstance(location, Location)
+                                    else Location(latitude=location[0], longitude=location[1]))
+VisitListValidator = make_id_list_item_validator('visits')
+VisitValidator = make_id_item_validator('visits')
+VehicleValidator = make_id_item_validator('vehicles')
+
+
+def validate_score(v: Any, info: ValidationInfo) -> Any:
+    if isinstance(v, HardSoftScore) or v is None:
+        return v
+    if isinstance(v, str):
+        hard_part, soft_part = v.split('/')
+        hard = int(hard_part.rstrip('hard'))
+        soft = int(soft_part.rstrip('soft'))
+        return HardSoftScore.of(hard, soft)
+    raise ValueError('"score" should be a string')
+
+
+ScoreValidator = BeforeValidator(validate_score)
 
 
 class Location(BaseSchema):
@@ -82,55 +130,23 @@ class ArrivalTimeUpdatingVariableListener(VariableListener):
 class Visit(BaseSchema):
     id: Annotated[str, PlanningId]
     name: str
-    location: Annotated[Location, LocationSerializer, LocationDeserializer]
+    location: Annotated[Location, LocationSerializer, LocationValidator]
     demand: int
-    min_start_time: datetime
-    max_end_time: datetime
-    service_duration: timedelta
     vehicle: Annotated[Optional['Vehicle'],
                        InverseRelationShadowVariable(source_variable_name='visits'),
                        IdSerializer,
+                       VehicleValidator,
                        Field(default=None)]
     previous_visit: Annotated[Optional['Visit'],
                               PreviousElementShadowVariable(source_variable_name='visits'),
                               IdSerializer,
+                              VisitValidator,
                               Field(default=None)]
     next_visit: Annotated[Optional['Visit'],
                           NextElementShadowVariable(source_variable_name='visits'),
                           IdSerializer,
+                          VisitValidator,
                           Field(default=None)]
-    arrival_time: Annotated[Optional[datetime],
-                            ShadowVariable(variable_listener_class=ArrivalTimeUpdatingVariableListener,
-                                           source_variable_name='vehicle'),
-                            ShadowVariable(variable_listener_class=ArrivalTimeUpdatingVariableListener,
-                                           source_variable_name='previous_visit'),
-                            Field(default=None)]
-
-    @computed_field
-    @property
-    def departure_time(self) -> Optional[datetime]:
-        return self.calculate_departure_time()
-
-    def calculate_departure_time(self) -> Optional[datetime]:
-        if self.arrival_time is None:
-            return None
-
-        return self.arrival_time + self.service_duration
-
-    @computed_field
-    @property
-    def start_service_time(self) -> Optional[datetime]:
-        if self.arrival_time is None:
-            return None
-        return self.min_start_time if (self.min_start_time < self.arrival_time) else self.arrival_time
-
-    def is_service_finished_after_max_end_time(self) -> bool:
-        return self.arrival_time is not None and self.calculate_departure_time() > self.max_end_time
-
-    def service_finished_delay_in_minutes(self) -> int:
-        if self.arrival_time is None:
-            return 0
-        return (self.max_end_time - self.calculate_departure_time()).seconds // 60
 
     def driving_time_seconds_from_previous_standstill(self) -> int:
         if self.vehicle is None:
@@ -157,11 +173,11 @@ class Visit(BaseSchema):
 class Vehicle(BaseSchema):
     id: Annotated[str, PlanningId]
     capacity: int
-    home_location: Annotated[Location, LocationSerializer, LocationDeserializer]
-    departure_time: datetime
+    home_location: Annotated[Location, LocationSerializer, LocationValidator]
     visits: Annotated[list[Visit],
                       PlanningListVariable,
                       IdListSerializer,
+                      VisitListValidator,
                       Field(default_factory=list)]
 
     @computed_field
@@ -193,14 +209,6 @@ class Vehicle(BaseSchema):
         total_driving_time_seconds += previous_location.driving_time_to(self.home_location)
         return total_driving_time_seconds
 
-    def arrival_time(self):
-        if len(self.visits) == 0:
-            return self.departure_time
-
-        last_visit = self.visits[-1]
-        return (last_visit.calculate_departure_time() +
-                timedelta(seconds=last_visit.location.driving_time_to(self.home_location)))
-
     def __str__(self):
         return self.id
 
@@ -211,20 +219,27 @@ class Vehicle(BaseSchema):
 @planning_solution
 class VehicleRoutePlan(BaseSchema):
     name: str
-    south_west_corner: Annotated[Location, LocationSerializer, LocationDeserializer]
-    north_east_corner: Annotated[Location, LocationSerializer, LocationDeserializer]
-    start_date_time: datetime
-    end_date_time: datetime
+    south_west_corner: Annotated[Location, LocationSerializer, LocationValidator]
+    north_east_corner: Annotated[Location, LocationSerializer, LocationValidator]
     vehicles: Annotated[list[Vehicle], PlanningEntityCollectionProperty]
     visits: Annotated[list[Visit], PlanningEntityCollectionProperty, ValueRangeProvider]
     score: Annotated[Optional[HardSoftScore],
                      PlanningScore,
                      ScoreSerializer,
+                     ScoreValidator,
                      Field(default=None)]
     solver_status: Annotated[Optional[SolverStatus],
                              Field(default=None)]
     score_explanation: Annotated[Optional[str],
                                  Field(default=None)]
+
+    @computed_field
+    @property
+    def total_driving_time_seconds(self) -> int:
+        out = 0
+        for vehicle in self.vehicles:
+            out += vehicle.total_driving_time_seconds
+        return out
 
     def __str__(self):
         return f'VehicleRoutePlan(name={self.id}, vehicles={self.vehicles}, visits={self.visits})'
@@ -233,13 +248,13 @@ class VehicleRoutePlan(BaseSchema):
 @dataclass
 class MatchAnalysisDTO:
     name: str
-    score: str
+    score: Annotated[HardSoftScore, ScoreSerializer]
     justification: object
 
 
 @dataclass
 class ConstraintAnalysisDTO:
     name: str
-    weight: str
+    weight: Annotated[HardSoftScore, ScoreSerializer]
     matches: list[MatchAnalysisDTO]
-    score: str
+    score: Annotated[HardSoftScore, ScoreSerializer]

@@ -1,11 +1,9 @@
 from timefold.solver.score import ConstraintFactory, HardSoftScore, constraint_provider
 
-from .domain import Vehicle, Visit
-from .justifications import (VehicleCapacityJustification, ServiceFinishedAfterMaxEndTimeJustification,
-                             MinimizeTravelTimeJustification)
+from .domain import Vehicle
+from .justifications import VehicleCapacityJustification, MinimizeTravelTimeJustification
 
 VEHICLE_CAPACITY = "vehicleCapacity"
-SERVICE_FINISHED_AFTER_MAX_END_TIME = "serviceFinishedAfterMaxEndTime"
 MINIMIZE_TRAVEL_TIME = "minimizeTravelTime"
 
 
@@ -13,7 +11,6 @@ MINIMIZE_TRAVEL_TIME = "minimizeTravelTime"
 def vehicle_routing_constraints(factory: ConstraintFactory):
     return [
         vehicle_capacity(factory),
-        service_finished_after_max_end_time(factory),
         minimize_travel_time(factory)
     ]
 
@@ -33,19 +30,6 @@ def vehicle_capacity(factory: ConstraintFactory):
                               vehicle.calculate_total_demand(),
                               vehicle.capacity))
             .as_constraint(VEHICLE_CAPACITY)
-            )
-
-
-def service_finished_after_max_end_time(factory: ConstraintFactory):
-    return (factory.for_each(Visit)
-            .filter(lambda visit: visit.is_service_finished_after_max_end_time())
-            .penalize(HardSoftScore.ONE_HARD,
-                      lambda visit: visit.service_finished_delay_in_minutes())
-            .justify_with(lambda visit, score:
-                          ServiceFinishedAfterMaxEndTimeJustification(
-                              visit.id,
-                              visit.service_finished_delay_in_minutes()))
-            .as_constraint(SERVICE_FINISHED_AFTER_MAX_END_TIME)
             )
 
 ##############################################
