@@ -50,4 +50,4 @@ def minimize_travel_time(factory: ConstraintFactory):
     )
 
 
-__all__ = ['vehicle_routing_constraints']
+__all__ = ['vehicle_routing_constraints', 'vehicle_capacity', 'minimize_travel_time']

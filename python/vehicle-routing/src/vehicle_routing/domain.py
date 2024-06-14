@@ -85,8 +85,8 @@ class Location(BaseSchema):
     def driving_time_to(self, other: 'Location') -> int:
         if id(other) not in self.driving_time_seconds:
             self.driving_time_seconds[id(other)] = round((
-                                                                 (self.latitude - other.latitude) ** 2 +
-                                                                 (self.longitude - other.longitude) ** 2
+                                                             (self.latitude - other.latitude) ** 2 +
+                                                             (self.longitude - other.longitude) ** 2
                                                          ) ** 0.5 * 1000)
         return self.driving_time_seconds[id(other)]
 
