@@ -1,7 +1,14 @@
-= School Timetabling (Python)
+= Employee Scheduling (Python)
 
-Assign lessons to timeslots and rooms to produce a better schedule for teachers and students.
+Find the most efficient routes for a fleet of vehicles.
 
+image::./python-vehicle-routing-screenshot.png[]
+
+* <<prerequisites,Prerequisites>>
+* <<run,Run the application>>
+* <<test,Test the application>>
+
+[[prerequisites]]
 == Prerequisites
 
 . Install https://www.python.org/downloads/[Python 3.10+]
@@ -12,15 +19,16 @@ Assign lessons to timeslots and rooms to produce a better schedule for teachers 
 $ sdk install java
 ----
 
+[[run]]
 == Run the application
 
-. Git clone the timefold-quickstarts repo:
+. Git clone the timefold-quickstarts repo and navigate to this directory:
 +
 [source, shell]
 ----
 $ git clone https://github.com/TimefoldAI/timefold-quickstarts.git
 ...
-$ cd timefold-quickstarts/python/hello-world
+$ cd timefold-quickstarts/python/vehicle-routing
 ----
 
 . Create a virtual environment
@@ -50,6 +58,14 @@ $ pip install -e .
 ----
 $ run-app
 ----
+
+. Visit http://localhost:8080 in your browser.
+
+. Click on the *Solve* button.
+
+
+[[test]]
+== Test the application
 
 . Run tests
 +
