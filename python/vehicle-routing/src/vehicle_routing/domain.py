@@ -79,15 +79,12 @@ ScoreValidator = BeforeValidator(validate_score)
 class Location(BaseSchema):
     latitude: float
     longitude: float
-    driving_time_seconds: Annotated[dict[int, int], Field(default_factory=dict)]
 
     def driving_time_to(self, other: 'Location') -> int:
-        if id(other) not in self.driving_time_seconds:
-            self.driving_time_seconds[id(other)] = round((
-                                                             (self.latitude - other.latitude) ** 2 +
-                                                             (self.longitude - other.longitude) ** 2
-                                                         ) ** 0.5 * 1000)
-        return self.driving_time_seconds[id(other)]
+        return round((
+             (self.latitude - other.latitude) ** 2 +
+             (self.longitude - other.longitude) ** 2
+         ) ** 0.5 * 1000)
 
     def __str__(self):
         return f'[{self.latitude}, {self.longitude}]'
