@@ -1,28 +1,41 @@
-from timefold.solver import SolverFactory
-from timefold.solver.config import (SolverConfig, ScoreDirectorFactoryConfig,
-                                    TerminationConfig, Duration, TerminationCompositionStyle)
+from school_timetabling.routes import app
+from school_timetabling.domain import Timetable, Room, Timeslot
 
-from school_timetabling.domain import Timetable, Lesson
-from school_timetabling.constraints import school_timetabling_constraints
-from school_timetabling.demo_data import generate_demo_data, DemoData
+from fastapi.testclient import TestClient
+from time import sleep
+from pytest import fail
+
+client = TestClient(app)
 
 
 def test_feasible():
-    solver_factory = SolverFactory.create(
-        SolverConfig(
-            solution_class=Timetable,
-            entity_class_list=[Lesson],
-            score_director_factory_config=ScoreDirectorFactoryConfig(
-                constraint_provider_function=school_timetabling_constraints
-            ),
-            termination_config=TerminationConfig(
-                termination_config_list=[
-                    TerminationConfig(best_score_feasible=True),
-                    TerminationConfig(spent_limit=Duration(seconds=30)),
-                ],
-                termination_composition_style=TerminationCompositionStyle.OR
-            )
-        ))
-    solver = solver_factory.build_solver()
-    solution = solver.solve(generate_demo_data(DemoData.SMALL))
-    assert solution.score.is_feasible
+    demo_data_response = client.get("/demo-data/SMALL")
+    assert demo_data_response.status_code == 200
+
+    job_id_response = client.post("/timetables", json=demo_data_response.json())
+    assert job_id_response.status_code == 200
+    job_id = job_id_response.text[1:-1]
+
+    ATTEMPTS = 1_000
+    for _ in range(ATTEMPTS):
+        sleep(0.1)
+        timetable_response = client.get(f"/timetables/{job_id}")
+        timetable_json = timetable_response.json()
+        timetable = Timetable.model_validate(timetable_json,
+                                             context={
+                                                 'rooms': {
+                                                     room['id']: Room.model_validate(room)
+                                                     for room in timetable_json.get('rooms', [])
+                                                 },
+                                                 'timeslots': {
+                                                     timeslot['id']: Timeslot.model_validate(timeslot)
+                                                     for timeslot in timetable_json.get('timeslots', [])
+                                                 },
+                                             })
+        if timetable.score is not None and timetable.score.is_feasible:
+            stop_solving_response = client.delete(f"/timetables/{job_id}")
+            assert stop_solving_response.status_code == 200
+            return
+
+    client.delete(f"/timetables/{job_id}")
+    fail('solution is not feasible')
