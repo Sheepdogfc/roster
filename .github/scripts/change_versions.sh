@@ -10,3 +10,4 @@ echo "New version: $NEW_VERSION"
 # Replaces the old version by the new version.
 find . -name pom.xml | xargs sed -i "s/>$OLD_VERSION</>$NEW_VERSION</g"
 find . -name build.gradle | xargs sed -i "s/\"$OLD_VERSION\"/\"$NEW_VERSION\"/g"
+find . -name gradle.properties | xargs sed -i "s/$OLD_VERSION/$NEW_VERSION/g"
