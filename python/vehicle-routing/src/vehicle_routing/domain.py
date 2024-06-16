@@ -3,7 +3,6 @@ from timefold.solver.score import HardSoftScore, ScoreDirector
 from timefold.solver.domain import *
 
 from dataclasses import dataclass
-from datetime import datetime, timedelta
 from typing import Annotated, Optional, Any
 from pydantic import BaseModel, ConfigDict, PlainSerializer, BeforeValidator, Field, ValidationInfo, computed_field
 from pydantic.alias_generators import to_camel
@@ -95,35 +94,6 @@ class Location(BaseSchema):
 
     def __repr__(self):
         return f'Location({self.latitude}, {self.longitude})'
-
-
-class ArrivalTimeUpdatingVariableListener(VariableListener):
-    def after_variable_changed(self, score_director: ScoreDirector, visit) -> None:
-        if visit.vehicle is None:
-            if visit.arrival_time is not None:
-                score_director.before_variable_changed(visit, 'arrival_time')
-                visit.arrival_time = None
-                score_director.after_variable_changed(visit, 'arrival_time')
-            return
-        previous_visit = visit.previous_visit
-        departure_time = visit.vehicle.departure_time if previous_visit is None else (
-            previous_visit.calculate_departure_time())
-        next_visit = visit
-        arrival_time = ArrivalTimeUpdatingVariableListener.calculate_arrival_time(next_visit, departure_time)
-        while next_visit is not None and next_visit.arrival_time != arrival_time:
-            score_director.before_variable_changed(next_visit, 'arrival_time')
-            next_visit.arrival_time = arrival_time
-            score_director.after_variable_changed(next_visit, 'arrival_time')
-            departure_time = next_visit.calculate_departure_time()
-            next_visit = next_visit.next_visit
-            arrival_time = ArrivalTimeUpdatingVariableListener.calculate_arrival_time(next_visit, departure_time)
-
-    @staticmethod
-    def calculate_arrival_time(visit, previous_departure_time: Optional[datetime]) \
-            -> datetime | None:
-        if visit is None or previous_departure_time is None:
-            return None
-        return previous_departure_time + timedelta(seconds=visit.driving_time_seconds_from_previous_standstill())
 
 
 @planning_entity
@@ -230,8 +200,6 @@ class VehicleRoutePlan(BaseSchema):
                      Field(default=None)]
     solver_status: Annotated[Optional[SolverStatus],
                              Field(default=None)]
-    score_explanation: Annotated[Optional[str],
-                                 Field(default=None)]
 
     @computed_field
     @property

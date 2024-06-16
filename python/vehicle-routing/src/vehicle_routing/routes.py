@@ -48,7 +48,6 @@ async def get_route(problem_id: str) -> VehicleRoutePlan:
     route = data_sets[problem_id]
     out = route.model_copy(update={
         'solver_status': solver_manager.get_solver_status(problem_id),
-        'score_explanation': solution_manager.explain(route).summary
     })
     solution_manager.update(out)
     return out
@@ -118,7 +117,7 @@ async def analyze_route(route: Annotated[VehicleRoutePlan, Depends(setup_context
     ) for constraint in solution_manager.analyze(route).constraint_analyses]}
 
 
-@app.delete("/schedules/{problem_id}")
+@app.delete("/route-plans/{problem_id}")
 async def stop_solving(problem_id: str) -> None:
     solver_manager.terminate_early(problem_id)
 
