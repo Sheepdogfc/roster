@@ -49,7 +49,6 @@ async def get_route(problem_id: str) -> VehicleRoutePlan:
     out = route.model_copy(update={
         'solver_status': solver_manager.get_solver_status(problem_id),
     })
-    solution_manager.update(out)
     return out
 
 
