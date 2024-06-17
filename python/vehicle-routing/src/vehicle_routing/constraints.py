@@ -27,8 +27,8 @@ def vehicle_capacity(factory: ConstraintFactory):
             .justify_with(lambda vehicle, score:
                           VehicleCapacityJustification(
                               vehicle.id,
-                              vehicle.calculate_total_demand(),
-                              vehicle.capacity))
+                              vehicle.capacity,
+                              vehicle.calculate_total_demand()))
             .as_constraint(VEHICLE_CAPACITY)
             )
 
