@@ -3,13 +3,13 @@ name: Python
 on:
   push:
     branches: [stable, development, '*.x']
-    paths-ignore:
+    paths:
       - '**/*.py'
       - '**/pyproject.toml'
       - '.github/**/*.yml'
   pull_request:
     branches: [stable, development, '*.x']
-    paths-ignore:
+    paths:
       - '**/*.py'
       - '**/pyproject.toml'
       - '.github/**/*.yml'
