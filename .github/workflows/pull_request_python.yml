@@ -123,4 +123,6 @@ jobs:
 
       - name: Build and test timefold-quickstarts
         working-directory: ./timefold-quickstarts
+        env:
+          TIMEFOLD_SOLVER_PYTHON_DIST: "../timefold-solver-python/dist"
         run: .github/scripts/run_python_tests.sh
