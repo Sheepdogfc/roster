@@ -46,10 +46,9 @@ async def get_demo_data(dataset_id: str) -> VehicleRoutePlan:
 @app.get("/route-plans/{problem_id}", response_model_exclude_none=True)
 async def get_route(problem_id: str) -> VehicleRoutePlan:
     route = data_sets[problem_id]
-    out = route.model_copy(update={
+    return route.model_copy(update={
         'solver_status': solver_manager.get_solver_status(problem_id),
     })
-    return out
 
 
 def update_route(problem_id: str, route: VehicleRoutePlan):
