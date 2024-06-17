@@ -58,16 +58,7 @@ def update_route(problem_id: str, route: VehicleRoutePlan):
     data_sets[problem_id] = route
 
 
-@app.post("/route-plans")
-async def solve_route(route: VehicleRoutePlan) -> str:
-    data_sets['ID'] = route
-    solver_manager.solve_and_listen('ID', route,
-                                    lambda solution: update_route('ID', solution))
-    return 'ID'
-
-
-async def setup_context(request: Request) -> VehicleRoutePlan:
-    json = await request.json()
+def json_to_vehicle_route_plan(json: dict) -> VehicleRoutePlan:
     visits = {
         visit['id']: visit for visit in json.get('visits', [])
     }
@@ -97,6 +88,19 @@ async def setup_context(request: Request) -> VehicleRoutePlan:
         'visits': visits,
         'vehicles': vehicles
     })
+
+
+async def setup_context(request: Request) -> VehicleRoutePlan:
+    json = await request.json()
+    return json_to_vehicle_route_plan(json)
+
+
+@app.post("/route-plans")
+async def solve_route(route: Annotated[VehicleRoutePlan, Depends(setup_context)]) -> str:
+    data_sets['ID'] = route
+    solver_manager.solve_and_listen('ID', route,
+                                    lambda solution: update_route('ID', solution))
+    return 'ID'
 
 
 @app.put("/route-plans/analyze")

@@ -1,28 +1,30 @@
-from timefold.solver import SolverFactory
-from timefold.solver.config import (SolverConfig, ScoreDirectorFactoryConfig,
-                                    TerminationConfig, Duration, TerminationCompositionStyle)
+from vehicle_routing.routes import json_to_vehicle_route_plan, app
 
-from vehicle_routing.domain import VehicleRoutePlan, Vehicle, Visit
-from vehicle_routing.constraints import vehicle_routing_constraints
-from vehicle_routing.demo_data import generate_demo_data, DemoData
+from fastapi.testclient import TestClient
+from time import sleep
+from pytest import fail
+
+client = TestClient(app)
 
 
 def test_feasible():
-    solver_factory = SolverFactory.create(
-        SolverConfig(
-            solution_class=VehicleRoutePlan,
-            entity_class_list=[Vehicle, Visit],
-            score_director_factory_config=ScoreDirectorFactoryConfig(
-                constraint_provider_function=vehicle_routing_constraints
-            ),
-            termination_config=TerminationConfig(
-                termination_config_list=[
-                    TerminationConfig(best_score_feasible=True),
-                    TerminationConfig(spent_limit=Duration(seconds=120)),
-                ],
-                termination_composition_style=TerminationCompositionStyle.OR
-            )
-        ))
-    solver = solver_factory.build_solver()
-    solution = solver.solve(generate_demo_data(DemoData.PHILADELPHIA))
-    assert solution.score.is_feasible
+    demo_data_response = client.get("/demo-data/PHILADELPHIA")
+    assert demo_data_response.status_code == 200
+
+    job_id_response = client.post("/route-plans", json=demo_data_response.json())
+    assert job_id_response.status_code == 200
+    job_id = job_id_response.text[1:-1]
+
+    ATTEMPTS = 1_000
+    for _ in range(ATTEMPTS):
+        sleep(0.1)
+        route_plan_response = client.get(f"/route-plans/{job_id}")
+        route_plan_json = route_plan_response.json()
+        timetable = json_to_vehicle_route_plan(route_plan_json)
+        if timetable.score is not None and timetable.score.is_feasible:
+            stop_solving_response = client.delete(f"/route-plans/{job_id}")
+            assert stop_solving_response.status_code == 200
+            return
+
+    client.delete(f"/route-plans/{job_id}")
+    fail('solution is not feasible')
