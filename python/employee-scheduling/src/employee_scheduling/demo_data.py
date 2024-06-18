@@ -50,7 +50,7 @@ def generate_demo_data() -> EmployeeSchedule:
     initial_roster_length_in_days = 14
     start_date = earliest_monday_on_or_after(date.today())
 
-    random = Random(0)
+    random = Random(37)
     shift_template_index = 0
     for location in LOCATIONS:
         location_to_shift_start_time_list_map[location] = SHIFT_START_TIMES_COMBOS[shift_template_index]
