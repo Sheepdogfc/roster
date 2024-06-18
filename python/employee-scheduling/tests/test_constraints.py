@@ -21,7 +21,7 @@ def test_required_skill():
            Shift(id="1", start=DAY_START_TIME, end=DAY_END_TIME, location="Location", required_skill="Skill", employee=employee))
     .penalizes(1))
     
-    employee = Employee(name="Beth", skills={"Skill"})
+    employee = Employee(name="Beth", skills={"Skill"}, unavailable_dates=set(), undesired_dates=set(), desired_dates=set())
     (constraint_verifier.verify_that(required_skill)
     .given(employee,
            Shift(id="2", start=DAY_START_TIME, end=DAY_END_TIME, location="Location", required_skill="Skill", employee=employee))
@@ -146,17 +146,17 @@ def test_undesired_day_for_employee():
     .given(employee1, employee2,
            Shift(id="1", start=DAY_START_TIME, end=DAY_END_TIME, location="Location", required_skill="Skill", employee=employee1))
     .penalizes_by(timedelta(hours=8) // timedelta(minutes=1)))
-    
+
     (constraint_verifier.verify_that(undesired_day_for_employee)
     .given(employee1, employee2,
            Shift(id="1", start=DAY_START_TIME - timedelta(days=1), end=DAY_END_TIME, location="Location", required_skill="Skill", employee=employee1))
     .penalizes_by(timedelta(hours=32) // timedelta(minutes=1)))
-    
+
     (constraint_verifier.verify_that(undesired_day_for_employee)
     .given(employee1, employee2,
            Shift(id="1", start=DAY_START_TIME + timedelta(days=1), end=DAY_END_TIME + timedelta(days=1), location="Location", required_skill="Skill", employee=employee1))
     .penalizes(0))
-    
+
     (constraint_verifier.verify_that(undesired_day_for_employee)
     .given(employee1, employee2,
            Shift(id="1", start=DAY_START_TIME, end=DAY_END_TIME, location="Location", required_skill="Skill", employee=employee2))
