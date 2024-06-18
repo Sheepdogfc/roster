@@ -45,6 +45,29 @@ $ gradle bootRun
 
 . Click on the *Solve* button.
 
+[[enterprise]]
+== Run the application with the Enterprise Edition
+
+For high-scalability use cases, try the paid https://docs.timefold.ai/timefold-solver/latest/enterprise-edition/enterprise-edition[Enterprise Edition] instead:
+
+. Start the application with Maven:
++
+[source, shell]
+----
+$ mvn spring-boot:run -Denterprise
+----
++
+or with Gradle:
++
+[source, shell]
+----
+$ gradle bootRun -Denterprise=true
+----
+
+. Visit http://localhost:8080 in your browser.
+
+. Click on the *Solve* button.
+
 [[package]]
 == Run the packaged application
 

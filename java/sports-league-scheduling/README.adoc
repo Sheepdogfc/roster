@@ -49,6 +49,28 @@ Then try _live coding_:
 
 Notice that those changes are immediately in effect.
 
+[[enterprise]]
+== Run the application with the Enterprise Edition
+
+For high-scalability use cases, try the paid https://docs.timefold.ai/timefold-solver/latest/enterprise-edition/enterprise-edition[Enterprise Edition] instead:
+
+. Start the application with Maven:
++
+[source,shell]
+----
+$ mvn clean quarkus:dev -Denterprise
+----
+
+. Visit http://localhost:8080 in your browser.
+
+. Click on the *Solve* button.
+
+Then try _live coding_:
+
+. Make some changes in the source code.
+. Refresh your browser (F5).
+
+Notice that those changes are immediately in effect.
 
 [[package]]
 == Run the packaged application

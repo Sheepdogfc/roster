@@ -60,37 +60,13 @@ class OrderPickingConstraintProviderTest {
         TrolleyStep trolley1Step3 = mockTrolleyStep(order2.getItems().get(0));
         TrolleyStep trolley1Step4 = mockTrolleyStep(order2.getItems().get(1));
 
-        //Trolley1:
-        //Order1 total volume = 9 -> requires 2 buckets
-        //Order2 total volume = 5 -> requires 1 bucket
-        //Total required buckets = 3
-        //Penalization = 3 - 2 = 1
-        Trolley trolley1 = mockTrolley(2, 5,
-                trolley1Step1,
-                trolley1Step2,
-                trolley1Step3,
-                trolley1Step4);
-
-        TrolleyStep trolley2Step1 = mockTrolleyStep(order1.getItems().get(2));
+         TrolleyStep trolley2Step1 = mockTrolleyStep(order1.getItems().get(2));
         TrolleyStep trolley2Step2 = mockTrolleyStep(order1.getItems().get(3));
 
         TrolleyStep trolley2Step3 = mockTrolleyStep(order2.getItems().get(2));
         TrolleyStep trolley2Step4 = mockTrolleyStep(order2.getItems().get(3));
         TrolleyStep trolley2Step5 = mockTrolleyStep(order2.getItems().get(4));
         TrolleyStep trolley2Step6 = mockTrolleyStep(order2.getItems().get(5));
-
-        //Trolley2:
-        //Order1 total volume = 17 -> requires 2 bucket
-        //Order2 total volume = 33 -> requires 4 buckets
-        //Total required buckets = 6
-        //Penalization = 6 - 2 = 4
-        Trolley trolley2 = mockTrolley(2, 10,
-                trolley2Step1,
-                trolley2Step2,
-                trolley2Step3,
-                trolley2Step4,
-                trolley2Step5,
-                trolley2Step6);
 
         //Penalization Trolley1 = 1
         //Penalization Trolley2 = 4
@@ -202,7 +178,7 @@ class OrderPickingConstraintProviderTest {
     }
 
     private static TrolleyStep mockTrolleyStep(OrderItem item) {
-        return new TrolleyStep(item);
+        return new TrolleyStep("1", item);
     }
 
     private static TrolleyStep mockTrolleyStep(WarehouseLocation location) {
@@ -210,7 +186,7 @@ class OrderPickingConstraintProviderTest {
         Product product = new Product();
         product.setLocation(location);
         item.setProduct(product);
-        return new TrolleyStep(item);
+        return new TrolleyStep("1", item);
     }
 
     private static Trolley mockTrolley(int bucketCount, int bucketCapacity, TrolleyStep... steps) {
