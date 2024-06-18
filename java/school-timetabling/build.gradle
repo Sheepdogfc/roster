@@ -14,11 +14,6 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     mavenLocal()
-    if (enterprise == 'true') {
-        maven {
-            url = "https://timefold.jfrog.io/artifactory/releases/"
-        }
-    }
 }
 
 dependencies {
