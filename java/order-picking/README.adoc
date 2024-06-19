@@ -57,10 +57,6 @@ https://timefold.ai/contact[Contact Timefold] to obtain the credentials required
 
 . Create `.m2/settings.xml` in your home directory with the following content:
 +
-[tabs]
-====
-Maven::
-+
 --
 [source,xml,options="nowrap"]
 ----
@@ -80,29 +76,6 @@ Maven::
 
 See https://maven.apache.org/settings.html[Settings Reference] for more information on Maven settings.
 --
-Gradle::
-+
---
-Add the following in your `build.gradle`:
-
-[source,groovy,options="nowrap"]
-----
-repositories {
-  mavenCentral()
-  maven {
-    url "https://timefold.jfrog.io/artifactory/releases/"
-    credentials { // Replace "my_username" and "my_password" with credentials obtained from a Timefold representative.
-        username "my_username"
-        password "my_password"
-    }
-    authentication {
-        basic(BasicAuthentication)
-    }
-  }
-}
-----
---
-====
 
 . Start the application with Maven:
 +
