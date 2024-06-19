@@ -15,7 +15,6 @@ def school_timetabling_constraints(constraint_factory: ConstraintFactory):
         room_conflict(constraint_factory),
         teacher_conflict(constraint_factory),
         student_group_conflict(constraint_factory),
-
         # Soft constraints
         teacher_room_stability(constraint_factory),
         teacher_time_efficiency(constraint_factory),

@@ -48,6 +48,3 @@ def minimize_travel_time(factory: ConstraintFactory):
                           vehicle.calculate_total_driving_time_seconds()))
         .as_constraint(MINIMIZE_TRAVEL_TIME)
     )
-
-
-__all__ = ['vehicle_routing_constraints', 'vehicle_capacity', 'minimize_travel_time']

@@ -124,6 +124,3 @@ def generate_demo_data(demo_data_enum: DemoData) -> VehicleRoutePlan:
 
 def tomorrow_at(local_time: time) -> datetime:
     return datetime.combine(date.today(), local_time)
-
-
-__all__ = ['DemoData', 'generate_demo_data']
