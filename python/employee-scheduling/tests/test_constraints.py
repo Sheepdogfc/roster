@@ -21,7 +21,7 @@ def test_required_skill():
            Shift(id="1", start=DAY_START_TIME, end=DAY_END_TIME, location="Location", required_skill="Skill", employee=employee))
     .penalizes(1))
     
-    employee = Employee(name="Beth", skills={"Skill"}, unavailable_dates=set(), undesired_dates=set(), desired_dates=set())
+    employee = Employee(name="Beth", skills={"Skill"})
     (constraint_verifier.verify_that(required_skill)
     .given(employee,
            Shift(id="2", start=DAY_START_TIME, end=DAY_END_TIME, location="Location", required_skill="Skill", employee=employee))
