@@ -1,11 +1,8 @@
 from timefold.solver.test import ConstraintVerifier
 from datetime import time
 
-from hello_world.domain import Timetable, Lesson, Room, Timeslot
-from hello_world.constraints import (define_constraints, room_conflict,
-                                     teacher_conflict, student_group_conflict,
-                                     teacher_room_stability, teacher_time_efficiency,
-                                     student_group_subject_variety)
+from hello_world.domain import *
+from hello_world.constraints import *
 
 ROOM1 = Room("Room1")
 ROOM2 = Room("Room2")

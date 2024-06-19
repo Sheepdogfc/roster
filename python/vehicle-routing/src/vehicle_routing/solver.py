@@ -7,8 +7,8 @@ from .constraints import define_constraints
 
 
 solver_config = SolverConfig(
-    solution_class=EmployeeSchedule,
-    entity_class_list=[Shift],
+    solution_class=VehicleRoutePlan,
+    entity_class_list=[Vehicle, Visit],
     score_director_factory_config=ScoreDirectorFactoryConfig(
         constraint_provider_function=define_constraints
     ),
@@ -17,5 +17,5 @@ solver_config = SolverConfig(
     )
 )
 
-solver_manager = SolverManager.create(SolverFactory.create(solver_config))
+solver_manager = SolverManager.create(solver_config)
 solution_manager = SolutionManager.create(solver_manager)

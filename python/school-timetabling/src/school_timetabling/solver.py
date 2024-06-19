@@ -7,8 +7,8 @@ from .constraints import define_constraints
 
 
 solver_config = SolverConfig(
-    solution_class=EmployeeSchedule,
-    entity_class_list=[Shift],
+    solution_class=Timetable,
+    entity_class_list=[Lesson],
     score_director_factory_config=ScoreDirectorFactoryConfig(
         constraint_provider_function=define_constraints
     ),

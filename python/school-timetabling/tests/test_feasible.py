@@ -1,4 +1,4 @@
-from school_timetabling.routes import app
+from school_timetabling.rest_api import app
 from school_timetabling.domain import *
 
 from fastapi.testclient import TestClient

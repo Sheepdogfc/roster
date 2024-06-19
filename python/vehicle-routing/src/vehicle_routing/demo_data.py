@@ -4,7 +4,7 @@ from enum import Enum
 from random import Random
 from dataclasses import dataclass
 
-from .domain import Location, Visit, Vehicle, VehicleRoutePlan
+from .domain import *
 
 
 FIRST_NAMES = ("Amy", "Beth", "Chad", "Dan", "Elsa", "Flo", "Gus", "Hugo", "Ivy", "Jay")

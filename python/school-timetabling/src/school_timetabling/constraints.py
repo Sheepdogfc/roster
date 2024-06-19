@@ -2,10 +2,8 @@ from timefold.solver.score import (constraint_provider, HardSoftScore, Joiners,
                                    ConstraintFactory, Constraint)
 from datetime import time
 
-from .domain import Lesson
-from .justifications import (RoomConflictJustification, TeacherConflictJustification,
-                             StudentGroupConflictJustification, TeacherRoomStabilityJustification,
-                             TeacherTimeEfficiencyJustification, StudentGroupSubjectVarietyJustification)
+from .domain import *
+from .score_analysis import *
 
 
 @constraint_provider

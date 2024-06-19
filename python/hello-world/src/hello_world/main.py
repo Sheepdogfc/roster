@@ -6,7 +6,7 @@ from datetime import time
 import logging
 import argparse
 
-from .domain import Lesson, Timeslot, Room, Timetable
+from .domain import *
 from .constraints import define_constraints
 
 
