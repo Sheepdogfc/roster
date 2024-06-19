@@ -9,7 +9,7 @@ from .justifications import (RoomConflictJustification, TeacherConflictJustifica
 
 
 @constraint_provider
-def school_timetabling_constraints(constraint_factory: ConstraintFactory):
+def define_constraints(constraint_factory: ConstraintFactory):
     return [
         # Hard constraints
         room_conflict(constraint_factory),

@@ -9,7 +9,7 @@ import pathlib
 
 
 from .domain import VehicleRoutePlan, Vehicle, Visit, MatchAnalysisDTO, ConstraintAnalysisDTO
-from .constraints import vehicle_routing_constraints
+from .constraints import define_constraints
 from .demo_data import DemoData, generate_demo_data
 
 set_class_output_directory(pathlib.Path('target'))
@@ -18,7 +18,7 @@ solver_config = SolverConfig(
     solution_class=VehicleRoutePlan,
     entity_class_list=[Vehicle, Visit],
     score_director_factory_config=ScoreDirectorFactoryConfig(
-        constraint_provider_function=vehicle_routing_constraints
+        constraint_provider_function=define_constraints
     ),
     termination_config=TerminationConfig(
         spent_limit=Duration(seconds=30)

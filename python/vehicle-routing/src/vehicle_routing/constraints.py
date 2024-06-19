@@ -8,7 +8,7 @@ MINIMIZE_TRAVEL_TIME = "minimizeTravelTime"
 
 
 @constraint_provider
-def vehicle_routing_constraints(factory: ConstraintFactory):
+def define_constraints(factory: ConstraintFactory):
     return [
         vehicle_capacity(factory),
         minimize_travel_time(factory)

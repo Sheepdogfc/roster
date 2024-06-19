@@ -13,7 +13,7 @@ def get_shift_duration_in_minutes(shift: Shift) -> int:
 
 
 @constraint_provider
-def scheduling_constraints(constraint_factory: ConstraintFactory):
+def define_constraints(constraint_factory: ConstraintFactory):
     return [
         # Hard constraints
         required_skill(constraint_factory),

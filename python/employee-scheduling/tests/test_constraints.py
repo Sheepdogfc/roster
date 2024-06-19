@@ -1,8 +1,8 @@
+from datetime import date, datetime, time, timedelta
 from timefold.solver.test import ConstraintVerifier
 
 from employee_scheduling.domain import *
 from employee_scheduling.constraints import *
-from datetime import date, datetime, time, timedelta
 
 
 DAY_1 = date(2021, 2, 1)
@@ -11,7 +11,7 @@ DAY_END_TIME = datetime.combine(DAY_1, time(17, 0))
 AFTERNOON_START_TIME = datetime.combine(DAY_1, time(13, 0))
 AFTERNOON_END_TIME = datetime.combine(DAY_1, time(21, 0))
 
-constraint_verifier = ConstraintVerifier.build(scheduling_constraints, EmployeeSchedule, Shift)
+constraint_verifier = ConstraintVerifier.build(define_constraints, EmployeeSchedule, Shift)
 
 
 def test_required_skill():
