@@ -88,6 +88,7 @@ jobs:
       - name: Test timefold-quickstarts (native tests)
         working-directory: ./timefold-quickstarts/${{matrix.module}}
         run: mvn -B -Dnative -Pnative verify
+
   build-enterprise-quarkus:
     concurrency:
       group: pull_request_enterprise_long_running-${{ github.event_name }}-${{ github.head_ref }}-${{ matrix.module }}-${{ matrix.java-version }}
@@ -126,6 +127,27 @@ jobs:
         shell: bash
         working-directory: ./timefold-solver
         run: .github/scripts/prevent_stale_fork.sh
+      # Clone timefold-solver-enterprise
+      # Need to check for stale repo, since Github is not aware of the build chain and therefore doesn't automate it.
+      - name: Checkout timefold-solver-enterprise (PR) # Checkout the PR branch first, if it exists
+        id: checkout-solver-enterprise
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          repository: TimefoldAI/timefold-solver-enterprise
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.JRELEASER_GITHUB_TOKEN }} # Safe; only used to clone the repo and not stored in the fork.
+          path: ./timefold-solver-enterprise
+          fetch-depth: 0 # Otherwise merge will fail on account of not having history.
+      - name: Checkout timefold-solver-enterprise (main) # Checkout the main branch if the PR branch does not exist
+        if: steps.checkout-solver-enterprise.outcome != 'success'
+        uses: actions/checkout@v4
+        with:
+          repository: TimefoldAI/timefold-solver-enterprise
+          ref: main
+          token: ${{ secrets.JRELEASER_GITHUB_TOKEN }} # Safe; only used to clone the repo and not stored in the fork.
+          path: ./timefold-solver-enterprise
+          fetch-depth: 0 # Otherwise merge will fail on account of not having history.
 
       # Clone timefold-quickstarts
       # No need to check for stale repo, as Github merges the main repo into the fork automatically.
@@ -146,10 +168,14 @@ jobs:
 
       - name: Quickly build timefold-solver
         working-directory: ./timefold-solver
-        run: mvn -B -Dquickly clean install
+        run: mvn -B -Dquickly -DskipTests clean install
+      - name: Quickly build timefold-solver-enterprise
+        working-directory: ./timefold-solver-enterprise
+        run: mvn -B -Dquickly -DskipTests clean install
       - name: Test timefold-enterprise-quickstarts (enterprise native tests)
         working-directory: ./timefold-quickstarts/${{matrix.module}}
         run: mvn -B -Dnative -Denterprise -Pnative verify
+
   build-spring-boot:
     concurrency:
       group: pull_request_long_running-${{ github.event_name }}-${{ github.head_ref }}-${{ matrix.module }}-${{ matrix.java-version }}
