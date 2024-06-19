@@ -1,5 +1,5 @@
-from datetime import date, datetime, time, timedelta
 from timefold.solver.test import ConstraintVerifier
+from datetime import date, datetime, time, timedelta
 
 from employee_scheduling.domain import *
 from employee_scheduling.constraints import *
