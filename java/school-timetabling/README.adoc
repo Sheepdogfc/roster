@@ -62,13 +62,15 @@ For high-scalability use cases, switch to https://docs.timefold.ai/timefold-solv
 our commercial offering.
 https://timefold.ai/contact[Contact Timefold] to obtain the credentials required to access our private Enterprise Maven repository.
 
-. Create `.m2/settings.xml` in your home directory with the following content:
+. Configure the Enterprise Edition Maven repository:
 +
 [tabs]
 ====
 Maven::
 +
 --
+Create `.m2/settings.xml` in your home directory with the following content:
+
 [source,xml,options="nowrap"]
 ----
 <settings>
@@ -108,6 +110,8 @@ repositories {
   }
 }
 ----
+
+See https://docs.gradle.org/current/dsl/org.gradle.api.artifacts.repositories.AuthenticationSupported.html#content[Settings Reference] for more information on Gradle settings.
 --
 ====
 
