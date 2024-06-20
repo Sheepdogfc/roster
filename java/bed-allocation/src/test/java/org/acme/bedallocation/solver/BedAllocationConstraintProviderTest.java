@@ -31,6 +31,11 @@ class BedAllocationConstraintProviderTest {
     ConstraintVerifier<BedAllocationConstraintProvider, BedPlan> constraintVerifier;
 
     @Test
+    void dummy() {
+
+    }
+
+    @Test
     void femaleInMaleRoom() {
         Room room = new Room();
         room.setGenderLimitation(GenderLimitation.MALE_ONLY);
