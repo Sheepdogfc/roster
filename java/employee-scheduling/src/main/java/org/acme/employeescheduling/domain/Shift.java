@@ -1,11 +1,18 @@
 package org.acme.employeescheduling.domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @PlanningEntity
 public class Shift {
@@ -87,6 +94,41 @@ public class Shift {
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
+    }
+
+    @JsonIgnore
+    public boolean isOverlappingWith(Collection<LocalDate> dates) {
+        return !getOverlappingDatesForShift(dates).isEmpty();
+    }
+
+    @JsonIgnore
+    public int getOverlappingDurationInMinutes(Collection<LocalDate> dates) {
+        List<LocalDate> overlappingDates = getOverlappingDatesForShift(dates);
+        long overlappingDurationInMinutes = 0;
+        for (LocalDate date : overlappingDates) {
+            overlappingDurationInMinutes += getOverlappingDurationForShift(date);
+        }
+        return (int) overlappingDurationInMinutes;
+    }
+
+    private List<LocalDate> getOverlappingDatesForShift(Collection<LocalDate> dates) {
+        return dates.stream()
+                .filter(d -> getOverlappingDurationForShift(d) > 0)
+                .toList();
+    }
+
+    private long getOverlappingDurationForShift(LocalDate date) {
+        LocalDateTime startDateTime = LocalDateTime.of(date, LocalTime.MIN);
+        LocalDateTime endDateTime = LocalDateTime.of(date, LocalTime.MAX);
+        return getOverlappingDurationInMinutes(startDateTime, endDateTime, getStart(), getEnd());
+    }
+
+    private long getOverlappingDurationInMinutes(LocalDateTime firstStartDateTime, LocalDateTime firstEndDateTime,
+            LocalDateTime secondStartDateTime, LocalDateTime secondEndDateTime) {
+        LocalDateTime maxStartTime = firstStartDateTime.isAfter(secondStartDateTime) ? firstStartDateTime : secondStartDateTime;
+        LocalDateTime minEndTime = firstEndDateTime.isBefore(secondEndDateTime) ? firstEndDateTime : secondEndDateTime;
+        long minutes = maxStartTime.until(minEndTime, ChronoUnit.MINUTES);
+        return minutes > 0 ? minutes : 0;
     }
 
     @Override
