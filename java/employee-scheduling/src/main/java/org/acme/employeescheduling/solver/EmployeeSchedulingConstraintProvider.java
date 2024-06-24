@@ -1,6 +1,8 @@
 package org.acme.employeescheduling.solver;
 
 import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
+import static ai.timefold.solver.core.api.score.stream.Joiners.lessThanOrEqual;
+import static ai.timefold.solver.core.api.score.stream.Joiners.overlapping;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -10,7 +12,6 @@ import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
-import ai.timefold.solver.core.api.score.stream.Joiners;
 
 import org.acme.employeescheduling.domain.Employee;
 import org.acme.employeescheduling.domain.Shift;
@@ -53,7 +54,7 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
 
     Constraint noOverlappingShifts(ConstraintFactory constraintFactory) {
         return constraintFactory.forEachUniquePair(Shift.class, equal(Shift::getEmployee),
-                Joiners.overlapping(Shift::getStart, Shift::getEnd))
+                overlapping(Shift::getStart, Shift::getEnd))
                 .penalize(HardSoftScore.ONE_HARD,
                         EmployeeSchedulingConstraintProvider::getMinuteOverlap)
                 .asConstraint("Overlapping shift");
@@ -61,7 +62,7 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
 
     Constraint atLeast10HoursBetweenTwoShifts(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Shift.class)
-                .join(Shift.class, equal(Shift::getEmployee), Joiners.lessThanOrEqual(Shift::getEnd, Shift::getStart))
+                .join(Shift.class, equal(Shift::getEmployee), lessThanOrEqual(Shift::getEnd, Shift::getStart))
                 .filter((firstShift,
                         secondShift) -> Duration.between(firstShift.getEnd(), secondShift.getStart()).toHours() < 10)
                 .penalize(HardSoftScore.ONE_HARD,
