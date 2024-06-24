@@ -8,6 +8,10 @@ def get_minute_overlap(shift1: Shift, shift2: Shift) -> int:
     return (min(shift1.end, shift2.end) - max(shift1.start, shift2.start)).total_seconds() // 60
 
 
+def is_overlapping_with_date(shift: Shift, dt: date) -> bool:
+    return shift.start.date() == dt or shift.end.date() == dt
+
+
 def overlapping_in_minutes(first_start_datetime: datetime, first_end_datetime: datetime,
                            second_start_datetime: datetime, second_end_datetime: datetime) -> int:
     latest_start = max(first_start_datetime, second_start_datetime)
@@ -87,8 +91,7 @@ def unavailable_employee(constraint_factory: ConstraintFactory):
     return (constraint_factory.for_each(Shift)
             .join(Employee, Joiners.equal(lambda shift: shift.employee, lambda employee: employee))
             .flatten_last(lambda employee: employee.unavailable_dates)
-            .filter(
-        lambda shift, unavailable_date: shift.start.date() == unavailable_date or shift.end.date() == unavailable_date)
+            .filter(lambda shift, unavailable_date: is_overlapping_with_date(shift, unavailable_date))
             .penalize(HardSoftScore.ONE_HARD,
                       lambda shift, unavailable_date: get_shift_overlapping_duration_in_minutes(shift,
                                                                                                 unavailable_date))
@@ -100,8 +103,7 @@ def undesired_day_for_employee(constraint_factory: ConstraintFactory):
     return (constraint_factory.for_each(Shift)
             .join(Employee, Joiners.equal(lambda shift: shift.employee, lambda employee: employee))
             .flatten_last(lambda employee: employee.undesired_dates)
-            .filter(
-        lambda shift, undesired_date: shift.start.date() == undesired_date or shift.end.date() == undesired_date)
+            .filter(lambda shift, undesired_date: is_overlapping_with_date(shift, undesired_date))
             .penalize(HardSoftScore.ONE_SOFT,
                       lambda shift, undesired_date: get_shift_overlapping_duration_in_minutes(shift, undesired_date))
             .as_constraint("Undesired day for employee")
@@ -112,7 +114,7 @@ def desired_day_for_employee(constraint_factory: ConstraintFactory):
     return (constraint_factory.for_each(Shift)
             .join(Employee, Joiners.equal(lambda shift: shift.employee, lambda employee: employee))
             .flatten_last(lambda employee: employee.desired_dates)
-            .filter(lambda shift, desired_date: shift.start.date() == desired_date or shift.end.date() == desired_date)
+            .filter(lambda shift, desired_date: is_overlapping_with_date(shift, desired_date))
             .reward(HardSoftScore.ONE_SOFT,
                     lambda shift, desired_date: get_shift_overlapping_duration_in_minutes(shift, desired_date))
             .as_constraint("Desired day for employee")

@@ -92,6 +92,10 @@ public class Shift {
         this.employee = employee;
     }
 
+    public boolean isOverlappingWithDate(LocalDate date) {
+        return getStart().toLocalDate().equals(date) || getEnd().toLocalDate().equals(date);
+    }
+
     public long getOverlappingDurationInMinutes(LocalDate date) {
         LocalDateTime startDateTime = LocalDateTime.of(date, LocalTime.MIN);
         LocalDateTime endDateTime = LocalDateTime.of(date, LocalTime.MAX);
