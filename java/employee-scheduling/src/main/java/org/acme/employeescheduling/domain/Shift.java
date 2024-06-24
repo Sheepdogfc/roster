@@ -96,18 +96,18 @@ public class Shift {
         return getStart().toLocalDate().equals(date) || getEnd().toLocalDate().equals(date);
     }
 
-    public long getOverlappingDurationInMinutes(LocalDate date) {
+    public int getOverlappingDurationInMinutes(LocalDate date) {
         LocalDateTime startDateTime = LocalDateTime.of(date, LocalTime.MIN);
         LocalDateTime endDateTime = LocalDateTime.of(date, LocalTime.MAX);
         return getOverlappingDurationInMinutes(startDateTime, endDateTime, getStart(), getEnd());
     }
 
-    private long getOverlappingDurationInMinutes(LocalDateTime firstStartDateTime, LocalDateTime firstEndDateTime,
+    private int getOverlappingDurationInMinutes(LocalDateTime firstStartDateTime, LocalDateTime firstEndDateTime,
             LocalDateTime secondStartDateTime, LocalDateTime secondEndDateTime) {
         LocalDateTime maxStartTime = firstStartDateTime.isAfter(secondStartDateTime) ? firstStartDateTime : secondStartDateTime;
         LocalDateTime minEndTime = firstEndDateTime.isBefore(secondEndDateTime) ? firstEndDateTime : secondEndDateTime;
         long minutes = maxStartTime.until(minEndTime, ChronoUnit.MINUTES);
-        return minutes > 0 ? minutes : 0;
+        return minutes > 0 ? (int) minutes : 0;
     }
 
     @Override

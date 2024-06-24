@@ -60,9 +60,8 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
     }
 
     Constraint atLeast10HoursBetweenTwoShifts(ConstraintFactory constraintFactory) {
-        return constraintFactory.forEachUniquePair(Shift.class,
-                equal(Shift::getEmployee),
-                Joiners.lessThanOrEqual(Shift::getEnd, Shift::getStart))
+        return constraintFactory.forEach(Shift.class)
+                .join(Shift.class, equal(Shift::getEmployee), Joiners.lessThanOrEqual(Shift::getEnd, Shift::getStart))
                 .filter((firstShift,
                         secondShift) -> Duration.between(firstShift.getEnd(), secondShift.getStart()).toHours() < 10)
                 .penalize(HardSoftScore.ONE_HARD,
@@ -85,8 +84,7 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
                 .join(Employee.class, equal(Shift::getEmployee, Function.identity()))
                 .flattenLast(Employee::getUnavailableDates)
                 .filter(Shift::isOverlappingWithDate)
-                .penalize(HardSoftScore.ONE_HARD,
-                        (shift, unavailableDate) -> (int) shift.getOverlappingDurationInMinutes(unavailableDate))
+                .penalize(HardSoftScore.ONE_HARD, Shift::getOverlappingDurationInMinutes)
                 .asConstraint("Unavailable employee");
     }
 
@@ -95,10 +93,8 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
                 .join(Employee.class, equal(Shift::getEmployee, Function.identity()))
                 .flattenLast(Employee::getUndesiredDates)
                 .filter(Shift::isOverlappingWithDate)
-                .penalize(HardSoftScore.ONE_SOFT,
-                        (shift, undesiredDate) -> (int) shift.getOverlappingDurationInMinutes(undesiredDate))
+                .penalize(HardSoftScore.ONE_SOFT, Shift::getOverlappingDurationInMinutes)
                 .asConstraint("Undesired day for employee");
-
     }
 
     Constraint desiredDayForEmployee(ConstraintFactory constraintFactory) {
@@ -106,8 +102,7 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
                 .join(Employee.class, equal(Shift::getEmployee, Function.identity()))
                 .flattenLast(Employee::getDesiredDates)
                 .filter(Shift::isOverlappingWithDate)
-                .reward(HardSoftScore.ONE_SOFT,
-                        (shift, desiredDate) -> (int) shift.getOverlappingDurationInMinutes(desiredDate))
+                .reward(HardSoftScore.ONE_SOFT, Shift::getOverlappingDurationInMinutes)
                 .asConstraint("Desired day for employee");
     }
 

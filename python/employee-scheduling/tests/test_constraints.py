@@ -92,6 +92,12 @@ def test_at_least_10_hours_between_shifts():
            Shift(id="1", start=DAY_START_TIME, end=DAY_END_TIME, location="Location", required_skill="Skill", employee=employee1),
            Shift(id="2", start=DAY_END_TIME, end=DAY_START_TIME + timedelta(days=1), location="Location 2", required_skill="Skill", employee=employee1))
     .penalizes_by(600))
+
+    (constraint_verifier.verify_that(at_least_10_hours_between_two_shifts)
+    .given(employee1, employee2,
+           Shift(id="1", start=DAY_END_TIME, end=DAY_START_TIME + timedelta(days=1), location="Location", required_skill="Skill", employee=employee1),
+           Shift(id="2", start=DAY_START_TIME, end=DAY_END_TIME, location="Location 2", required_skill="Skill", employee=employee1))
+    .penalizes_by(600))
     
     (constraint_verifier.verify_that(at_least_10_hours_between_two_shifts)
     .given(employee1, employee2,
