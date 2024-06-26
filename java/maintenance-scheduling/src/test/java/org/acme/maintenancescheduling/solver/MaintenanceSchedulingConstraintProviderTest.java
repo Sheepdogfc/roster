@@ -51,33 +51,33 @@ class MaintenanceSchedulingConstraintProviderTest {
     }
 
     @Test
-    void readyDate() {
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::readyDate)
+    void minDate() {
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::minDate)
                 .given(new Job("1", "Downtown tunnel", 1, DAY_2, null, null, null, ALPHA_CREW, DAY_2))
                 .penalizesBy(0);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::readyDate)
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::minDate)
                 .given(new Job("1", "Downtown tunnel", 1, DAY_1, null, null, null, ALPHA_CREW, DAY_3))
                 .penalizesBy(0);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::readyDate)
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::minDate)
                 .given(new Job("1", "Downtown tunnel", 1, DAY_3, null, null, null, ALPHA_CREW, DAY_1))
                 .penalizesBy(2);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::readyDate)
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::minDate)
                 .given(new Job("1", "Downtown tunnel", 4, DAY_3, null, null, null, ALPHA_CREW, DAY_1))
                 .penalizesBy(2);
     }
 
     @Test
-    void dueDate() {
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
+    void maxDate() {
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::maxDate)
                 .given(new Job("1", "Downtown tunnel", 1, null, DAY_2, null, null, ALPHA_CREW, DAY_2))
                 .penalizesBy(1);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::maxDate)
                 .given(new Job("1", "Downtown tunnel", 1, null, DAY_1, null, null, ALPHA_CREW, DAY_3))
                 .penalizesBy(3);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::maxDate)
                 .given(new Job("1", "Downtown tunnel", 1, null, DAY_3, null, null, ALPHA_CREW, DAY_1))
                 .penalizesBy(0);
-        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::dueDate)
+        constraintVerifier.verifyThat(MaintenanceScheduleConstraintProvider::maxDate)
                 .given(new Job("1", "Downtown tunnel", 4, null, DAY_3, null, null, ALPHA_CREW, DAY_1))
                 .penalizesBy(2);
     }
