@@ -22,8 +22,8 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
         return new Constraint[] {
                 // Hard constraints
                 crewConflict(constraintFactory),
-                minDate(constraintFactory),
-                maxDate(constraintFactory),
+                minStartDate(constraintFactory),
+                maxEndDate(constraintFactory),
                 // Soft constraints
                 beforeIdealEndDate(constraintFactory),
                 afterIdealEndDate(constraintFactory),
@@ -50,24 +50,24 @@ public class MaintenanceScheduleConstraintProvider implements ConstraintProvider
                 .asConstraint("Crew conflict");
     }
 
-    public Constraint minDate(ConstraintFactory constraintFactory) {
+    public Constraint minStartDate(ConstraintFactory constraintFactory) {
         // Don't start a maintenance job before its ready to start.
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getMinStartDate() != null
                         && job.getStartDate().isBefore(job.getMinStartDate()))
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                         job -> DAYS.between(job.getStartDate(), job.getMinStartDate()))
-                .asConstraint("Min date");
+                .asConstraint("Min start date");
     }
 
-    public Constraint maxDate(ConstraintFactory constraintFactory) {
+    public Constraint maxEndDate(ConstraintFactory constraintFactory) {
         // Don't end a maintenance job after its due.
         return constraintFactory.forEach(Job.class)
                 .filter(job -> job.getMaxEndDate() != null
                         && job.getEndDate().isAfter(job.getMaxEndDate()))
                 .penalizeLong(HardSoftLongScore.ONE_HARD,
                         job -> DAYS.between(job.getMaxEndDate(), job.getEndDate()))
-                .asConstraint("Max date");
+                .asConstraint("Max end date");
     }
 
     // ************************************************************************
