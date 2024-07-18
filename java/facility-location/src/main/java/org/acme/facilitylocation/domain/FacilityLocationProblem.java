@@ -5,7 +5,6 @@ import static java.util.Collections.emptyList;
 import java.util.Arrays;
 import java.util.List;
 
-import ai.timefold.solver.core.api.domain.constraintweight.ConstraintConfigurationProvider;
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
@@ -23,8 +22,6 @@ public class FacilityLocationProblem {
 
     @PlanningScore
     private HardSoftLongScore score;
-    @ConstraintConfigurationProvider
-    private FacilityLocationConstraintConfiguration constraintConfiguration = new FacilityLocationConstraintConfiguration();
 
     private Location southWestCorner;
     private Location northEastCorner;
@@ -75,14 +72,6 @@ public class FacilityLocationProblem {
 
     public void setScore(HardSoftLongScore score) {
         this.score = score;
-    }
-
-    public FacilityLocationConstraintConfiguration getConstraintConfiguration() {
-        return constraintConfiguration;
-    }
-
-    public void setConstraintConfiguration(FacilityLocationConstraintConfiguration constraintConfiguration) {
-        this.constraintConfiguration = constraintConfiguration;
     }
 
     public List<Location> getBounds() {
