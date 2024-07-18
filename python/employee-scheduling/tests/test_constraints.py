@@ -1,7 +1,9 @@
 from timefold.solver.test import ConstraintVerifier
 
-from employee_scheduling.constraints import *
 from employee_scheduling.domain import *
+from employee_scheduling.constraints import *
+
+from datetime import date, datetime, time, timedelta
 
 DAY_1 = date(2021, 2, 1)
 DAY_3 = date(2021, 2, 3)
