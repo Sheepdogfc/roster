@@ -128,7 +128,7 @@ def balance_employee_shift_assignments(constraint_factory: ConstraintFactory):
             .complement(Employee, lambda e: 0)  # Include all employees which are not assigned to any shift.
             .group_by(ConstraintCollectors.load_balance(lambda employee, shift_count: employee,
                                                         lambda employee, shift_count: shift_count))
-            .penalizeDecimal(HardSoftDecimalScore.ONE_SOFT, lambda load_balance: load_balance.unfairness)
+            .penalize_decimal(HardSoftDecimalScore.ONE_SOFT, lambda load_balance: load_balance.unfairness())
             .as_constraint("Balance employee shift assignments")
             )
 
