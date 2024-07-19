@@ -4,7 +4,9 @@ import static java.util.Collections.emptyList;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import ai.timefold.solver.core.api.domain.solution.ConstraintWeightOverrides;
 import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
 import ai.timefold.solver.core.api.domain.solution.PlanningScore;
 import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
@@ -22,6 +24,10 @@ public class FacilityLocationProblem {
 
     @PlanningScore
     private HardSoftLongScore score;
+
+    // Demonstrates how to override the weights of constraints.
+    ConstraintWeightOverrides<HardSoftLongScore> constraintWeightOverrides = ConstraintWeightOverrides.of(
+            Map.of("distance from facility", HardSoftLongScore.ofSoft(6)));
 
     private Location southWestCorner;
     private Location northEastCorner;
@@ -72,6 +78,14 @@ public class FacilityLocationProblem {
 
     public void setScore(HardSoftLongScore score) {
         this.score = score;
+    }
+
+    public ConstraintWeightOverrides<HardSoftLongScore> getConstraintWeightOverrides() {
+        return constraintWeightOverrides;
+    }
+
+    public void setConstraintWeightOverrides(ConstraintWeightOverrides<HardSoftLongScore> constraintWeightOverrides) {
+        this.constraintWeightOverrides = constraintWeightOverrides;
     }
 
     public List<Location> getBounds() {
