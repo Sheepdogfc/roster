@@ -30,7 +30,7 @@ public class Task {
     @PreviousElementShadowVariable(sourceVariableName = "tasks")
     private Task previousTask;
     @JsonIgnore
-    @CascadingUpdateShadowVariable(targetMethodName = "updateStartTime", sourceVariableName = "tasks", sourceEntityClass = Employee.class)
+    @CascadingUpdateShadowVariable(targetMethodName = "updateStartTime", sourceVariableNames = {"employee", "previousTask"})
     private Integer startTime; // In minutes
 
     public Task() {
