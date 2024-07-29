@@ -8,7 +8,6 @@ import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.CascadingUpdateShadowVariable;
 import ai.timefold.solver.core.api.domain.variable.InverseRelationShadowVariable;
-import ai.timefold.solver.core.api.domain.variable.NextElementShadowVariable;
 import ai.timefold.solver.core.api.domain.variable.PreviousElementShadowVariable;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -36,9 +35,6 @@ public class Visit implements LocationAware {
     @JsonIdentityReference(alwaysAsId = true)
     @PreviousElementShadowVariable(sourceVariableName = "visits")
     private Visit previousVisit;
-    @JsonIdentityReference(alwaysAsId = true)
-    @NextElementShadowVariable(sourceVariableName = "visits")
-    private Visit nextVisit;
     @CascadingUpdateShadowVariable(targetMethodName = "updateArrivalTime", sourceVariableNames = {"vehicle", "previousVisit"})
     private LocalDateTime arrivalTime;
 
@@ -111,14 +107,6 @@ public class Visit implements LocationAware {
 
     public void setPreviousVisit(Visit previousVisit) {
         this.previousVisit = previousVisit;
-    }
-
-    public Visit getNextVisit() {
-        return nextVisit;
-    }
-
-    public void setNextVisit(Visit nextVisit) {
-        this.nextVisit = nextVisit;
     }
 
     public LocalDateTime getArrivalTime() {

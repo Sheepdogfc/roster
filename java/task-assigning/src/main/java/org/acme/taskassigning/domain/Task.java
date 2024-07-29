@@ -4,7 +4,6 @@ import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.CascadingUpdateShadowVariable;
 import ai.timefold.solver.core.api.domain.variable.InverseRelationShadowVariable;
-import ai.timefold.solver.core.api.domain.variable.NextElementShadowVariable;
 import ai.timefold.solver.core.api.domain.variable.PreviousElementShadowVariable;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -31,9 +30,7 @@ public class Task {
     @PreviousElementShadowVariable(sourceVariableName = "tasks")
     private Task previousTask;
     @JsonIgnore
-    @NextElementShadowVariable(sourceVariableName = "tasks")
-    private Task nextTask;
-    @CascadingUpdateShadowVariable(targetMethodName = "updateStartTime", sourceVariableNames = {"employee", "previousTask"})
+    @CascadingUpdateShadowVariable(targetMethodName = "updateStartTime", sourceVariableName = "tasks", sourceEntityClass = Employee.class)
     private Integer startTime; // In minutes
 
     public Task() {
@@ -122,14 +119,6 @@ public class Task {
         this.previousTask = previousTask;
     }
 
-    public Task getNextTask() {
-        return nextTask;
-    }
-
-    public void setNextTask(Task nextTask) {
-        this.nextTask = nextTask;
-    }
-
     public Integer getStartTime() {
         return startTime;
     }
@@ -144,6 +133,10 @@ public class Task {
 
     @SuppressWarnings("unused")
     private void updateStartTime() {
+        if (employee == null) {
+            startTime = null;
+            return;
+        }
         var previousEndTime = previousTask == null ? Integer.valueOf(0) : previousTask.getEndTime();
         if (previousEndTime == null) {
             return;
