@@ -45,7 +45,7 @@ public class Job {
     /**
      * Start is after cleanup.
      */
-    @CascadingUpdateShadowVariable(targetMethodName = "updateStartCleaningDateTime", sourceVariableNames = {"line", "previousJob"})
+    @CascadingUpdateShadowVariable(targetMethodName = "updateStartCleaningDateTime")
     private LocalDateTime startCleaningDateTime;
 
     @PiggybackShadowVariable(shadowVariableName = "startCleaningDateTime")
